@@ -4,12 +4,12 @@ import { Observable } from 'rxjs';
 import { Sucursales } from '../../Models/sucursales';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiService {
   url = 'https://localhost:44301/api/SucursalApi';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getAllSucursales(): Observable<Sucursales[]> {
     return this.http.get<Sucursales[]>(this.url);
@@ -26,9 +26,9 @@ export class ApiService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(sucursal), 
+        body: JSON.stringify(sucursal),
       });
-  
+
       return response.ok;
     } catch (error) {
       console.error('Error al agregar la sucursal:', error);

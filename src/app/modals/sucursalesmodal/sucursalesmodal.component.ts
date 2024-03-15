@@ -14,7 +14,7 @@ import { Sucursales } from '../../Models/sucursales';
     <label>Direccion:</label>
     <input type="text" [(ngModel)]="nuevaSucursal.direccion" />
     <label>URL de imagen:</label>
-    <input type="text" [(ngModel)]="nuevaSucursal.urlImagen" />
+    <input type="text" [(ngModel)]="nuevaSucursal.url_imagen" />
     <div class="botonera">
       <button class="btn" (click)="agregarSucursal()">Añadir</button>
       <button class="btn" (click)="cerrarModal()">Cancelar</button>
@@ -38,7 +38,8 @@ export class SucursalesmodalComponent {
     fechaModificado: new Date(),
     usuarioEliminador: 0,
     fechaEliminado: new Date(),
-    urlImagen: ''
+    url_imagen: '',
+    status: 1,
   };
 
   cerrarModal() {
@@ -55,7 +56,8 @@ export class SucursalesmodalComponent {
       fechaModificado: new Date(),
       usuarioEliminador: 0,
       fechaEliminado: new Date(),
-      urlImagen: ''
+      url_imagen: '',
+      status: 1,
     };
     this.cancelar.emit();
   }
@@ -75,7 +77,8 @@ export class SucursalesmodalComponent {
       fechaModificado: new Date(),
       usuarioEliminador: 0,
       fechaEliminado: new Date(),
-      urlImagen: ''
+      url_imagen: '',
+      status: 1,
     };
   }
 }

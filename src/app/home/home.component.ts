@@ -25,10 +25,7 @@ import { SucursalesmodalComponent } from '../modals/sucursalesmodal/sucursalesmo
       </div>
       <div class="card-container">
         <div class="card" *ngFor="let sucursal of filteredSucursalesList">
-          <img
-            src="https://image.placeholder.co/insecure/w:640/quality:65/czM6Ly9jZG4uc3BhY2VyLnByb3BlcnRpZXMvYjZhYTU2YjUtN2RkMS00N2MwLTg4ZjYtNjUyOTlkODk0YmE2"
-            alt="Placeholder Image"
-          />
+          <img src="{{ sucursal.url_imagen }}" />
           <div class="card-content">
             <h2>{{ sucursal.nombre }}</h2>
             <p>{{ sucursal.estado }}</p>
@@ -69,7 +66,8 @@ export class HomeComponent implements OnInit {
     fechaModificado: new Date(),
     usuarioEliminador: 0,
     fechaEliminado: new Date(),
-    urlImagen: ''
+    url_imagen: '',
+    status: 1,
   };
 
   constructor(private apiService: ApiService) {}
@@ -93,7 +91,8 @@ export class HomeComponent implements OnInit {
       fechaModificado: new Date(),
       usuarioEliminador: 0,
       fechaEliminado: new Date(),
-      urlImagen: ''
+      url_imagen: '',
+      status: 1,
     };
   }
 
@@ -103,8 +102,8 @@ export class HomeComponent implements OnInit {
 
   async agregarSucursal(sucursal: Sucursales): Promise<void> {
     try {
-      console.log("Se mandó a agregar XD")
-      console.log(sucursal)
+      console.log('Se mandó a agregar');
+      console.log(sucursal);
       const success = await this.apiService.agregarSucursal(sucursal);
       if (success) {
         this.actualizarListaSucursales();
@@ -120,8 +119,10 @@ export class HomeComponent implements OnInit {
   private actualizarListaSucursales(): void {
     this.apiService.getAllSucursales().subscribe(
       (sucursalesList: Sucursales[]) => {
+        this.filteredSucursalesList = sucursalesList.filter(
+          (sucursal) => sucursal.status === 1
+        );
         this.sucursalesList = sucursalesList;
-        this.filteredSucursalesList = sucursalesList;
       },
       (error) => {
         console.error('Error al obtener todas las sucursales:', error);
