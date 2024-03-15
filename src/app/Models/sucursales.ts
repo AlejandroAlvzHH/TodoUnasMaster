@@ -11,4 +11,5 @@ export interface Sucursales {
     fechaModificado: Date;
     usuarioEliminador: number;
     fechaEliminado: Date;
+    urlImagen: string;
 }

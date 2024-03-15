@@ -1,34 +1,38 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Sucursales } from '../../Models/sucursales';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ApiService {
   url = 'https://localhost:44301/api/SucursalApi';
 
-  async getAllSucursales(): Promise<Sucursales[]> {
-    try {
-      const response = await fetch(this.url, { method: 'GET' });
-      return (await response.json()) ?? [];
-    } catch (error) {
-      console.error('Error al obtener todas las sucursales:', error);
-      return [];
-    }
+  constructor(private http: HttpClient) { }
+
+  getAllSucursales(): Observable<Sucursales[]> {
+    return this.http.get<Sucursales[]>(this.url);
   }
 
-  async getSucursalById(id: number): Promise<Sucursales | null> {
+  getSucursalById(id: number): Observable<Sucursales | null> {
+    return this.http.get<Sucursales | null>(`${this.url}/${id}`);
+  }
+
+  async agregarSucursal(sucursal: Sucursales): Promise<boolean> {
     try {
-      const response = await fetch(`${this.url}/${id}`, { method: 'GET' });
-      if (response.ok) {
-        return await response.json();
-      } else {
-        console.error('Error al obtener la sucursal por ID:', response.statusText);
-        return null;
-      }
+      const response = await fetch(this.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sucursal), 
+      });
+  
+      return response.ok;
     } catch (error) {
-      console.error('Error al obtener la sucursal por ID:', error);
-      return null;
+      console.error('Error al agregar la sucursal:', error);
+      return false;
     }
   }
 }

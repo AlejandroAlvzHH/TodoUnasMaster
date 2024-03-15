@@ -1,13 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SucursalesCardsComponent } from '../sucursales-cards/sucursales-cards.component';
 import { Sucursales } from '../Models/sucursales';
 import { ApiService } from '../core/services/sucursales.service';
+import { SucursalesmodalComponent } from '../modals/sucursalesmodal/sucursalesmodal.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, SucursalesCardsComponent],
+  imports: [CommonModule, SucursalesmodalComponent],
   template: ` <div class="container">
     <aside class="sidebar">
       <ul>
@@ -20,7 +20,7 @@ import { ApiService } from '../core/services/sucursales.service';
     <main class="main-content">
       <h1>SUCURSALES</h1>
       <div class="botonera">
-        <a class="btn">Agregar Sucursal</a>
+        <button class="btn" (click)="abrirModal()">Agregar Sucursal</button>
         <a class="btn">Modificar Sucursales</a>
       </div>
       <div class="card-container">
@@ -33,36 +33,99 @@ import { ApiService } from '../core/services/sucursales.service';
             <h2>{{ sucursal.nombre }}</h2>
             <p>{{ sucursal.estado }}</p>
             <p>{{ sucursal.fechaActualizacion }}</p>
-            <a href="http://localhost:4200/sucursalselected/{{ sucursal.idSucursal }}" class="btn"
+            <a
+              href="http://localhost:4200/sucursalselected/{{
+                sucursal.idSucursal
+              }}"
+              class="btn"
               >Seleccionar</a
             >
           </div>
         </div>
       </div>
     </main>
+    <app-sucursalesmodal
+      *ngIf="mostrarModal"
+      (addSucursal)="agregarSucursal($event)"
+      (cancelar)="cerrarModal()"
+    ></app-sucursalesmodal>
   </div>`,
   styleUrl: './home.component.css',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   sucursalesList: Sucursales[] = [];
-  apiService: ApiService = inject(ApiService);
   filteredSucursalesList: Sucursales[] = [];
+  mostrarModal: boolean = false;
+  nuevaSucursal: Sucursales = {
+    idSucursal: 0,
+    nombre: '',
+    estado: 'Online',
+    fechaActualizacion: new Date(),
+    direccion: '',
+    url: '',
+    usuarioCreador: 0,
+    fechaCreado: new Date(),
+    usuarioModificador: 0,
+    fechaModificado: new Date(),
+    usuarioEliminador: 0,
+    fechaEliminado: new Date(),
+    urlImagen: ''
+  };
 
-  constructor() {
-    this.apiService.getAllSucursales().then((sucursalesList: Sucursales[]) => {
-      this.sucursalesList = sucursalesList;
-      this.filteredSucursalesList = sucursalesList;
-    });
+  constructor(private apiService: ApiService) {}
+
+  ngOnInit(): void {
+    this.actualizarListaSucursales();
   }
 
-  filterResults(text: string) {
-    if (!text) {
-      this.filteredSucursalesList = this.filteredSucursalesList;
-      return;
-    }
+  abrirModal(): void {
+    this.mostrarModal = true;
+    this.nuevaSucursal = {
+      idSucursal: 0,
+      nombre: '',
+      estado: 'Online',
+      fechaActualizacion: new Date(),
+      direccion: '',
+      url: '',
+      usuarioCreador: 0,
+      fechaCreado: new Date(),
+      usuarioModificador: 0,
+      fechaModificado: new Date(),
+      usuarioEliminador: 0,
+      fechaEliminado: new Date(),
+      urlImagen: ''
+    };
+  }
 
-    this.filteredSucursalesList = this.sucursalesList.filter((sucursales) =>
-      sucursales?.nombre.toLowerCase().includes(text.toLowerCase())
+  cerrarModal(): void {
+    this.mostrarModal = false;
+  }
+
+  async agregarSucursal(sucursal: Sucursales): Promise<void> {
+    try {
+      console.log("Se mandó a agregar XD")
+      console.log(sucursal)
+      const success = await this.apiService.agregarSucursal(sucursal);
+      if (success) {
+        this.actualizarListaSucursales();
+        this.cerrarModal();
+      } else {
+        console.error('Error al agregar la sucursal.');
+      }
+    } catch (error) {
+      console.error('Error al agregar la sucursal:', error);
+    }
+  }
+
+  private actualizarListaSucursales(): void {
+    this.apiService.getAllSucursales().subscribe(
+      (sucursalesList: Sucursales[]) => {
+        this.sucursalesList = sucursalesList;
+        this.filteredSucursalesList = sucursalesList;
+      },
+      (error) => {
+        console.error('Error al obtener todas las sucursales:', error);
+      }
     );
   }
 }

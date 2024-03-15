@@ -11,22 +11,21 @@ import { ApiService } from '../core/services/sucursales.service';
 })
 export class SucursalSelectedComponent implements OnInit {
   sucursal: Sucursales | null = null;
-  
-  constructor(private route: ActivatedRoute, private apiService: ApiService) { }
+
+  constructor(private route: ActivatedRoute, private apiService: ApiService) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const sucursalId = params.get('id');
       if (sucursalId) {
-        this.apiService.getSucursalById(parseInt(sucursalId, 10)).then((sucursal: Sucursales | null) => {
-          if (sucursal) {
+        this.apiService.getSucursalById(parseInt(sucursalId, 10)).subscribe(
+          (sucursal: Sucursales | null) => {
             this.sucursal = sucursal;
-          } else {
-            console.error('No se encontró la sucursal con el ID proporcionado');
+          },
+          error => {
+            console.error('Error al obtener la sucursal:', error);
           }
-        }).catch(error => {
-          console.error('Error al obtener la sucursal por ID:', error);
-        });
+        );
       }
     });
   }
