@@ -10,57 +10,42 @@ import { ModifysucursalmodalComponent } from '../../../../modals/Modals Sucursal
   standalone: true,
   imports: [CommonModule, ModifysucursalmodalComponent],
   template: `<div class="container">
-    <aside class="sidebar">
-      <ul>
-        <li><a href="/">Sucursales</a></li>
-        <li><a href="/catalogogeneral">Catálogo General</a></li>
-        <li><a href="/historicos">Históricos</a></li>
-        <li><a href="/configuracion">Configuración</a></li>
-      </ul>
-    </aside>
-    <main class="main-content">
-      <h1>{{ sucursal.nombre }}</h1>
-      <h2>{{ sucursal.url }}</h2>
-      <div class="menu-container">
-        <div class="menu">
-          <a href="#" class="opcion">Entradas y Salidas</a>
-          <a href="#" class="opcion">Inventario</a>
-          <a href="#" class="opcion">Traspasos</a>
-          <button class="opcion">Eliminar Sucursal</button>
-          <button class="opcion" (click)="abrirModal()">
-            Modificar Sucursal
-          </button>
-          <a href="#" class="opcion">Traspaso a Clínica</a>
-        </div>
+  <aside class="sidebar">
+    <ul>
+      <li><a href="/">Sucursales</a></li>
+      <li><a href="/catalogogeneral">Catálogo General</a></li>
+      <li><a href="/historicos">Históricos</a></li>
+      <li><a href="/configuracion">Configuración</a></li>
+    </ul>
+  </aside>
+  <main class="main-content">
+    <h1>{{ sucursal?.nombre }}</h1>
+    <h2>{{ sucursal?.url }}</h2>
+    <div class="menu-container">
+      <div class="menu">
+        <a href="#" class="opcion">Entradas y Salidas</a>
+        <a href="#" class="opcion">Inventario</a>
+        <a href="#" class="opcion">Traspasos</a>
+        <button class="opcion">Eliminar Sucursal</button>
+        <button class="opcion" (click)="abrirModal()">
+          Modificar Sucursal
+        </button>
+        <a href="#" class="opcion">Traspaso a Clínica</a>
       </div>
-    </main>
-    <!-- En el componente que abre el modal -->
-    <app-modifysucursalmodal
-      *ngIf="mostrarModal"
-      [sucursal]="sucursal"
-      (modificar)="modificarSucursal()"
-      (cancelar)="cerrarModal()"
-    ></app-modifysucursalmodal>
-  </div>`,
+    </div>
+  </main>
+  <!-- En el componente que abre el modal -->
+  <app-modifysucursalmodal
+    *ngIf="mostrarModal"
+    (modificar)="modificarSucursal()"
+    (cancelar)="cerrarModal()"
+  ></app-modifysucursalmodal>
+</div>
+`,
   styleUrls: ['./sucursal-selected.component.css'],
 })
 export class SucursalSelectedComponent implements OnInit {
-  sucursal: Sucursales = {
-    idSucursal: 0,
-    nombre: '',
-    estado: '',
-    fechaActualizacion: new Date(),
-    direccion: '',
-    url: '',
-    usuarioCreador: 0,
-    fechaCreado: new Date(),
-    usuarioModificador: 0,
-    fechaModificado: new Date(),
-    usuarioEliminador: 0,
-    fechaEliminado: new Date(),
-    url_imagen: '',
-    status: 1,
-  };
+  sucursal: Sucursales | null = null;
   mostrarModal: boolean = false;
 
   constructor(private route: ActivatedRoute, private apiService: ApiService) {}
@@ -74,6 +59,9 @@ export class SucursalSelectedComponent implements OnInit {
       const sucursalId = params.get('id');
       if (sucursalId) {
         this.apiService.getSucursalById(parseInt(sucursalId, 10)).subscribe(
+          (sucursal) => {
+            this.sucursal = sucursal;
+          },
           (error) => {
             console.error('Error al obtener la sucursal:', error);
           }
@@ -92,6 +80,6 @@ export class SucursalSelectedComponent implements OnInit {
   }
 
   modificarSucursal(): void {
+    // Aquí puedes implementar la lógica para modificar la sucursal
   }
-  
 }
