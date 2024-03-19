@@ -28,6 +28,7 @@ import { SucursalesmodalComponent } from '../../../../modals/Modals Sucursales/s
           <div class="card-content">
             <h2>{{ sucursal.nombre }}</h2>
             <p>{{ sucursal.estado }}</p>
+            <h4>Última fecha de actualización:</h4>
             <p>{{ sucursal.fechaActualizacion }}</p>
             <a
               href="http://localhost:4200/sucursalselected/{{
@@ -52,22 +53,6 @@ export class HomeComponent implements OnInit {
   sucursalesList: Sucursales[] = [];
   filteredSucursalesList: Sucursales[] = [];
   mostrarModal: boolean = false;
-  nuevaSucursal: Sucursales = {
-    idSucursal: 0,
-    nombre: '',
-    estado: 'Online',
-    fechaActualizacion: new Date(),
-    direccion: '',
-    url: '',
-    usuarioCreador: 0,
-    fechaCreado: new Date(),
-    usuarioModificador: 0,
-    fechaModificado: new Date(),
-    usuarioEliminador: 0,
-    fechaEliminado: new Date(),
-    url_imagen: '',
-    status: 1,
-  };
 
   constructor(private apiService: ApiService) {}
 
@@ -77,22 +62,6 @@ export class HomeComponent implements OnInit {
 
   abrirModal(): void {
     this.mostrarModal = true;
-    this.nuevaSucursal = {
-      idSucursal: 0,
-      nombre: '',
-      estado: 'Online',
-      fechaActualizacion: new Date(),
-      direccion: '',
-      url: '',
-      usuarioCreador: 0,
-      fechaCreado: new Date(),
-      usuarioModificador: 0,
-      fechaModificado: new Date(),
-      usuarioEliminador: 0,
-      fechaEliminado: new Date(),
-      url_imagen: '',
-      status: 1,
-    };
   }
 
   cerrarModal(): void {

@@ -13,6 +13,8 @@ import { Sucursales } from '../../../Models/sucursales';
     <input type="text" [(ngModel)]="nuevaSucursal.nombre" />
     <label>Direccion:</label>
     <input type="text" [(ngModel)]="nuevaSucursal.direccion" />
+    <label>URL de servicios:</label>
+    <input type="text" [(ngModel)]="nuevaSucursal.url" />
     <label>URL de imagen:</label>
     <input type="text" [(ngModel)]="nuevaSucursal.url_imagen" />
     <div class="botonera">
@@ -43,22 +45,6 @@ export class SucursalesmodalComponent {
   };
 
   cerrarModal() {
-    this.nuevaSucursal = {
-      idSucursal: 0,
-      nombre: '',
-      estado: 'Online',
-      fechaActualizacion: new Date(),
-      direccion: '',
-      url: '',
-      usuarioCreador: 0,
-      fechaCreado: new Date(),
-      usuarioModificador: 0,
-      fechaModificado: new Date(),
-      usuarioEliminador: 0,
-      fechaEliminado: new Date(),
-      url_imagen: '',
-      status: 1,
-    };
     this.cancelar.emit();
   }
 

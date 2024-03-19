@@ -80,6 +80,6 @@ export class SucursalSelectedComponent implements OnInit {
   }
 
   modificarSucursal(): void {
-    // Aquí puedes implementar la lógica para modificar la sucursal
+
   }
 }
