@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Sucursales } from '../Models/sucursales';
-import { ApiService } from '../core/services/sucursales.service';
-import { SucursalesmodalComponent } from '../modals/sucursalesmodal/sucursalesmodal.component';
+import { Sucursales } from '../../../../Models/sucursales';
+import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
+import { SucursalesmodalComponent } from '../../../../modals/Modals Sucursales/sucursalesmodal/sucursalesmodal.component';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +21,6 @@ import { SucursalesmodalComponent } from '../modals/sucursalesmodal/sucursalesmo
       <h1>SUCURSALES</h1>
       <div class="botonera">
         <button class="btn" (click)="abrirModal()">Agregar Sucursal</button>
-        <a class="btn">Modificar Sucursales</a>
       </div>
       <div class="card-container">
         <div class="card" *ngFor="let sucursal of filteredSucursalesList">

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SucursalSelectedComponent } from './sucursal-selected/sucursal-selected.component';
-import { HomeComponent } from './home/home.component';
+import { SucursalSelectedComponent } from './components/screens/Sucursales/sucursal-selected/sucursal-selected.component';
+import { HomeComponent } from './components/screens/Sucursales/home/home.component';
 
 @Component({
   selector: 'app-root',

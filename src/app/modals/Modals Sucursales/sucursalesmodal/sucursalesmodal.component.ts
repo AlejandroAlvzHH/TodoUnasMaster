@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Sucursales } from '../../Models/sucursales';
+import { Sucursales } from '../../../Models/sucursales';
 
 @Component({
   selector: 'app-sucursalesmodal',
@@ -19,7 +19,7 @@ import { Sucursales } from '../../Models/sucursales';
       <button class="btn" (click)="agregarSucursal()">Añadir</button>
       <button class="btn" (click)="cerrarModal()">Cancelar</button>
     </div>
-  </div> `,
+  </div>`,
   styleUrl: './sucursalesmodal.component.css',
 })
 export class SucursalesmodalComponent {

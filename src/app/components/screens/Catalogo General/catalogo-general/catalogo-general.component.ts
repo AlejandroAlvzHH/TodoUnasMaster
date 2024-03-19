@@ -1,8 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductsComponentComponent } from '../products-component/products-component.component';
-import { Products } from '../products';
-import { ApiService } from '../core/services/api.service';
+import { Products } from '../../../../Models/products';
+import { ApiService } from '../../../../core/services/Services Catalogo General/api.service';
 
 @Component({
   selector: 'app-catalogo-general',

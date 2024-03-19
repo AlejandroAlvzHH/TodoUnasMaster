@@ -1,0 +1,92 @@
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-historicos',
+  standalone: true,
+  imports: [],
+  template: `<div class="container">
+    <aside class="sidebar">
+      <ul>
+        <li><a href="/">Sucursales</a></li>
+        <li><a href="/catalogogeneral">Catálogo General</a></li>
+        <li><a href="/historicos">Históricos</a></li>
+        <li><a href="/configuracion">Configuración</a></li>
+      </ul>
+    </aside>
+    <main class="main-content">
+      <h1>HISTÓRICOS</h1>
+      <div class="menu-container">
+        <div class="menu">
+          <a href="#" class="opcion">Filtro</a>
+          <a href="#" class="opcion">Filtro</a>
+          <a href="#" class="opcion">Filtro</a>
+          <a href="#" class="opcion">Generar Reporte</a>
+        </div>
+      </div>
+      <table border="2">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Movimiento</th>
+            <th>Usuario</th>
+            <th>Detalles</th>
+            <th>Datos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dato 1</td>
+            <td>Dato 2</td>
+            <td>Dato 3</td>
+            <td>Dato 4</td>
+            <td>Dato 5</td>
+            <td>Dato 6</td>
+          </tr>
+          <tr>
+            <td>Dato 1</td>
+            <td>Dato 2</td>
+            <td>Dato 3</td>
+            <td>Dato 4</td>
+            <td>Dato 5</td>
+            <td>Dato 6</td>
+          </tr>
+          <tr>
+            <td>Dato 1</td>
+            <td>Dato 2</td>
+            <td>Dato 3</td>
+            <td>Dato 4</td>
+            <td>Dato 5</td>
+            <td>Dato 6</td>
+          </tr>
+          <tr>
+            <td>Dato 1</td>
+            <td>Dato 2</td>
+            <td>Dato 3</td>
+            <td>Dato 4</td>
+            <td>Dato 5</td>
+            <td>Dato 6</td>
+          </tr>
+          <tr>
+            <td>Dato 1</td>
+            <td>Dato 2</td>
+            <td>Dato 3</td>
+            <td>Dato 4</td>
+            <td>Dato 5</td>
+            <td>Dato 6</td>
+          </tr>
+          <tr>
+            <td>Dato 1</td>
+            <td>Dato 2</td>
+            <td>Dato 3</td>
+            <td>Dato 4</td>
+            <td>Dato 5</td>
+            <td>Dato 6</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  </div>`,
+  styleUrl: './historicos.component.css',
+})
+export class HistoricosComponent {}
