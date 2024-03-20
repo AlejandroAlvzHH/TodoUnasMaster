@@ -27,19 +27,21 @@ import { ModifysucursalmodalComponent } from '../../../../modals/Modals Sucursal
         <a href="#" class="opcion">Inventario</a>
         <a href="#" class="opcion">Traspasos</a>
         <button class="opcion">Eliminar Sucursal</button>
-        <button class="opcion" (click)="abrirModal()">Modificar Sucursal</button>
+        <button class="opcion" (click)="abrirModal()">
+          Modificar Sucursal
+        </button>
         <a href="#" class="opcion">Traspaso a Clínica</a>
       </div>
     </div>
   </main>
   <app-modifysucursalmodal
-    *ngIf="mostrarModal"
-    [sucursal]="sucursal"
-    (modificar)="modificarSucursal()"
-    (cancelar)="cerrarModal()"
-  ></app-modifysucursalmodal>
-</div>
+  *ngIf="mostrarModal"
+  [sucursal]="sucursal"
+  (modificar)="modificarSucursal()"
+  (cancelar)="cerrarModal()"
+></app-modifysucursalmodal>
 
+</div>
 `,
   styleUrls: ['./sucursal-selected.component.css'],
 })
@@ -77,6 +79,19 @@ export class SucursalSelectedComponent implements OnInit {
     this.mostrarModal = false;
   }
 
-  modificarSucursal(): void {
+  modificarSucursal(sucursalModificada: Sucursales): void {
+    if (this.sucursal) {
+      this.apiService.modificarSucursal(sucursalModificada).subscribe(
+        (resultado) => {
+          // Actualizar la sucursal en la vista si es necesario
+          // Por ejemplo, recargar los datos de la sucursal
+          this.obtenerDetalleSucursal();
+          this.mostrarModal = false; // Cerrar el modal después de la modificación
+        },
+        (error) => {
+          console.error('Error al modificar la sucursal:', error);
+        }
+      );
+    }
   }
 }
