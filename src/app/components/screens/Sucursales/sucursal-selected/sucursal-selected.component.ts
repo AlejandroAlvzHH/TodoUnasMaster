@@ -27,20 +27,19 @@ import { ModifysucursalmodalComponent } from '../../../../modals/Modals Sucursal
         <a href="#" class="opcion">Inventario</a>
         <a href="#" class="opcion">Traspasos</a>
         <button class="opcion">Eliminar Sucursal</button>
-        <button class="opcion" (click)="abrirModal()">
-          Modificar Sucursal
-        </button>
+        <button class="opcion" (click)="abrirModal()">Modificar Sucursal</button>
         <a href="#" class="opcion">Traspaso a Clínica</a>
       </div>
     </div>
   </main>
-  <!-- En el componente que abre el modal -->
   <app-modifysucursalmodal
     *ngIf="mostrarModal"
+    [sucursal]="sucursal"
     (modificar)="modificarSucursal()"
     (cancelar)="cerrarModal()"
   ></app-modifysucursalmodal>
 </div>
+
 `,
   styleUrls: ['./sucursal-selected.component.css'],
 })
@@ -72,7 +71,6 @@ export class SucursalSelectedComponent implements OnInit {
 
   abrirModal(): void {
     this.mostrarModal = true;
-    console.log('works');
   }
 
   cerrarModal(): void {
@@ -80,6 +78,5 @@ export class SucursalSelectedComponent implements OnInit {
   }
 
   modificarSucursal(): void {
-
   }
 }
