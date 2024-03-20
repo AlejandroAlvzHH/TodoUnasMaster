@@ -29,4 +29,9 @@ export class ApiService {
       sucursal
     );
   }
+
+  modificarStatusSucursal(id: number, status: number): Observable<boolean> {
+    const url = `${this.url}/${id}/status`;
+    return this.http.put<boolean>(url, { status });
+  }
 }

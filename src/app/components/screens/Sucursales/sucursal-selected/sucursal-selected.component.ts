@@ -27,10 +27,8 @@ type TipoDeError = HttpErrorResponse;
           <a href="#" class="opcion">Entradas y Salidas</a>
           <a href="#" class="opcion">Inventario</a>
           <a href="#" class="opcion">Traspasos</a>
-          <button class="opcion">Eliminar Sucursal</button>
-          <button class="opcion" (click)="abrirModal()">
-            Modificar Sucursal
-          </button>
+          <a href="#" class="opcion" (click)="eliminarSucursal()">Eliminar</a>
+          <button class="opcion" (click)="abrirModal()">Modificar Sucursal</button>
           <a href="#" class="opcion">Traspaso a Clínica</a>
         </div>
       </div>
@@ -76,6 +74,27 @@ export class SucursalSelectedComponent implements OnInit {
 
   cerrarModal(): void {
     this.mostrarModal = false;
+  }
+
+  eliminarSucursal() {
+    if (this.sucursal) {
+      this.sucursal.status = 0; 
+      this.apiService
+        .modificarStatusSucursal(this.sucursal.idSucursal, 0)
+        .subscribe(
+          (success: boolean) => {
+            if (success) {
+              this.obtenerDetalleSucursal(); 
+              this.mostrarModal = false;
+            } else {
+              console.error('Error al eliminar la sucursal.');
+            }
+          },
+          (error: TipoDeError) => {
+            console.error('Error al eliminar la sucursal:', error);
+          }
+        );
+    }
   }
 
   modificarSucursal(sucursalModificada: Sucursales): void {
