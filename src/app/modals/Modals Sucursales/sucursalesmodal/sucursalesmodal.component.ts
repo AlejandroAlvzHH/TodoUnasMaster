@@ -30,7 +30,7 @@ export class SucursalesmodalComponent {
   nuevaSucursal: Sucursales = {
     idSucursal: 0,
     nombre: '',
-    estado: 'Online',
+    estado: 'Online 🟢',
     fechaActualizacion: new Date(),
     direccion: '',
     url: '',
