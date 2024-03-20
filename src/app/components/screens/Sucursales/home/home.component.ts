@@ -68,20 +68,17 @@ export class HomeComponent implements OnInit {
     this.mostrarModal = false;
   }
 
-  async agregarSucursal(sucursal: Sucursales): Promise<void> {
-    try {
-      console.log('Se mandó a agregar');
-      console.log(sucursal);
-      const success = await this.apiService.agregarSucursal(sucursal);
-      if (success) {
+  agregarSucursal(sucursal: Sucursales): void {
+    this.apiService.agregarSucursal(sucursal).subscribe(
+      (success) => {
+        console.log('Éxito al agregar la sucursal:', success);
         this.actualizarListaSucursales();
         this.cerrarModal();
-      } else {
-        console.error('Error al agregar la sucursal.');
+      },
+      (error) => {
+        console.error('Error al agregar la sucursal:', error);
       }
-    } catch (error) {
-      console.error('Error al agregar la sucursal:', error);
-    }
+    );
   }
 
   private actualizarListaSucursales(): void {

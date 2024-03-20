@@ -50,21 +50,5 @@ export class SucursalesmodalComponent {
 
   agregarSucursal() {
     this.addSucursal.emit(this.nuevaSucursal);
-    this.nuevaSucursal = {
-      idSucursal: 0,
-      nombre: '',
-      estado: 'Online',
-      fechaActualizacion: new Date(),
-      direccion: '',
-      url: '',
-      usuarioCreador: 0,
-      fechaCreado: new Date(),
-      usuarioModificador: 0,
-      fechaModificado: new Date(),
-      usuarioEliminador: 0,
-      fechaEliminado: new Date(),
-      url_imagen: '',
-      status: 1,
-    };
   }
 }

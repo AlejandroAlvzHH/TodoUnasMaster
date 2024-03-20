@@ -4,45 +4,44 @@ import { ActivatedRoute } from '@angular/router';
 import { Sucursales } from '../../../../Models/sucursales';
 import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
 import { ModifysucursalmodalComponent } from '../../../../modals/Modals Sucursales/modifysucursalmodal/modifysucursalmodal.component';
-
+import { HttpErrorResponse } from '@angular/common/http';
+type TipoDeError = HttpErrorResponse;
 @Component({
   selector: 'app-sucursal-selected',
   standalone: true,
   imports: [CommonModule, ModifysucursalmodalComponent],
   template: `<div class="container">
-  <aside class="sidebar">
-    <ul>
-      <li><a href="/">Sucursales</a></li>
-      <li><a href="/catalogogeneral">Catálogo General</a></li>
-      <li><a href="/historicos">Históricos</a></li>
-      <li><a href="/configuracion">Configuración</a></li>
-    </ul>
-  </aside>
-  <main class="main-content">
-    <h1>{{ sucursal?.nombre }}</h1>
-    <h2>{{ sucursal?.url }}</h2>
-    <div class="menu-container">
-      <div class="menu">
-        <a href="#" class="opcion">Entradas y Salidas</a>
-        <a href="#" class="opcion">Inventario</a>
-        <a href="#" class="opcion">Traspasos</a>
-        <button class="opcion">Eliminar Sucursal</button>
-        <button class="opcion" (click)="abrirModal()">
-          Modificar Sucursal
-        </button>
-        <a href="#" class="opcion">Traspaso a Clínica</a>
+    <aside class="sidebar">
+      <ul>
+        <li><a href="/">Sucursales</a></li>
+        <li><a href="/catalogogeneral">Catálogo General</a></li>
+        <li><a href="/historicos">Históricos</a></li>
+        <li><a href="/configuracion">Configuración</a></li>
+      </ul>
+    </aside>
+    <main class="main-content">
+      <h1>{{ sucursal?.nombre }}</h1>
+      <h2>{{ sucursal?.url }}</h2>
+      <div class="menu-container">
+        <div class="menu">
+          <a href="#" class="opcion">Entradas y Salidas</a>
+          <a href="#" class="opcion">Inventario</a>
+          <a href="#" class="opcion">Traspasos</a>
+          <button class="opcion">Eliminar Sucursal</button>
+          <button class="opcion" (click)="abrirModal()">
+            Modificar Sucursal
+          </button>
+          <a href="#" class="opcion">Traspaso a Clínica</a>
+        </div>
       </div>
-    </div>
-  </main>
-  <app-modifysucursalmodal
-  *ngIf="mostrarModal"
-  [sucursal]="sucursal"
-  (modificar)="modificarSucursal()"
-  (cancelar)="cerrarModal()"
-></app-modifysucursalmodal>
-
-</div>
-`,
+    </main>
+    <app-modifysucursalmodal
+      *ngIf="mostrarModal"
+      [sucursal]="sucursal"
+      (modificar)="modificarSucursal($event)"
+      (cancelar)="cerrarModal()"
+    ></app-modifysucursalmodal>
+  </div> `,
   styleUrls: ['./sucursal-selected.component.css'],
 })
 export class SucursalSelectedComponent implements OnInit {
@@ -82,13 +81,11 @@ export class SucursalSelectedComponent implements OnInit {
   modificarSucursal(sucursalModificada: Sucursales): void {
     if (this.sucursal) {
       this.apiService.modificarSucursal(sucursalModificada).subscribe(
-        (resultado) => {
-          // Actualizar la sucursal en la vista si es necesario
-          // Por ejemplo, recargar los datos de la sucursal
+        (resultado: boolean) => {
           this.obtenerDetalleSucursal();
-          this.mostrarModal = false; // Cerrar el modal después de la modificación
+          this.mostrarModal = false;
         },
-        (error) => {
+        (error: TipoDeError) => {
           console.error('Error al modificar la sucursal:', error);
         }
       );

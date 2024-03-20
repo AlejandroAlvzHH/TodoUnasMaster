@@ -11,6 +11,10 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
+  agregarSucursal(sucursal: Sucursales): Observable<Sucursales> {
+    return this.http.post<Sucursales>(this.url, sucursal);
+  }
+
   getAllSucursales(): Observable<Sucursales[]> {
     return this.http.get<Sucursales[]>(this.url);
   }
@@ -19,20 +23,10 @@ export class ApiService {
     return this.http.get<Sucursales | null>(`${this.url}/${id}`);
   }
 
-  async agregarSucursal(sucursal: Sucursales): Promise<boolean> {
-    try {
-      const response = await fetch(this.url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(sucursal),
-      });
-
-      return response.ok;
-    } catch (error) {
-      console.error('Error al agregar la sucursal:', error);
-      return false;
-    }
+  modificarSucursal(sucursal: Sucursales): Observable<boolean> {
+    return this.http.put<boolean>(
+      `${this.url}/${sucursal.idSucursal}`,
+      sucursal
+    );
   }
 }
