@@ -43,7 +43,7 @@ import { SidebaropeningService } from '../../../../core/services/sidebaropening.
             <h4>Última fecha de actualización:</h4>
             <p>{{ sucursal.fechaActualizacion }}</p>
             <a
-              href="http://localhost:4200/sucursalselected/{{
+              href="/sucursalselected/{{
                 sucursal.idSucursal
               }}"
               class="btn"

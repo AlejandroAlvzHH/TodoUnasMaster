@@ -4,6 +4,7 @@ import { HomeComponent } from './components/screens/Sucursales/home/home.compone
 import { ConfiguracionComponent } from './components/screens/Configuracion/configuracion/configuracion.component';
 import { CatalogoGeneralComponent } from './components/screens/Catalogo General/catalogo-general/catalogo-general.component';
 import { HistoricosComponent } from './components/screens/Historicos/historicos/historicos.component';
+import { EntradasysalidasComponent } from './components/screens/Sucursales/entradasysalidas/entradasysalidas.component';
 
 export const routes: Routes = [
     {'path':'',component:HomeComponent},
@@ -11,4 +12,5 @@ export const routes: Routes = [
     {'path':'configuracion',component:ConfiguracionComponent},
     {'path':'catalogogeneral',component:CatalogoGeneralComponent},
     {'path':'historicos',component:HistoricosComponent},
+    {'path':'entradasysalidas/:id',component:EntradasysalidasComponent},
 ];

@@ -36,7 +36,9 @@ type TipoDeError = HttpErrorResponse;
       <h2>{{ sucursal?.url }}</h2>
       <div class="menu-container">
         <div class="menu">
-          <a href="#" class="opcion">Entradas y Salidas</a>
+          <a href="/entradasysalidas/{{
+                sucursal?.idSucursal
+              }}" class="opcion">Entradas y Salidas</a>
           <a href="#" class="opcion">Inventario</a>
           <a href="#" class="opcion">Traspasos</a>
           <a href="#" class="opcion" (click)="eliminarSucursal()">Eliminar</a>
