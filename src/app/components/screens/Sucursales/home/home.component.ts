@@ -42,11 +42,7 @@ import { SidebaropeningService } from '../../../../core/services/sidebaropening.
             <p>{{ sucursal.estado }}</p>
             <h4>Última fecha de actualización:</h4>
             <p>{{ sucursal.fechaActualizacion }}</p>
-            <a
-              href="/sucursalselected/{{
-                sucursal.idSucursal
-              }}"
-              class="btn"
+            <a href="/sucursalselected/{{ sucursal.idSucursal }}" class="btn"
               >Seleccionar</a
             >
           </div>
