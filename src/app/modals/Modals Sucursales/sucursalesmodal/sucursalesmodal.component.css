@@ -1,62 +1,63 @@
 .modal {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
+  font-family: "Montserrat", sans-serif;
   background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  width: 400px;
+  max-width: 90%;
+  margin: 50px auto;
 }
 
 h2 {
-  margin-top: 0;
-  font-size: 1.5em;
-}
-
-.form-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.form-list li {
-  margin-bottom: 10px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 label {
-  display: block;
+  font-size: 16px;
   margin-bottom: 5px;
-  font-weight: bold;
+  display: block; 
 }
 
 input[type="text"] {
-  width: 100%;
-  padding: 8px;
+  width: calc(100% - 22px); 
+  padding: 10px;
+  font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 5px;
+  margin-bottom: 15px;
 }
 
 .botonera {
-  margin-top: 20px;
-  text-align: right;
+  display: flex;
+  justify-content: center;
 }
 
 .btn {
-  padding: 8px 16px;
-  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 0 10px;
+}
+
+.btn-primary {
   background-color: #007bff;
   color: #fff;
-  cursor: pointer;
 }
 
-.btn.cancelar {
-  background-color: #dc3545;
-}
-
-.btn:hover {
+.btn-primary:hover {
   background-color: #0056b3;
 }
 
-.btn.cancelar:hover {
-  background-color: #bd2130;
+.btn-secondary {
+  background-color: #ccc;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #bbb;
 }

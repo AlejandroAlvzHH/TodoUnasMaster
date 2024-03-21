@@ -5,21 +5,33 @@ import { Sucursales } from '../../../../Models/sucursales';
 import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
 import { ModifysucursalmodalComponent } from '../../../../modals/Modals Sucursales/modifysucursalmodal/modifysucursalmodal.component';
 import { HttpErrorResponse } from '@angular/common/http';
+import { SidebarComponent } from '../../../sidebar/sidebar.component';
+import { HeaderComponent } from '../../../header/header.component';
+import { SidebaropeningService } from '../../../../core/services/sidebaropening.service';
 type TipoDeError = HttpErrorResponse;
 @Component({
   selector: 'app-sucursal-selected',
   standalone: true,
-  imports: [CommonModule, ModifysucursalmodalComponent],
-  template: `<div class="container">
-    <aside class="sidebar">
-      <ul>
-        <li><a href="/">Sucursales</a></li>
-        <li><a href="/catalogogeneral">Catálogo General</a></li>
-        <li><a href="/historicos">Históricos</a></li>
-        <li><a href="/configuracion">Configuración</a></li>
-      </ul>
-    </aside>
-    <main class="main-content">
+  imports: [
+    CommonModule,
+    ModifysucursalmodalComponent,
+    SidebarComponent,
+    HeaderComponent,
+  ],
+  template: ` <app-header></app-header>
+    <app-sidebar></app-sidebar>
+    <main class="main-content" [class.opened-sidebar]="isSidebarOpen">
+    <div
+        class="overlay"
+        *ngIf="isSidebarOpen"
+        (click)="toggleSidebar()"
+      ></div>
+      <app-modifysucursalmodal
+        *ngIf="mostrarModal"
+        [sucursal]="sucursal"
+        (modificar)="modificarSucursal($event)"
+        (cancelar)="cerrarModal()"
+      ></app-modifysucursalmodal>
       <h1>{{ sucursal?.nombre }}</h1>
       <h2>{{ sucursal?.url }}</h2>
       <div class="menu-container">
@@ -28,27 +40,31 @@ type TipoDeError = HttpErrorResponse;
           <a href="#" class="opcion">Inventario</a>
           <a href="#" class="opcion">Traspasos</a>
           <a href="#" class="opcion" (click)="eliminarSucursal()">Eliminar</a>
-          <button class="opcion" (click)="abrirModal()">Modificar Sucursal</button>
+          <button class="opcion" (click)="abrirModal()">
+            Modificar Sucursal
+          </button>
           <a href="#" class="opcion">Traspaso a Clínica</a>
         </div>
       </div>
-    </main>
-    <app-modifysucursalmodal
-      *ngIf="mostrarModal"
-      [sucursal]="sucursal"
-      (modificar)="modificarSucursal($event)"
-      (cancelar)="cerrarModal()"
-    ></app-modifysucursalmodal>
-  </div> `,
+    </main>`,
   styleUrls: ['./sucursal-selected.component.css'],
 })
 export class SucursalSelectedComponent implements OnInit {
   sucursal: Sucursales | null = null;
   mostrarModal: boolean = false;
+  isSidebarOpen: boolean = false;
+  
+  constructor(private route: ActivatedRoute, private apiService: ApiService, private sidebarOpeningService: SidebaropeningService) {}
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService) {}
+  toggleSidebar(): void {
+    console.log('Toggle');
+    this.sidebarOpeningService.toggleSidebar();
+  }
 
   ngOnInit(): void {
+    this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
+      this.isSidebarOpen = isOpen;
+    });
     this.obtenerDetalleSucursal();
   }
 
@@ -78,13 +94,13 @@ export class SucursalSelectedComponent implements OnInit {
 
   eliminarSucursal() {
     if (this.sucursal) {
-      this.sucursal.status = 0; 
+      this.sucursal.status = 0;
       this.apiService
         .modificarStatusSucursal(this.sucursal.idSucursal, 0)
         .subscribe(
           (success: boolean) => {
             if (success) {
-              this.obtenerDetalleSucursal(); 
+              this.obtenerDetalleSucursal();
               this.mostrarModal = false;
             } else {
               console.error('Error al eliminar la sucursal.');

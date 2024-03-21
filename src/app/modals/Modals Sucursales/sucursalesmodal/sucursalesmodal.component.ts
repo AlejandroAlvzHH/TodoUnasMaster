@@ -11,7 +11,7 @@ import { Sucursales } from '../../../Models/sucursales';
     <h2>Agregar Sucursal</h2>
     <label>Nombre:</label>
     <input type="text" [(ngModel)]="nuevaSucursal.nombre" />
-    <label>Direccion:</label>
+    <label>Dirección:</label>
     <input type="text" [(ngModel)]="nuevaSucursal.direccion" />
     <label>URL de servicios:</label>
     <input type="text" [(ngModel)]="nuevaSucursal.url" />

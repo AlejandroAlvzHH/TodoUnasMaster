@@ -3,21 +3,33 @@ import { CommonModule } from '@angular/common';
 import { Sucursales } from '../../../../Models/sucursales';
 import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
 import { SucursalesmodalComponent } from '../../../../modals/Modals Sucursales/sucursalesmodal/sucursalesmodal.component';
+import { SidebarComponent } from '../../../sidebar/sidebar.component';
+import { HeaderComponent } from '../../../header/header.component';
+import { SidebaropeningService } from '../../../../core/services/sidebaropening.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, SucursalesmodalComponent],
-  template: ` <div class="container">
-    <aside class="sidebar">
-      <ul>
-        <li><a href="/">Sucursales</a></li>
-        <li><a href="/catalogogeneral">Catálogo General</a></li>
-        <li><a href="/historicos">Históricos</a></li>
-        <li><a href="/configuracion">Configuración</a></li>
-      </ul>
-    </aside>
-    <main class="main-content">
+  imports: [
+    CommonModule,
+    SucursalesmodalComponent,
+    SidebarComponent,
+    HeaderComponent,
+  ],
+  template: `
+    <app-header></app-header>
+    <app-sidebar></app-sidebar>
+    <main class="main-content" [class.opened-sidebar]="isSidebarOpen">
+      <div
+        class="overlay"
+        *ngIf="isSidebarOpen"
+        (click)="toggleSidebar()"
+      ></div>
+      <app-sucursalesmodal
+        *ngIf="mostrarModal"
+        (addSucursal)="agregarSucursal($event)"
+        (cancelar)="cerrarModal()"
+      ></app-sucursalesmodal>
       <h1>SUCURSALES</h1>
       <div class="botonera">
         <button class="btn" (click)="abrirModal()">Agregar Sucursal</button>
@@ -41,22 +53,28 @@ import { SucursalesmodalComponent } from '../../../../modals/Modals Sucursales/s
         </div>
       </div>
     </main>
-    <app-sucursalesmodal
-      *ngIf="mostrarModal"
-      (addSucursal)="agregarSucursal($event)"
-      (cancelar)="cerrarModal()"
-    ></app-sucursalesmodal>
-  </div>`,
+  `,
   styleUrl: './home.component.css',
 })
 export class HomeComponent implements OnInit {
   sucursalesList: Sucursales[] = [];
   filteredSucursalesList: Sucursales[] = [];
   mostrarModal: boolean = false;
+  isSidebarOpen: boolean = false;
+  constructor(
+    private apiService: ApiService,
+    private sidebarOpeningService: SidebaropeningService
+  ) {}
 
-  constructor(private apiService: ApiService) {}
+  toggleSidebar(): void {
+    console.log('Toggle');
+    this.sidebarOpeningService.toggleSidebar();
+  }
 
   ngOnInit(): void {
+    this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
+      this.isSidebarOpen = isOpen;
+    });
     this.actualizarListaSucursales();
   }
 

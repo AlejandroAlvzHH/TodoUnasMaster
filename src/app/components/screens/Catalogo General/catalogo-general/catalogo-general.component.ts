@@ -2,22 +2,23 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Products } from '../../../../Models/products';
 import { ApiService } from '../../../../core/services/Services Catalogo General/api.service';
+import { SidebarComponent } from '../../../sidebar/sidebar.component';
+import { HeaderComponent } from '../../../header/header.component';
+import { SidebaropeningService } from '../../../../core/services/sidebaropening.service';
 
 @Component({
   selector: 'app-catalogo-general',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SidebarComponent, HeaderComponent],
   template: `
-    <div class="container">
-      <aside class="sidebar">
-        <ul>
-          <li><a href="/">Sucursales</a></li>
-          <li><a href="/catalogogeneral">Catálogo General</a></li>
-          <li><a href="/historicos">Históricos</a></li>
-          <li><a href="/configuracion">Configuración</a></li>
-        </ul>
-      </aside>
-      <main class="main-content">
+  <app-header></app-header>
+    <app-sidebar></app-sidebar>
+    <main class="main-content" [class.opened-sidebar]="isSidebarOpen">
+    <div
+          class="overlay"
+          *ngIf="isSidebarOpen"
+          (click)="toggleSidebar()"
+        ></div>
         <h1>CATÁLOGO GENERAL</h1>
         <div class="menu-container">
           <div class="menu">
@@ -29,7 +30,7 @@ import { ApiService } from '../../../../core/services/Services Catalogo General/
             <a href="#" class="opcion">Agregar Producto</a>
           </div>
         </div>
-        <section>
+        <div>
           <form>
             <input type="text" placeholder="Buscar por nombre" #filter />
             <button
@@ -40,8 +41,8 @@ import { ApiService } from '../../../../core/services/Services Catalogo General/
               Ir
             </button>
           </form>
-        </section>
-        <section>
+          </div>
+        <div>
           <table border="2">
             <thead>
               <tr>
@@ -64,9 +65,8 @@ import { ApiService } from '../../../../core/services/Services Catalogo General/
               </tr>
             </tbody>
           </table>
-        </section>
+        </div>
       </main>
-    </div>
   `,
   styleUrl: './catalogo-general.component.css',
 })
@@ -74,11 +74,23 @@ export class CatalogoGeneralComponent {
   productsList: Products[] = [];
   apiService: ApiService = inject(ApiService);
   filteredProductsList: Products[] = [];
+  isSidebarOpen: boolean = false;
 
-  constructor() {
+  constructor(private sidebarOpeningService: SidebaropeningService) {
     this.apiService.getAllProducts().then((productsList: Products[]) => {
       this.productsList = productsList;
       this.filteredProductsList = productsList;
+    });
+  }
+
+  toggleSidebar(): void {
+    console.log('Toggle');
+    this.sidebarOpeningService.toggleSidebar();
+  }
+
+  ngOnInit(): void {
+    this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
+      this.isSidebarOpen = isOpen;
     });
   }
 

@@ -1,19 +1,22 @@
 import { Component } from '@angular/core';
+import { SidebarComponent } from '../../../sidebar/sidebar.component';
+import { HeaderComponent } from '../../../header/header.component';
+import { CommonModule } from '@angular/common';
+import { SidebaropeningService } from '../../../../core/services/sidebaropening.service';
 
 @Component({
   selector: 'app-configuracion',
   standalone: true,
-  imports: [],
-  template: `<div class="container">
-    <aside class="sidebar">
-      <ul>
-        <li><a href="/">Sucursales</a></li>
-        <li><a href="/catalogogeneral">Catálogo General</a></li>
-        <li><a href="/historicos">Históricos</a></li>
-        <li><a href="/configuracion">Configuración</a></li>
-      </ul>
-    </aside>
-    <main class="main-content">
+  imports: [SidebarComponent, HeaderComponent, CommonModule],
+  template: `
+    <app-header></app-header>
+    <app-sidebar></app-sidebar>
+    <main class="main-content" [class.opened-sidebar]="isSidebarOpen">
+      <div
+        class="overlay"
+        *ngIf="isSidebarOpen"
+        (click)="toggleSidebar()"
+      ></div>
       <h1>CONFIGURACIÓN</h1>
       <div class="menu-container">
         <div class="menu">
@@ -24,7 +27,21 @@ import { Component } from '@angular/core';
         </div>
       </div>
     </main>
-  </div>`,
+  `,
   styleUrl: './configuracion.component.css',
 })
-export class ConfiguracionComponent {}
+export class ConfiguracionComponent {
+  isSidebarOpen: boolean = false;
+  constructor(private sidebarOpeningService: SidebaropeningService) {}
+
+  toggleSidebar(): void {
+    console.log('Toggle');
+    this.sidebarOpeningService.toggleSidebar();
+  }
+
+  ngOnInit(): void {
+    this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
+      this.isSidebarOpen = isOpen;
+    });
+  }
+}

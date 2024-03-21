@@ -7,10 +7,9 @@ import { Sucursales } from '../../../Models/sucursales';
   providedIn: 'root',
 })
 export class ApiService {
-  url = 'https://localhost:44301/api/SucursalApi';
+  url = 'http://localhost:10395/api/SucursalApi';
 
   constructor(private http: HttpClient) {}
-
   agregarSucursal(sucursal: Sucursales): Observable<Sucursales> {
     return this.http.post<Sucursales>(this.url, sucursal);
   }
