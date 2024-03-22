@@ -1,20 +1,84 @@
-.main-content.opened-sidebar {
-    margin-left: 20%;
-    transition: margin-left 0.3s ease;
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+  display: none;
+}
+
+.main-content.opened-sidebar .overlay {
+  display: block;
+}
+
+.switch-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.switch-container button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: 16px;
+  margin: 0;
+}
+
+.switch-container button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 0 10px;
+}
+
+.tables-container {
+  display: flex;
+  flex-wrap: wrap; 
+  margin: 20px 0;
+}
+.table {
+  width: calc(50% - 20px); /* Ajusta el ancho de cada tabla */
+  margin-right: 20px; /* Agrega margen entre las tablas */
+  margin-bottom: 20px; /* Agrega margen inferior para separar las tablas */
+}
+
+.table:last-child {
+  margin-right: 0; /* Elimina el margen derecho de la última tabla */
+}
+
+@media screen and (max-width: 768px) {
+  .table {
+    width: 100%; /* Ajusta el ancho de las tablas al 100% en dispositivos móviles */
+    margin-right: 0; /* Elimina el margen derecho en dispositivos móviles */
   }
-  
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 10;
-    display: none;
-  }
-  
-  .main-content.opened-sidebar .overlay {
-    display: block;
-  }
-  
+}
+
+table {
+  border-collapse: collapse; 
+  width: 100%; 
+}
+
+th, td {
+  padding: 6px;
+  text-align: left; 
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+td {
+  border-bottom: 1px solid #ddd; 
+}

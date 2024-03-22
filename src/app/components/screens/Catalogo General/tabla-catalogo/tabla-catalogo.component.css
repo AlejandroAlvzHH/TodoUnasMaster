@@ -1,0 +1,44 @@
+input[type="text"] {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 200px;
+  margin-bottom: 8px;
+}
+
+th {
+  cursor: pointer;
+}
+table,
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 4px;
+}
+
+table {
+  margin: 18px;
+}
+.arrow-icon {
+  margin-left: 5px;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  transition: transform 0.3s ease;
+}
+
+.asc {
+  border-top: 6px solid black;
+  transform: rotate(180deg);
+}
+
+.desc {
+  border-bottom: 6px solid black;
+  transform: rotate(180deg);
+}
+
+.interactive:hover {
+  text-decoration: underline;
+}

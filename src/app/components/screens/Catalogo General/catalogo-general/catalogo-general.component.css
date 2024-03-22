@@ -1,14 +1,3 @@
-table,
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 4px;
-}
-
-table {
-  margin: 18px;
-}
-
 input[type="text"] {
   padding: 8px;
   border-radius: 5px;
