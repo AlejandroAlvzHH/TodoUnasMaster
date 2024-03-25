@@ -33,3 +33,18 @@ th {
 .interactive:hover {
   text-decoration: underline; 
 }
+
+.search-form {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px; 
+}
+
+.search-input {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.search-input:last-child {
+  margin-right: 0;
+}

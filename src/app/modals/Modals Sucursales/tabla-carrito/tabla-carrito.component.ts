@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, Input} from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CarritoServiceService } from '../../../core/services/Services Sucursales/carrito-service.service';
+import { CatalogoSalidasService } from '../../../core/services/Services Sucursales/Entradas y Salidas/catalogo-salidas.service';
 
 @Component({
   selector: 'app-tabla-carrito',
@@ -37,9 +38,12 @@ import { CarritoServiceService } from '../../../core/services/Services Sucursale
             </td>
             <td *ngIf="isSalida">
               <select [(ngModel)]="item.motivoSalida">
-                <option value="1">Motivo 1</option>
-                <option value="2">Motivo 2</option>
-                <option value="3">Motivo 3</option>
+                <option
+                  *ngFor="let motivo of catalogoSalidas"
+                  [value]="motivo.id_tipo_salida"
+                >
+                  {{ motivo.tipo }}
+                </option>
               </select>
             </td>
           </tr>
@@ -53,26 +57,38 @@ export class TablaCarritoComponent {
   items: any[] = [];
   @Output() cerrar = new EventEmitter<void>();
   @Input() isSalida: boolean = false;
+  catalogoSalidas: any[] = [];
 
-  constructor(private carritoService: CarritoServiceService) {
+  constructor(
+    private carritoService: CarritoServiceService,
+    private catalogoSalidasService: CatalogoSalidasService
+  ) {
     this.carritoService.items$.subscribe((items) => {
       this.items = items;
     });
   }
 
+  ngOnInit(): void {
+    if (this.isSalida) {
+      this.catalogoSalidasService.getCatalogoSalidas().subscribe((data) => {
+        console.log(data);
+        this.catalogoSalidas = data;
+      });
+    }
+  }
+
   validarCantidad(event: any, item: any): void {
     const value = event.target.value.trim();
-    const newValue = parseInt(value, 10);
-
+    let newValue = parseInt(value, 10);
     if (!/^\d+$/.test(value) || value === '' || newValue === 0) {
-      event.target.value = item.cantidad;
+      newValue = 1;
+      event.target.value = newValue;
+    }
+    if (newValue > item.existencia) {
+      item.cantidad = item.existencia;
+      event.target.value = item.existencia;
     } else {
-      if (newValue > item.existencia) {
-        item.cantidad = item.existencia;
-        event.target.value = item.existencia;
-      } else {
-        item.cantidad = newValue;
-      }
+      item.cantidad = newValue;
     }
   }
 
@@ -84,4 +100,3 @@ export class TablaCarritoComponent {
     this.cerrar.emit();
   }
 }
-

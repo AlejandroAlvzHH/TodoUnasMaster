@@ -9,12 +9,28 @@ import { Products } from '../../../../Models/products';
   imports: [CommonModule],
   template: `
     <div>
-      <form>
-        <input
-          type="text"
-          placeholder="Buscar por nombre"
-          (input)="filterResults($event)"
-        />
+      <form class="search-form">
+        <div class="search-input">
+          <input
+            type="text"
+            placeholder="Buscar por ID de artículo"
+            (input)="filterByIdArticulo($event)"
+          />
+        </div>
+        <div class="search-input">
+          <input
+            type="text"
+            placeholder="Buscar por clave"
+            (input)="filterByClave($event)"
+          />
+        </div>
+        <div class="search-input">
+          <input
+            type="text"
+            placeholder="Buscar por nombre"
+            (input)="filterResults($event)"
+          />
+        </div>
       </form>
     </div>
     <div>
@@ -146,7 +162,28 @@ export class TablaCatalogoComponent {
       product.nombre.toLowerCase().includes(text.toLowerCase())
     );
   }
+  filterByClave(event: Event) {
+    const text = (event.target as HTMLInputElement).value.trim();
+    if (!text) {
+      this.filteredProductsList = this.productsList;
+      return;
+    }
+    this.filteredProductsList = this.productsList.filter((product) =>
+      product.clave.toLowerCase().includes(text.toLowerCase())
+    );
+  }
 
+  filterByIdArticulo(event: Event) {
+    const text = (event.target as HTMLInputElement).value.trim();
+    if (!text) {
+      this.filteredProductsList = this.productsList;
+      return;
+    }
+    const idArticulo = parseInt(text, 10);
+    this.filteredProductsList = this.productsList.filter(
+      (product) => product.idArticulo === idArticulo
+    );
+  }
   ordenarPorColumna(columna: keyof Products) {
     if (this.columnaOrdenada === columna) {
       this.ordenAscendente = !this.ordenAscendente;
