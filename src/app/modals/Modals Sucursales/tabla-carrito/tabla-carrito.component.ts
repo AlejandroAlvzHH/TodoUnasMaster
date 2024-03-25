@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, Input} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CarritoServiceService } from '../../../core/services/Services Sucursales/carrito-service.service';
 
@@ -17,6 +17,7 @@ import { CarritoServiceService } from '../../../core/services/Services Sucursale
             <th scope="col">Clave</th>
             <th scope="col">Nombre</th>
             <th scope="col">Cantidad</th>
+            <th *ngIf="isSalida" scope="col">Motivo de Salida</th>
           </tr>
         </thead>
         <tbody>
@@ -34,6 +35,13 @@ import { CarritoServiceService } from '../../../core/services/Services Sucursale
               />
               <button class="btn" (click)="eliminarItem(i)">Eliminar</button>
             </td>
+            <td *ngIf="isSalida">
+              <select [(ngModel)]="item.motivoSalida">
+                <option value="1">Motivo 1</option>
+                <option value="2">Motivo 2</option>
+                <option value="3">Motivo 3</option>
+              </select>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -44,6 +52,7 @@ import { CarritoServiceService } from '../../../core/services/Services Sucursale
 export class TablaCarritoComponent {
   items: any[] = [];
   @Output() cerrar = new EventEmitter<void>();
+  @Input() isSalida: boolean = false;
 
   constructor(private carritoService: CarritoServiceService) {
     this.carritoService.items$.subscribe((items) => {
@@ -75,3 +84,4 @@ export class TablaCarritoComponent {
     this.cerrar.emit();
   }
 }
+

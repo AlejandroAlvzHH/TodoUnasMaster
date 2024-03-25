@@ -46,12 +46,13 @@ import { TablaCarritoComponent } from '../../../../modals/Modals Sucursales/tabl
           Salida
         </button>
       </div>
-      <button class="btn" (click)="abrirModal()">Productos Elegidos</button
+      <button class="btn" (click)="abrirModal()">Ver Productos Elegidos</button
       ><button class="btn" (click)="confirmAction()">
         {{ isEntradaSelected ? 'Confirmar Entrada' : 'Confirmar Salida' }}
       </button>
       <app-tabla-carrito
         *ngIf="mostrarModal"
+        [isSalida]="!isEntradaSelected"
         (cerrar)="cerrarModal()"
       ></app-tabla-carrito>
       <div class="table">
@@ -72,6 +73,7 @@ export class EntradasysalidasComponent implements OnInit {
     private apiService: ApiService,
     private sidebarOpeningService: SidebaropeningService
   ) {}
+
   abrirModal(): void {
     this.mostrarModal = true;
   }
@@ -79,6 +81,7 @@ export class EntradasysalidasComponent implements OnInit {
   cerrarModal(): void {
     this.mostrarModal = false;
   }
+
   toggleSidebar(): void {
     console.log('Toggle');
     this.sidebarOpeningService.toggleSidebar();
@@ -90,9 +93,6 @@ export class EntradasysalidasComponent implements OnInit {
 
   selectSalida(): void {
     this.isEntradaSelected = false;
-  }
-  toggleSwitch(): void {
-    this.isEntradaSelected = !this.isEntradaSelected;
   }
 
   confirmAction(): void {
