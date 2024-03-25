@@ -8,7 +8,8 @@ import { Sucursales } from '../../../../Models/sucursales';
 import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
 import { ActivatedRoute } from '@angular/router';
 import { TablaProductosComponent } from '../../../tabla-productos/tabla-productos.component';
-import { TablaCarritoComponent } from '../../../tabla-carrito/tabla-carrito.component';
+import { TablaCarritoComponent } from '../../../../modals/Modals Sucursales/tabla-carrito/tabla-carrito.component';
+
 @Component({
   selector: 'app-entradasysalidas',
   standalone: true,
@@ -18,7 +19,7 @@ import { TablaCarritoComponent } from '../../../tabla-carrito/tabla-carrito.comp
     HeaderComponent,
     FormsModule,
     TablaProductosComponent,
-    TablaCarritoComponent
+    TablaCarritoComponent,
   ],
   template: `<app-header></app-header>
     <app-sidebar></app-sidebar>
@@ -45,18 +46,17 @@ import { TablaCarritoComponent } from '../../../tabla-carrito/tabla-carrito.comp
           Salida
         </button>
       </div>
-      <button class="btn" (click)="confirmAction()">
+      <button class="btn" (click)="abrirModal()">Productos Elegidos</button
+      ><button class="btn" (click)="confirmAction()">
         {{ isEntradaSelected ? 'Confirmar Entrada' : 'Confirmar Salida' }}
       </button>
-      <div class="tables-container">
-        <div class="table">
-          <h2>Inventario en {{ sucursal?.nombre }}</h2>
-          <app-tabla-productos></app-tabla-productos>
-        </div>
-        <div class="table">
-          <h2>Ítems Seleccionados para {{ isEntradaSelected ? 'Entrada' : 'Salida' }}</h2>
-          <app-tabla-carrito></app-tabla-carrito>
-        </div>
+      <app-tabla-carrito
+        *ngIf="mostrarModal"
+        (cerrar)="cerrarModal()"
+      ></app-tabla-carrito>
+      <div class="table">
+        <h2>Inventario en {{ sucursal?.nombre }}</h2>
+        <app-tabla-productos></app-tabla-productos>
       </div>
     </main> `,
   styleUrl: './entradasysalidas.component.css',
@@ -65,13 +65,20 @@ export class EntradasysalidasComponent implements OnInit {
   sucursal: Sucursales | null = null;
   isSidebarOpen: boolean = false;
   isEntradaSelected: boolean = true;
+  mostrarModal: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
     private sidebarOpeningService: SidebaropeningService
   ) {}
+  abrirModal(): void {
+    this.mostrarModal = true;
+  }
 
+  cerrarModal(): void {
+    this.mostrarModal = false;
+  }
   toggleSidebar(): void {
     console.log('Toggle');
     this.sidebarOpeningService.toggleSidebar();

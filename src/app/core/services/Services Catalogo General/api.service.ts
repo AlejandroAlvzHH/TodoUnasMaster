@@ -5,7 +5,7 @@ import { Products } from '../../../Models/products';
   providedIn: 'root',
 })
 export class ApiService {
-  url = 'https://localhost:44300/api/ProductApi/instock';
+  url = 'http://localhost:10394/api/ProductApi/instock';
 
   async getAllProducts(): Promise<Products[]> {
     try {
