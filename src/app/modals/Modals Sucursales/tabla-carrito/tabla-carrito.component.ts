@@ -1,8 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, Input } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Output,
+  Input,
+  SimpleChanges,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CarritoServiceService } from '../../../core/services/Services Sucursales/carrito-service.service';
 import { CatalogoSalidasService } from '../../../core/services/Services Sucursales/Entradas y Salidas/catalogo-salidas.service';
+import { CatalogoSalidas } from '../../../Models/Master/catalogo_salidas';
 
 @Component({
   selector: 'app-tabla-carrito',
@@ -38,6 +45,7 @@ import { CatalogoSalidasService } from '../../../core/services/Services Sucursal
             </td>
             <td *ngIf="isSalida">
               <select [(ngModel)]="item.motivoSalida">
+                <option value="" disabled selected>-- Seleccione --</option>
                 <option
                   *ngFor="let motivo of catalogoSalidas"
                   [value]="motivo.id_tipo_salida"
@@ -57,7 +65,7 @@ export class TablaCarritoComponent {
   items: any[] = [];
   @Output() cerrar = new EventEmitter<void>();
   @Input() isSalida: boolean = false;
-  catalogoSalidas: any[] = [];
+  catalogoSalidas: CatalogoSalidas[] = [];
 
   constructor(
     private carritoService: CarritoServiceService,
@@ -68,13 +76,46 @@ export class TablaCarritoComponent {
     });
   }
 
+  private preseleccionarMotivoSalida(): void {
+    if (this.catalogoSalidas.length > 0) {
+      this.items.forEach((item) => {
+        if (!item.motivoSalida) {
+          item.motivoSalida = this.catalogoSalidas[0].id_tipo_salida;
+        }
+      });
+    }
+  }
+
   ngOnInit(): void {
     if (this.isSalida) {
       this.catalogoSalidasService.getCatalogoSalidas().subscribe((data) => {
         console.log(data);
         this.catalogoSalidas = data;
+        this.preseleccionarMotivoSalida();
       });
     }
+    this.carritoService.items$.subscribe((items) => {
+      this.items = items;
+      this.preseleccionarMotivoSalida(); 
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      changes['isSalida'] &&
+      !changes['isSalida'].firstChange &&
+      changes['isSalida'].currentValue
+    ) {
+      this.actualizarMotivosSalida();
+    }
+  }
+
+  private actualizarMotivosSalida(): void {
+    this.catalogoSalidasService.getCatalogoSalidas().subscribe((data) => {
+      console.log(data);
+      this.catalogoSalidas = data;
+      this.preseleccionarMotivoSalida();
+    });
   }
 
   validarCantidad(event: any, item: any): void {

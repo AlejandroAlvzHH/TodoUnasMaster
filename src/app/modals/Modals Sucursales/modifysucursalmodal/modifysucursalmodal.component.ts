@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Sucursales } from '../../../Models/sucursales';
+import { Branches } from '../../../Models/Master/branches';
 
 @Component({
   selector: 'app-modifysucursalmodal',
@@ -25,8 +25,8 @@ import { Sucursales } from '../../../Models/sucursales';
   styleUrl: './modifysucursalmodal.component.css',
 })
 export class ModifysucursalmodalComponent {
-  @Input() sucursal: Sucursales | null = null;
-  @Output() modificar = new EventEmitter<Sucursales>();
+  @Input() sucursal: Branches | null = null;
+  @Output() modificar = new EventEmitter<Branches>();
   @Output() cancelar = new EventEmitter<void>();
 
   nombre: string = '';
@@ -49,7 +49,7 @@ export class ModifysucursalmodalComponent {
 
   modificarSucursal() {
     if (this.sucursal) {
-      const sucursalModificada: Sucursales = {
+      const sucursalModificada: Branches = {
         ...this.sucursal,
         nombre: this.nombre,
         direccion: this.direccion,

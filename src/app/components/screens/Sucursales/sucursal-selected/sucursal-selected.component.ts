@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { Sucursales } from '../../../../Models/sucursales';
+import { Branches } from '../../../../Models/Master/branches';
 import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
 import { ModifysucursalmodalComponent } from '../../../../modals/Modals Sucursales/modifysucursalmodal/modifysucursalmodal.component';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -52,7 +52,7 @@ type TipoDeError = HttpErrorResponse;
   styleUrls: ['./sucursal-selected.component.css'],
 })
 export class SucursalSelectedComponent implements OnInit {
-  sucursal: Sucursales | null = null;
+  sucursal: Branches | null = null;
   mostrarModal: boolean = false;
   isSidebarOpen: boolean = false;
   
@@ -115,7 +115,7 @@ export class SucursalSelectedComponent implements OnInit {
     }
   }
 
-  modificarSucursal(sucursalModificada: Sucursales): void {
+  modificarSucursal(sucursalModificada: Branches): void {
     if (this.sucursal) {
       this.apiService.modificarSucursal(sucursalModificada).subscribe(
         (resultado: boolean) => {

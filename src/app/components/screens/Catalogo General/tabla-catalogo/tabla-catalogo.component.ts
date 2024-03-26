@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ApiService } from '../../../../core/services/Services Catalogo General/api.service';
-import { Products } from '../../../../Models/products';
+import { Products } from '../../../../Models/Factuprint/products';
 
 @Component({
   selector: 'app-tabla-catalogo',

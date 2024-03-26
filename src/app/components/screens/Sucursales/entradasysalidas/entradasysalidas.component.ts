@@ -4,7 +4,7 @@ import { SidebarComponent } from '../../../sidebar/sidebar.component';
 import { HeaderComponent } from '../../../header/header.component';
 import { SidebaropeningService } from '../../../../core/services/sidebaropening.service';
 import { FormsModule } from '@angular/forms';
-import { Sucursales } from '../../../../Models/sucursales';
+import { Branches } from '../../../../Models/Master/branches';
 import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
 import { ActivatedRoute } from '@angular/router';
 import { TablaProductosComponent } from '../../../tabla-productos/tabla-productos.component';
@@ -63,7 +63,7 @@ import { TablaCarritoComponent } from '../../../../modals/Modals Sucursales/tabl
   styleUrl: './entradasysalidas.component.css',
 })
 export class EntradasysalidasComponent implements OnInit {
-  sucursal: Sucursales | null = null;
+  sucursal: Branches | null = null;
   isSidebarOpen: boolean = false;
   isEntradaSelected: boolean = true;
   mostrarModal: boolean = false;

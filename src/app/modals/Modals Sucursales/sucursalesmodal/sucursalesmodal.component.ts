@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Sucursales } from '../../../Models/sucursales';
+import { Branches } from '../../../Models/Master/branches';
 
 @Component({
   selector: 'app-sucursalesmodal',
@@ -25,9 +25,9 @@ import { Sucursales } from '../../../Models/sucursales';
   styleUrl: './sucursalesmodal.component.css',
 })
 export class SucursalesmodalComponent {
-  @Output() addSucursal = new EventEmitter<Sucursales>();
+  @Output() addSucursal = new EventEmitter<Branches>();
   @Output() cancelar = new EventEmitter<void>();
-  nuevaSucursal: Sucursales = {
+  nuevaSucursal: Branches = {
     idSucursal: 0,
     nombre: '',
     estado: 'Online 🟢',

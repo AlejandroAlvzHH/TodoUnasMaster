@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Products } from '../../../../Models/products';
+import { Products } from '../../../../Models/Factuprint/products';
 import { SidebarComponent } from '../../../sidebar/sidebar.component';
 import { HeaderComponent } from '../../../header/header.component';
 import { SidebaropeningService } from '../../../../core/services/sidebaropening.service';

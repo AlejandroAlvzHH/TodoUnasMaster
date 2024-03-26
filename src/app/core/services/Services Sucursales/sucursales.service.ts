@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Sucursales } from '../../../Models/sucursales';
+import { Branches } from '../../../Models/Master/branches';
 
 @Injectable({
   providedIn: 'root',
@@ -10,19 +10,19 @@ export class ApiService {
   url = 'http://localhost:10395/api/SucursalApi';
 
   constructor(private http: HttpClient) {}
-  agregarSucursal(sucursal: Sucursales): Observable<Sucursales> {
-    return this.http.post<Sucursales>(this.url, sucursal);
+  agregarSucursal(sucursal: Branches): Observable<Branches> {
+    return this.http.post<Branches>(this.url, sucursal);
   }
 
-  getAllSucursales(): Observable<Sucursales[]> {
-    return this.http.get<Sucursales[]>(this.url);
+  getAllSucursales(): Observable<Branches[]> {
+    return this.http.get<Branches[]>(this.url);
   }
 
-  getSucursalById(id: number): Observable<Sucursales | null> {
-    return this.http.get<Sucursales | null>(`${this.url}/${id}`);
+  getSucursalById(id: number): Observable<Branches | null> {
+    return this.http.get<Branches | null>(`${this.url}/${id}`);
   }
 
-  modificarSucursal(sucursal: Sucursales): Observable<boolean> {
+  modificarSucursal(sucursal: Branches): Observable<boolean> {
     return this.http.put<boolean>(
       `${this.url}/${sucursal.idSucursal}`,
       sucursal

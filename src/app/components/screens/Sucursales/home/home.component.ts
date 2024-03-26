@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Sucursales } from '../../../../Models/sucursales';
+import { Branches } from '../../../../Models/Master/branches';
 import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
 import { SucursalesmodalComponent } from '../../../../modals/Modals Sucursales/sucursalesmodal/sucursalesmodal.component';
 import { SidebarComponent } from '../../../sidebar/sidebar.component';
@@ -55,8 +55,8 @@ import { SidebaropeningService } from '../../../../core/services/sidebaropening.
   styleUrl: './home.component.css',
 })
 export class HomeComponent implements OnInit {
-  sucursalesList: Sucursales[] = [];
-  filteredSucursalesList: Sucursales[] = [];
+  sucursalesList: Branches[] = [];
+  filteredSucursalesList: Branches[] = [];
   mostrarModal: boolean = false;
   isSidebarOpen: boolean = false;
   constructor(
@@ -84,7 +84,7 @@ export class HomeComponent implements OnInit {
     this.mostrarModal = false;
   }
 
-  agregarSucursal(sucursal: Sucursales): void {
+  agregarSucursal(sucursal: Branches): void {
     this.apiService.agregarSucursal(sucursal).subscribe(
       (success) => {
         console.log('Éxito al agregar la sucursal:', success);
@@ -99,7 +99,7 @@ export class HomeComponent implements OnInit {
 
   private actualizarListaSucursales(): void {
     this.apiService.getAllSucursales().subscribe(
-      (sucursalesList: Sucursales[]) => {
+      (sucursalesList: Branches[]) => {
         this.filteredSucursalesList = sucursalesList.filter(
           (sucursal) => sucursal.status === 1
         );

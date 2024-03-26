@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Products } from '../../../Models/products';
+import { Products } from '../../../Models/Factuprint/products';
 
 @Injectable({
   providedIn: 'root',

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CatalogoSalidas } from '../../../../Models/catalogo_salidas';
+import { CatalogoSalidas } from '../../../../Models/Master/catalogo_salidas';
 
 @Injectable({
   providedIn: 'root'
