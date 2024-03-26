@@ -94,21 +94,23 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of filteredProductsList">
-              <td>{{ item.idArticulo }}</td>
-              <td>{{ item.clave }}</td>
-              <td>{{ item.nombre }}</td>
-              <td>
-                {{ item.existencia }}
-                <button
-                  class="btn"
-                  [disabled]="item.botonDesactivado"
-                  (click)="agregarAlCarrito(item)"
-                >
-                  {{ item.enCarrito ? 'Agregado' : 'Agregar' }}
-                </button>
-              </td>
-            </tr>
+            <ng-container *ngFor="let index of filteredIndices">
+              <tr>
+                <td>{{ filteredProductsList[index].idArticulo }}</td>
+                <td>{{ filteredProductsList[index].clave }}</td>
+                <td>{{ filteredProductsList[index].nombre }}</td>
+                <td>
+                  {{ filteredProductsList[index].existencia }}
+                  <button
+                    class="btn"
+                    [disabled]="filteredProductsList[index].botonDesactivado"
+                    (click)="agregarAlCarrito(filteredProductsList[index])"
+                  >
+                    {{ filteredProductsList[index].enCarrito ? 'Agregado' : 'Agregar' }}
+                  </button>
+                </td>
+              </tr>
+            </ng-container>
           </tbody>
         </table>
       </div>
@@ -120,6 +122,7 @@ export class TablaProductosComponent {
   productsList: Products[] = [];
   apiService: ApiService = inject(ApiService);
   filteredProductsList: ProductListItem[] = [];
+  filteredIndices: number[] = [];
   columnaOrdenada: keyof Products | null = null;
   ordenAscendente: boolean = true;
   botonDesactivado: boolean = false;
@@ -184,168 +187,43 @@ export class TablaProductosComponent {
         enCarrito: false,
         botonDesactivado: false,
       }));
+      this.filteredIndices = Array.from(
+        { length: this.filteredProductsList.length },
+        (_, i) => i
+      );
     });
   }
 
   agregarAlCarrito(item: ProductListItem) {
-    const index = this.filteredProductsList.findIndex(
-      (listItem) => listItem.idArticulo === item.idArticulo
-    );
-    if (index !== -1) {
-      this.filteredProductsList[index].enCarrito = true;
-      this.filteredProductsList[index].botonDesactivado = true;
-    }
+    item.enCarrito = true;
+    item.botonDesactivado = true;
     this.carritoService.agregarItem({ ...item, cantidad: 1 });
     console.log('Se agregó al carrito. :)');
   }
 
   filterResults(event: Event) {
-    const text = (event.target as HTMLInputElement).value;
-    this.filteredProductsList = this.productsList
-      .filter((product) =>
-        product.nombre.toLowerCase().includes(text.toLowerCase())
-      )
-      .map((product) => ({
-        idArticulo: product.idArticulo,
-        clave: product.clave,
-        nombre: product.nombre,
-        precioVenta: product.precioVenta,
-        precioCompra: product.precioCompra,
-        unidadVenta: product.unidadVenta,
-        unidadCompra: product.unidadCompra,
-        relacion: product.relacion,
-        idImp1: product.idImp1,
-        idImp2: product.idImp2,
-        idRet1: product.idRet1,
-        idRet2: product.idRet2,
-        existencia: product.existencia,
-        observaciones: product.observaciones,
-        neto: product.neto,
-        netoC: product.netoC,
-        inventariable: product.inventariable,
-        costo: product.costo,
-        lotes: product.lotes,
-        series: product.series,
-        precioSug: product.precioSug,
-        oferta: product.oferta,
-        promocion: product.promocion,
-        impCig: product.impCig,
-        color: product.color,
-        precioLista: product.precioLista,
-        condiciones: product.condiciones,
-        utilidad: product.utilidad,
-        alterna: product.alterna,
-        kit: product.kit,
-        dpc: product.dpc,
-        dpv: product.dpv,
-        reorden: product.reorden,
-        maximo: product.maximo,
-        kitSuelto: product.kitSuelto,
-        idClaseMultiple: product.idClaseMultiple,
-        prcFix: product.prcFix,
-        localiza: product.localiza,
-        enCarrito: false,
-        botonDesactivado: false,
-      }));
+    const text = (event.target as HTMLInputElement).value.toLowerCase();
+    this.filteredIndices = this.productsList
+      .map((product, index) => ({ product, index })) 
+      .filter(({ product }) => product.nombre.toLowerCase().includes(text))
+      .map(({ index }) => index); 
   }
 
   filterByClave(event: Event) {
-    const text = (event.target as HTMLInputElement).value.trim();
-    this.filteredProductsList = this.productsList
-      .filter((product) =>
-        product.clave.toLowerCase().includes(text.toLowerCase())
-      )
-      .map((product) => ({
-        idArticulo: product.idArticulo,
-        clave: product.clave,
-        nombre: product.nombre,
-        precioVenta: product.precioVenta,
-        precioCompra: product.precioCompra,
-        unidadVenta: product.unidadVenta,
-        unidadCompra: product.unidadCompra,
-        relacion: product.relacion,
-        idImp1: product.idImp1,
-        idImp2: product.idImp2,
-        idRet1: product.idRet1,
-        idRet2: product.idRet2,
-        existencia: product.existencia,
-        observaciones: product.observaciones,
-        neto: product.neto,
-        netoC: product.netoC,
-        inventariable: product.inventariable,
-        costo: product.costo,
-        lotes: product.lotes,
-        series: product.series,
-        precioSug: product.precioSug,
-        oferta: product.oferta,
-        promocion: product.promocion,
-        impCig: product.impCig,
-        color: product.color,
-        precioLista: product.precioLista,
-        condiciones: product.condiciones,
-        utilidad: product.utilidad,
-        alterna: product.alterna,
-        kit: product.kit,
-        dpc: product.dpc,
-        dpv: product.dpv,
-        reorden: product.reorden,
-        maximo: product.maximo,
-        kitSuelto: product.kitSuelto,
-        idClaseMultiple: product.idClaseMultiple,
-        prcFix: product.prcFix,
-        localiza: product.localiza,
-        enCarrito: false,
-        botonDesactivado: false,
-      }));
+    const text = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.filteredIndices = this.productsList
+      .map((product, index) => ({ product, index })) 
+      .filter(({ product }) => product.clave.toLowerCase().includes(text))
+      .map(({ index }) => index); 
   }
 
   filterByIdArticulo(event: Event) {
     const text = (event.target as HTMLInputElement).value.trim();
     const idArticulo = parseInt(text, 10);
-    this.filteredProductsList = this.productsList
-      .filter((product) => product.idArticulo === idArticulo)
-      .map((product) => ({
-        idArticulo: product.idArticulo,
-        clave: product.clave,
-        nombre: product.nombre,
-        precioVenta: product.precioVenta,
-        precioCompra: product.precioCompra,
-        unidadVenta: product.unidadVenta,
-        unidadCompra: product.unidadCompra,
-        relacion: product.relacion,
-        idImp1: product.idImp1,
-        idImp2: product.idImp2,
-        idRet1: product.idRet1,
-        idRet2: product.idRet2,
-        existencia: product.existencia,
-        observaciones: product.observaciones,
-        neto: product.neto,
-        netoC: product.netoC,
-        inventariable: product.inventariable,
-        costo: product.costo,
-        lotes: product.lotes,
-        series: product.series,
-        precioSug: product.precioSug,
-        oferta: product.oferta,
-        promocion: product.promocion,
-        impCig: product.impCig,
-        color: product.color,
-        precioLista: product.precioLista,
-        condiciones: product.condiciones,
-        utilidad: product.utilidad,
-        alterna: product.alterna,
-        kit: product.kit,
-        dpc: product.dpc,
-        dpv: product.dpv,
-        reorden: product.reorden,
-        maximo: product.maximo,
-        kitSuelto: product.kitSuelto,
-        idClaseMultiple: product.idClaseMultiple,
-        prcFix: product.prcFix,
-        localiza: product.localiza,
-        enCarrito: false,
-        botonDesactivado: false,
-      }));
+    this.filteredIndices = this.productsList
+      .map((product, index) => ({ product, index })) 
+      .filter(({ product }) => product.idArticulo === idArticulo) 
+      .map(({ index }) => index); 
   }
 
   ordenarPorColumna(columna: keyof Products) {
@@ -355,13 +233,17 @@ export class TablaProductosComponent {
       this.columnaOrdenada = columna;
       this.ordenAscendente = true;
     }
-    this.filteredProductsList.sort((a, b) => {
+    this.filteredIndices.sort((a, b) => {
+      const productA = this.filteredProductsList[a];
+      const productB = this.filteredProductsList[b];
       if (this.columnaOrdenada === null) {
         return 0;
       }
-      if (a[this.columnaOrdenada] > b[this.columnaOrdenada]) {
+      if (productA[this.columnaOrdenada] > productB[this.columnaOrdenada]) {
         return this.ordenAscendente ? 1 : -1;
-      } else if (a[this.columnaOrdenada] < b[this.columnaOrdenada]) {
+      } else if (
+        productA[this.columnaOrdenada] < productB[this.columnaOrdenada]
+      ) {
         return this.ordenAscendente ? -1 : 1;
       } else {
         return 0;
