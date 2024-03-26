@@ -48,3 +48,9 @@ th {
 .search-input:last-child {
   margin-right: 0;
 }
+
+.btn[disabled] {
+  background-color: #ccc; 
+  color: #888;
+  cursor: not-allowed; 
+}

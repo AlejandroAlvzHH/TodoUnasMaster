@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { CarritoServiceService } from '../../../core/services/Services Sucursales/carrito-service.service';
 import { CatalogoSalidasService } from '../../../core/services/Services Sucursales/Entradas y Salidas/catalogo-salidas.service';
 import { CatalogoSalidas } from '../../../Models/Master/catalogo_salidas';
+import { CarritoComunicationService } from '../../../core/services/Services Sucursales/Entradas y Salidas/carrito-comunication.service';
 
 @Component({
   selector: 'app-tabla-carrito',
@@ -65,11 +66,14 @@ export class TablaCarritoComponent {
   items: any[] = [];
   @Output() cerrar = new EventEmitter<void>();
   @Input() isSalida: boolean = false;
+  @Input() productsList: any[] = [];
+  @Input() filteredProductsList: any[] = [];
   catalogoSalidas: CatalogoSalidas[] = [];
 
   constructor(
     private carritoService: CarritoServiceService,
-    private catalogoSalidasService: CatalogoSalidasService
+    private catalogoSalidasService: CatalogoSalidasService,
+    private carritoCommunicationService: CarritoComunicationService
   ) {
     this.carritoService.items$.subscribe((items) => {
       this.items = items;
@@ -96,7 +100,7 @@ export class TablaCarritoComponent {
     }
     this.carritoService.items$.subscribe((items) => {
       this.items = items;
-      this.preseleccionarMotivoSalida(); 
+      this.preseleccionarMotivoSalida();
     });
   }
 
@@ -134,7 +138,18 @@ export class TablaCarritoComponent {
   }
 
   eliminarItem(index: number) {
+    const item = this.items[index];
+    item.enCarrito = false;
+    item.botonDesactivado = false;
+    this.carritoCommunicationService.notifyItemRemoved(item.idArticulo);
     this.carritoService.eliminarItem(index);
+    const indexInProductsList = this.productsList.findIndex(
+      (product) => product.idArticulo === item.idArticulo
+    );
+    if (indexInProductsList !== -1) {
+      this.filteredProductsList[indexInProductsList].enCarrito = false;
+      this.filteredProductsList[indexInProductsList].botonDesactivado = false;
+    }
   }
 
   cerrarModal() {
