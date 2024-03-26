@@ -106,7 +106,11 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
                     [disabled]="filteredProductsList[index].botonDesactivado"
                     (click)="agregarAlCarrito(filteredProductsList[index])"
                   >
-                    {{ filteredProductsList[index].enCarrito ? 'Agregado' : 'Agregar' }}
+                    {{
+                      filteredProductsList[index].enCarrito
+                        ? 'Agregado'
+                        : 'Agregar'
+                    }}
                   </button>
                 </td>
               </tr>
@@ -204,26 +208,33 @@ export class TablaProductosComponent {
   filterResults(event: Event) {
     const text = (event.target as HTMLInputElement).value.toLowerCase();
     this.filteredIndices = this.productsList
-      .map((product, index) => ({ product, index })) 
+      .map((product, index) => ({ product, index }))
       .filter(({ product }) => product.nombre.toLowerCase().includes(text))
-      .map(({ index }) => index); 
+      .map(({ index }) => index);
   }
 
   filterByClave(event: Event) {
     const text = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.filteredIndices = this.productsList
-      .map((product, index) => ({ product, index })) 
+      .map((product, index) => ({ product, index }))
       .filter(({ product }) => product.clave.toLowerCase().includes(text))
-      .map(({ index }) => index); 
+      .map(({ index }) => index);
   }
 
   filterByIdArticulo(event: Event) {
     const text = (event.target as HTMLInputElement).value.trim();
-    const idArticulo = parseInt(text, 10);
-    this.filteredIndices = this.productsList
-      .map((product, index) => ({ product, index })) 
-      .filter(({ product }) => product.idArticulo === idArticulo) 
-      .map(({ index }) => index); 
+    if (text === '') {
+      this.filteredIndices = Array.from(
+        { length: this.productsList.length },
+        (_, i) => i
+      );
+    } else {
+      const idArticulo = parseInt(text, 10);
+      this.filteredIndices = this.productsList
+        .map((product, index) => ({ product, index }))
+        .filter(({ product }) => product.idArticulo === idArticulo)
+        .map(({ index }) => index);
+    }
   }
 
   ordenarPorColumna(columna: keyof Products) {
