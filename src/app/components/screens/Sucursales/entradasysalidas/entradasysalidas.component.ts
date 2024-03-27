@@ -9,6 +9,9 @@ import { ApiService } from '../../../../core/services/Services Sucursales/sucurs
 import { ActivatedRoute } from '@angular/router';
 import { TablaProductosComponent } from '../../../tabla-productos/tabla-productos.component';
 import { TablaCarritoComponent } from '../../../../modals/Modals Sucursales/tabla-carrito/tabla-carrito.component';
+import { InventarioService } from '../../../../core/services/inventario.service';
+import { CarritoServiceService } from '../../../../core/services/Services Sucursales/carrito-service.service';
+import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-entradasysalidas',
@@ -46,8 +49,8 @@ import { TablaCarritoComponent } from '../../../../modals/Modals Sucursales/tabl
           Salida
         </button>
       </div>
-      <button class="btn" (click)="abrirModal()">Ver Productos Elegidos</button
-      ><button class="btn" (click)="confirmAction()">
+      <button class="btn" (click)="abrirModal()">Ver Productos Elegidos</button>
+      <button class="btn" (click)="confirmAction()">
         {{ isEntradaSelected ? 'Confirmar Entrada' : 'Confirmar Salida' }}
       </button>
       <app-tabla-carrito
@@ -67,11 +70,17 @@ export class EntradasysalidasComponent implements OnInit {
   isSidebarOpen: boolean = false;
   isEntradaSelected: boolean = true;
   mostrarModal: boolean = false;
+  items: any[] = [];
+
+  @ViewChild(TablaCarritoComponent)
+  tablaCarritoComponent!: TablaCarritoComponent;
 
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private sidebarOpeningService: SidebaropeningService
+    private sidebarOpeningService: SidebaropeningService,
+    private inventarioService: InventarioService,
+    private carritoService: CarritoServiceService
   ) {}
 
   abrirModal(): void {
@@ -97,10 +106,136 @@ export class EntradasysalidasComponent implements OnInit {
 
   confirmAction(): void {
     if (this.isEntradaSelected) {
-      console.log('Confirmar Entrada');
+      console.log('Entrada:');
+      this.registrarEntrada();
     } else {
-      console.log('Confirmar Salida');
+      console.log('Salida:');
+      this.registrarSalida();
     }
+  }
+
+  registrarEntrada(): void {
+    this.items.forEach((item) => {
+      console.log(
+        'Cantidad de entrada para el artículo con id',
+        item.idArticulo,
+        ':',
+        item.cantidad
+      );
+      const cambios = {
+        idArticulo: item.idArticulo,
+        clave: item.clave,
+        nombre: item.nombre,
+        precioVenta: item.precioVenta,
+        precioCompra: item.precioCompra,
+        unidadVenta: item.unidadVenta,
+        unidadCompra: item.unidadCompra,
+        relacion: item.relacion,
+        idImp1: item.idImp1,
+        idImp2: item.idImp2,
+        idRet1: item.idRet1,
+        idRet2: item.idRet2,
+        existencia: item.existencia + item.cantidad,
+        observaciones: item.observaciones,
+        neto: item.neto,
+        netoC: item.netoC,
+        inventariable: item.inventariable,
+        costo: item.costo,
+        lotes: item.lotes,
+        series: item.series,
+        precioSug: item.precioSug,
+        oferta: item.oferta,
+        promocion: item.promocion,
+        impCig: item.impCig,
+        color: item.color,
+        precioLista: item.precioLista,
+        condiciones: item.condiciones,
+        utilidad: item.utilidad,
+        alterna: item.alterna,
+        kit: item.kit,
+        dpc: item.dpc,
+        dpv: item.dpv,
+        reorden: item.reorden,
+        maximo: item.maximo,
+        kitSuelto: item.kitSuelto,
+        idClaseMultiple: item.idClaseMultiple,
+        prcFix: item.prcFix,
+        localiza: item.localiza,
+      };
+      console.log('JSON final:', cambios);
+      this.inventarioService
+        .registrarEntrada(item.idArticulo, cambios)
+        .subscribe(
+          (response) => {
+            console.log('Entrada registrada exitosamente:', response);
+          },
+          (error) => {
+            console.error('Error al registrar entrada:', error);
+          }
+        );
+    });
+  }
+
+  registrarSalida(): void {
+    this.items.forEach((item) => {
+      console.log(
+        'Cantidad de salida para el artículo con id',
+        item.idArticulo,
+        ':',
+        item.cantidad
+      );
+      const cambios = {
+        idArticulo: item.idArticulo,
+        clave: item.clave,
+        nombre: item.nombre,
+        precioVenta: item.precioVenta,
+        precioCompra: item.precioCompra,
+        unidadVenta: item.unidadVenta,
+        unidadCompra: item.unidadCompra,
+        relacion: item.relacion,
+        idImp1: item.idImp1,
+        idImp2: item.idImp2,
+        idRet1: item.idRet1,
+        idRet2: item.idRet2,
+        existencia: item.existencia - item.cantidad,
+        observaciones: item.observaciones,
+        neto: item.neto,
+        netoC: item.netoC,
+        inventariable: item.inventariable,
+        costo: item.costo,
+        lotes: item.lotes,
+        series: item.series,
+        precioSug: item.precioSug,
+        oferta: item.oferta,
+        promocion: item.promocion,
+        impCig: item.impCig,
+        color: item.color,
+        precioLista: item.precioLista,
+        condiciones: item.condiciones,
+        utilidad: item.utilidad,
+        alterna: item.alterna,
+        kit: item.kit,
+        dpc: item.dpc,
+        dpv: item.dpv,
+        reorden: item.reorden,
+        maximo: item.maximo,
+        kitSuelto: item.kitSuelto,
+        idClaseMultiple: item.idClaseMultiple,
+        prcFix: item.prcFix,
+        localiza: item.localiza,
+      };
+      console.log('JSON final:', cambios);
+      this.inventarioService
+        .registrarSalida(item.idArticulo, cambios)
+        .subscribe(
+          (response) => {
+            console.log('Salida registrada exitosamente:', response);
+          },
+          (error) => {
+            console.error('Error al registrar salida:', error);
+          }
+        );
+    });
   }
 
   obtenerDetalleSucursal(): void {
@@ -124,5 +259,8 @@ export class EntradasysalidasComponent implements OnInit {
       this.isSidebarOpen = isOpen;
     });
     this.obtenerDetalleSucursal();
+    this.carritoService.items$.subscribe((items) => {
+      this.items = items;
+    });
   }
 }
