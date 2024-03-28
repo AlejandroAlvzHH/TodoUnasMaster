@@ -12,6 +12,7 @@ import { TablaCarritoComponent } from '../../../../modals/Modals Sucursales/tabl
 import { InventarioService } from '../../../../core/services/inventario.service';
 import { CarritoServiceService } from '../../../../core/services/Services Sucursales/carrito-service.service';
 import { ViewChild } from '@angular/core';
+import { InventarioMasterService } from '../../../../core/services/Services Sucursales/Entradas y Salidas/inventario-master.service';
 
 @Component({
   selector: 'app-entradasysalidas',
@@ -80,7 +81,8 @@ export class EntradasysalidasComponent implements OnInit {
     private apiService: ApiService,
     private sidebarOpeningService: SidebaropeningService,
     private inventarioService: InventarioService,
-    private carritoService: CarritoServiceService
+    private carritoService: CarritoServiceService,
+    private inventarioServiceMaster: InventarioMasterService
   ) {}
 
   abrirModal(): void {
@@ -122,6 +124,11 @@ export class EntradasysalidasComponent implements OnInit {
         ':',
         item.cantidad
       );
+      const cambiosMaster = {
+        id_sucursal: this.sucursal?.idSucursal ?? 0,
+        id_producto: item.idArticulo,
+        cantidad: item.existencia + item.cantidad
+      }
       const cambios = {
         idArticulo: item.idArticulo,
         clave: item.clave,
@@ -163,6 +170,15 @@ export class EntradasysalidasComponent implements OnInit {
         localiza: item.localiza,
       };
       console.log('JSON final:', cambios);
+      console.log('JSON final master:', cambiosMaster);
+      this.inventarioServiceMaster.registrarEntradaMaster(this.sucursal?.idSucursal ?? 0, item.idArticulo, cambiosMaster).subscribe(
+        (response) => {
+          console.log('Entrada master registrada exitosamente:', response);
+        },
+        (error) => {
+          console.error('Error al registrar entrada master:', error);
+        }
+      );
       this.inventarioService
         .registrarEntrada(item.idArticulo, cambios)
         .subscribe(
@@ -184,6 +200,11 @@ export class EntradasysalidasComponent implements OnInit {
         ':',
         item.cantidad
       );
+      const cambiosMaster = {
+        id_sucursal: this.sucursal?.idSucursal ?? 0,
+        id_producto: item.idArticulo,
+        cantidad: item.existencia - item.cantidad
+      }
       const cambios = {
         idArticulo: item.idArticulo,
         clave: item.clave,
@@ -225,6 +246,15 @@ export class EntradasysalidasComponent implements OnInit {
         localiza: item.localiza,
       };
       console.log('JSON final:', cambios);
+      console.log('JSON final master:', cambiosMaster);
+      this.inventarioServiceMaster.registrarSalidaMaster(this.sucursal?.idSucursal ?? 0, item.idArticulo, cambiosMaster).subscribe(
+        (response) => {
+          console.log('Salida master registrada exitosamente:', response);
+        },
+        (error) => {
+          console.error('Error al registrar salida master:', error);
+        }
+      );
       this.inventarioService
         .registrarSalida(item.idArticulo, cambios)
         .subscribe(

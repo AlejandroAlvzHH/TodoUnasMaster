@@ -10,11 +10,11 @@ export class InventarioMasterService {
 
   constructor(private http: HttpClient) {}
 
-  registrarEntrada(id_sucursal: number, id_producto: number, changes: any): Observable<any> {
+  registrarEntradaMaster(id_sucursal: number, id_producto: number, changes: any): Observable<any> {
     return this.http.put<any>(`${this.inventarioMasterUrl}/${id_sucursal}/${id_producto}`, changes);
   }
 
-  registrarSalida(id_sucursal: number, id_producto: number, changes: any): Observable<any> {
+  registrarSalidaMaster(id_sucursal: number, id_producto: number, changes: any): Observable<any> {
     return this.http.put<any>(`${this.inventarioMasterUrl}/${id_sucursal}/${id_producto}`, changes);
   }
 }
