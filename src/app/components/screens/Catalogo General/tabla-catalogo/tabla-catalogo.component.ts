@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input} from '@angular/core';
 import { ApiService } from '../../../../core/services/Services Catalogo General/api.service';
 import { Products } from '../../../../Models/Factuprint/products';
 
@@ -144,9 +144,10 @@ export class TablaCatalogoComponent {
   filteredProductsList: Products[] = [];
   columnaOrdenada: keyof Products | null = null;
   ordenAscendente: boolean = true;
+  @Input() baseUrl?: string;
 
   constructor() {
-    this.apiService.getAllProducts().then((productsList: Products[]) => {
+    this.apiService.getAllProducts(this.baseUrl || '').then((productsList: Products[]) => {
       this.productsList = productsList;
       this.filteredProductsList = productsList;
     });

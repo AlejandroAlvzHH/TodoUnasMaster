@@ -60,7 +60,7 @@ import { ViewChild } from '@angular/core';
       ></app-tabla-carrito>
       <div class="table">
         <h2>Inventario en {{ sucursal?.nombre }}</h2>
-        <app-tabla-productos></app-tabla-productos>
+        <app-tabla-productos [baseUrl]="sucursal?.url"></app-tabla-productos>
       </div>
     </main> `,
   styleUrl: './entradasysalidas.component.css',

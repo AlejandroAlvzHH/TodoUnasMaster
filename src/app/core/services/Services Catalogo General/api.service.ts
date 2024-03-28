@@ -5,24 +5,17 @@ import { Products } from '../../../Models/Factuprint/products';
   providedIn: 'root',
 })
 export class ApiService {
-  url = 'http://localhost:10394/api/ProductApi/instock';
+  constructor() {}
 
-  async getAllProducts(): Promise<Products[]> {
+  async getAllProducts(baseUrl: string): Promise<Products[]> {
     try {
-      const data = await fetch(this.url, { method: 'GET' });
-      //alert('json: ' + data.json());
+      const url = `${baseUrl}/api/ProductApi/instock`;
+      console.log(url)
+      const data = await fetch(url, { method: 'GET' });
       return (await data.json()) ?? [];
     } catch (e) {
       alert('Error: ' + e);
+      return [];
     }
-    return [];
   }
 }
-/*async getHousingLocationById(id: number): Promise<HousingLocation | undefined> {
-    const data = await fetch(`${this.url}/${id}`, { method: 'GET' });
-    return await data.json() ?? {};
-  }
-
-  submitApplication(firstName: string, lastName: string, email: string) {
-    console.log(firstName, lastName, email);
-  }*/

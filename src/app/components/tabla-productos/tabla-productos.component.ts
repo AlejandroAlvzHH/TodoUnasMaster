@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '../../core/services/Services Catalogo General/api.service';
 import { Products } from '../../Models/Factuprint/products';
 import { CarritoServiceService } from '../../core/services/Services Sucursales/carrito-service.service';
@@ -14,6 +14,7 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
     <div>
       <form class="search-form">
         <div class="search-input">
+          <h1>{{ baseUrl }}</h1>
           <input
             type="text"
             placeholder="Buscar por ID de artículo"
@@ -122,21 +123,44 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
   `,
   styleUrl: './tabla-productos.component.css',
 })
-export class TablaProductosComponent {
+export class TablaProductosComponent implements OnInit {
+  private _baseUrl?: string;
   productsList: Products[] = [];
-  apiService: ApiService = inject(ApiService);
   filteredProductsList: ProductListItem[] = [];
   filteredIndices: number[] = [];
   columnaOrdenada: keyof Products | null = null;
   ordenAscendente: boolean = true;
-  botonDesactivado: boolean = false;
 
   constructor(
+    private apiService: ApiService,
     private carritoService: CarritoServiceService,
-    private carritoCommunicationService: CarritoComunicationService
-  ) {
-    this.apiService.getAllProducts().then((productsList: Products[]) => {
-      this.productsList = productsList;
+    private carritoCommunicationService: CarritoComunicationService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    if (this.baseUrl) {
+      this.initialize();
+    } else {
+      console.error('La URL base no está definida.');
+    }
+  }
+
+  @Input()
+  set baseUrl(value: string | undefined) {
+    this._baseUrl = value;
+    if (value) {
+      this.initialize();
+    }
+  }
+
+  get baseUrl(): string | undefined {
+    return this._baseUrl;
+  }
+
+  private async initialize() {
+    try {
+      this.productsList = await this.apiService.getAllProducts(this.baseUrl!);
       this.carritoCommunicationService.itemRemoved$.subscribe((idArticulo) => {
         const indexInFilteredProductsList = this.filteredProductsList.findIndex(
           (product) => product.idArticulo === idArticulo
@@ -149,7 +173,7 @@ export class TablaProductosComponent {
           ].botonDesactivado = false;
         }
       });
-      this.filteredProductsList = productsList.map((product) => ({
+      this.filteredProductsList = this.productsList.map((product) => ({
         idArticulo: product.idArticulo,
         clave: product.clave,
         nombre: product.nombre,
@@ -195,7 +219,10 @@ export class TablaProductosComponent {
         { length: this.filteredProductsList.length },
         (_, i) => i
       );
-    });
+      this.cdr.detectChanges();
+    } catch (error) {
+      console.error('Error al obtener los productos:', error);
+    }
   }
 
   agregarAlCarrito(item: ProductListItem) {
