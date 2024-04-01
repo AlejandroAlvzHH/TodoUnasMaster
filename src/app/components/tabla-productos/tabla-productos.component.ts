@@ -140,8 +140,6 @@ export class TablaProductosComponent implements OnInit {
   ngOnInit(): void {
     if (this.baseUrl) {
       this.initialize();
-    } else {
-      console.error('La URL base no está definida.');
     }
   }
 
