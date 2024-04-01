@@ -11,7 +11,6 @@ import { ClinicasService } from '../../../../core/services/Services Sucursales/c
 import { FormsModule } from '@angular/forms';
 import { TablaProductosComponent } from '../../../tabla-productos/tabla-productos.component';
 import { CarritoClinicaComponent } from '../../../../modals/Modals Sucursales/carrito-clinica/carrito-clinica.component';
-import { ViewChild } from '@angular/core';
 import { InventarioMasterService } from '../../../../core/services/Services Sucursales/Entradas y Salidas/inventario-master.service';
 import { InventarioService } from '../../../../core/services/inventario.service';
 import { CarritoServiceService } from '../../../../core/services/Services Sucursales/carrito-service.service';
@@ -64,7 +63,6 @@ export class TraspasosClinicaComponent {
   defaultClinicId: number | null = null;
   items: any[] = [];
 
-  @ViewChild(CarritoClinicaComponent)
   carritoClinicaComponent!: CarritoClinicaComponent;
   constructor(
     private sidebarOpeningService: SidebaropeningService,
