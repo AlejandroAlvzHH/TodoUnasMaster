@@ -14,7 +14,6 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
     <div>
       <form class="search-form">
         <div class="search-input">
-          <h1>{{ baseUrl }}</h1>
           <input
             type="text"
             placeholder="Buscar por ID de artículo"
@@ -229,7 +228,6 @@ export class TablaProductosComponent implements OnInit {
     item.enCarrito = true;
     item.botonDesactivado = true;
     this.carritoService.agregarItem({ ...item, cantidad: 1 });
-    console.log('Se agregó al carrito. :)');
   }
 
   filterResults(event: Event) {

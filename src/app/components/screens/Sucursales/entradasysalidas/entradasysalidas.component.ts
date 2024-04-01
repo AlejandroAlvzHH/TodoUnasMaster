@@ -119,7 +119,7 @@ export class EntradasysalidasComponent implements OnInit {
   registrarEntrada(): void {
     this.items.forEach((item) => {
       console.log(
-        'Cantidad de entrada para el artículo con id',
+        'Cantidad de entrada para el artículo con id ',
         item.idArticulo,
         ':',
         item.cantidad
@@ -127,8 +127,8 @@ export class EntradasysalidasComponent implements OnInit {
       const cambiosMaster = {
         id_sucursal: this.sucursal?.idSucursal ?? 0,
         id_producto: item.idArticulo,
-        cantidad: item.existencia + item.cantidad
-      }
+        cantidad: item.existencia + item.cantidad,
+      };
       const cambios = {
         idArticulo: item.idArticulo,
         clave: item.clave,
@@ -171,14 +171,20 @@ export class EntradasysalidasComponent implements OnInit {
       };
       console.log('JSON final:', cambios);
       console.log('JSON final master:', cambiosMaster);
-      this.inventarioServiceMaster.registrarEntradaMaster(this.sucursal?.idSucursal ?? 0, item.idArticulo, cambiosMaster).subscribe(
-        (response) => {
-          console.log('Entrada master registrada exitosamente:', response);
-        },
-        (error) => {
-          console.error('Error al registrar entrada master:', error);
-        }
-      );
+      this.inventarioServiceMaster
+        .registrarEntradaMaster(
+          this.sucursal?.idSucursal ?? 0,
+          item.idArticulo,
+          cambiosMaster
+        )
+        .subscribe(
+          (response) => {
+            console.log('Entrada master registrada exitosamente:', response);
+          },
+          (error) => {
+            console.error('Error al registrar entrada master:', error);
+          }
+        );
       this.inventarioService
         .registrarEntrada(item.idArticulo, cambios)
         .subscribe(
@@ -201,10 +207,10 @@ export class EntradasysalidasComponent implements OnInit {
         item.cantidad
       );
       const cambiosMaster = {
-        id_sucursal: this.sucursal?.idSucursal ?? 0,
+        id_sucursal: this.sucursal?.idSucursal,
         id_producto: item.idArticulo,
-        cantidad: item.existencia - item.cantidad
-      }
+        cantidad: item.existencia - item.cantidad,
+      };
       const cambios = {
         idArticulo: item.idArticulo,
         clave: item.clave,
@@ -247,14 +253,20 @@ export class EntradasysalidasComponent implements OnInit {
       };
       console.log('JSON final:', cambios);
       console.log('JSON final master:', cambiosMaster);
-      this.inventarioServiceMaster.registrarSalidaMaster(this.sucursal?.idSucursal ?? 0, item.idArticulo, cambiosMaster).subscribe(
-        (response) => {
-          console.log('Salida master registrada exitosamente:', response);
-        },
-        (error) => {
-          console.error('Error al registrar salida master:', error);
-        }
-      );
+      this.inventarioServiceMaster
+        .registrarSalidaMaster(
+          this.sucursal?.idSucursal ?? 0,
+          item.idArticulo,
+          cambiosMaster
+        )
+        .subscribe(
+          (response) => {
+            console.log('Salida master registrada exitosamente:', response);
+          },
+          (error) => {
+            console.error('Error al registrar salida master:', error);
+          }
+        );
       this.inventarioService
         .registrarSalida(item.idArticulo, cambios)
         .subscribe(

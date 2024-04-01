@@ -13,7 +13,7 @@ import { CatalogoSalidas } from '../../../Models/Master/catalogo_salidas';
 import { CarritoComunicationService } from '../../../core/services/Services Sucursales/Entradas y Salidas/carrito-comunication.service';
 
 @Component({
-  selector: 'app-tabla-carrito',
+  selector: 'app-carrito-clinica',
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
@@ -60,9 +60,9 @@ import { CarritoComunicationService } from '../../../core/services/Services Sucu
       </table>
     </div>
   `,
-  styleUrl: './tabla-carrito.component.css',
+  styleUrl: './carrito-clinica.component.css',
 })
-export class TablaCarritoComponent {
+export class CarritoClinicaComponent {
   items: any[] = [];
   @Output() cerrar = new EventEmitter<void>();
   @Input() isSalida: boolean = false;
@@ -80,27 +80,15 @@ export class TablaCarritoComponent {
     });
   }
 
-  private preseleccionarMotivoSalida(): void {
-    if (this.catalogoSalidas.length > 0) {
-      this.items.forEach((item) => {
-        if (!item.motivoSalida) {
-          item.motivoSalida = this.catalogoSalidas[0].id_tipo_salida;
-        }
-      });
-    }
-  }
-
   ngOnInit(): void {
     if (this.isSalida) {
       this.catalogoSalidasService.getCatalogoSalidas().subscribe((data) => {
         console.log(data);
         this.catalogoSalidas = data;
-        this.preseleccionarMotivoSalida();
       });
     }
     this.carritoService.items$.subscribe((items) => {
       this.items = items;
-      this.preseleccionarMotivoSalida();
     });
   }
 
@@ -118,7 +106,6 @@ export class TablaCarritoComponent {
     this.catalogoSalidasService.getCatalogoSalidas().subscribe((data) => {
       console.log(data);
       this.catalogoSalidas = data;
-      this.preseleccionarMotivoSalida();
     });
   }
 
@@ -156,5 +143,3 @@ export class TablaCarritoComponent {
     this.cerrar.emit();
   }
 }
-
-

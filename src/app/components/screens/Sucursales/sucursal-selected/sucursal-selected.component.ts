@@ -21,7 +21,7 @@ type TipoDeError = HttpErrorResponse;
   template: ` <app-header></app-header>
     <app-sidebar></app-sidebar>
     <main class="main-content" [class.opened-sidebar]="isSidebarOpen">
-    <div
+      <div
         class="overlay"
         *ngIf="isSidebarOpen"
         (click)="toggleSidebar()"
@@ -33,19 +33,21 @@ type TipoDeError = HttpErrorResponse;
         (cancelar)="cerrarModal()"
       ></app-modifysucursalmodal>
       <h1>{{ sucursal?.nombre }}</h1>
-      <h2>{{ sucursal?.url }}</h2>
+      <h2>URL de servicios: {{ sucursal?.url }}</h2>
       <div class="menu-container">
         <div class="menu">
-          <a href="/entradasysalidas/{{
-                sucursal?.idSucursal
-              }}" class="opcion">Entradas y Salidas</a>
+          <a href="/entradasysalidas/{{ sucursal?.idSucursal }}" class="opcion"
+            >Entradas y Salidas</a
+          >
           <a href="#" class="opcion">Inventario</a>
-          <a href="#" class="opcion">Traspasos</a>
+          <a href="/traspasos/{{ sucursal?.idSucursal }}" class="opcion"
+            >Traspasos</a
+          >
           <a href="#" class="opcion" (click)="eliminarSucursal()">Eliminar</a>
           <button class="opcion" (click)="abrirModal()">
             Modificar Sucursal
           </button>
-          <a href="#" class="opcion">Traspaso a Clínica</a>
+          <a href="/traspasosclinica/{{ sucursal?.idSucursal }}" class="opcion">Traspaso a Clínica</a>
         </div>
       </div>
     </main>`,
@@ -55,8 +57,12 @@ export class SucursalSelectedComponent implements OnInit {
   sucursal: Branches | null = null;
   mostrarModal: boolean = false;
   isSidebarOpen: boolean = false;
-  
-  constructor(private route: ActivatedRoute, private apiService: ApiService, private sidebarOpeningService: SidebaropeningService) {}
+
+  constructor(
+    private route: ActivatedRoute,
+    private apiService: ApiService,
+    private sidebarOpeningService: SidebaropeningService
+  ) {}
 
   toggleSidebar(): void {
     console.log('Toggle');
