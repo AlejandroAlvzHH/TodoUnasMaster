@@ -18,9 +18,8 @@ export class DetalleMovimientosService {
     return this.http.get<Movements_Detail | null>(`${this.url}/${id}`);
   }
 
-  insertarLogMovimientoDetail(
-    movimientoDetail: any
-  ): Observable<number | null> {
-    return this.http.post<number | null>(this.url, movimientoDetail);
+  insertarLogMovimientoDetail(logDetalle: any): Observable<number | null> {
+    console.log('Datos enviados al backend:', logDetalle);
+    return this.http.post<number | null>(this.url, logDetalle);
   }
 }

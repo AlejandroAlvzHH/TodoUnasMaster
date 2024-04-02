@@ -102,7 +102,7 @@ export class TraspasosClinicaComponent {
       );
       console.log('Traspaso confirmado hacia', selectedClinica?.nombre);
       let valor_total_movimiento = 0;
-      const logDetalles: Movements_Detail[] = []; 
+      const logDetalles: Movements_Detail[] = [];
       this.items.forEach((item) => {
         valor_total_movimiento += item.precioVenta * item.cantidad;
         console.log(
@@ -183,13 +183,13 @@ export class TraspasosClinicaComponent {
             }
           );
         const logDetalle: Movements_Detail = {
-          id_detalle_mov: 0, 
+          id_detalle_mov: 0,
           id_movimiento: 0,
           id_producto: item.idArticulo,
           cantidad: item.cantidad,
           precio: item.precioVenta,
         };
-        logDetalles.push(logDetalle); 
+        logDetalles.push(logDetalle);
         console.log('Log creado exitosamente: ', logDetalle);
       });
       const logGlobal = {
@@ -210,8 +210,10 @@ export class TraspasosClinicaComponent {
             console.log('Movimiento insertado con ID:', id);
             logDetalles.forEach((logDetalle) => {
               logDetalle.id_movimiento = id;
-              console.log('LogDetalle con ID de movimiento actualizado: ', logDetalle);
-              this.detalleMovimientosService.insertarLogMovimientoDetail(logDetalle);
+              console.log('LogDetalle antes de insertar:', logDetalle);
+              this.detalleMovimientosService
+                .insertarLogMovimientoDetail(logDetalle)
+                .subscribe();
             });
           } else {
             console.error('Error al insertar el movimiento');
