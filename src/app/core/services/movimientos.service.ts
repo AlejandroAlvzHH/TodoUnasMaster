@@ -18,7 +18,9 @@ export class MovimientosService {
     return this.http.get<Movements | null>(`${this.url}/${id}`);
   }
 
-  insertarLogMovimiento(movimiento: Movements): Observable<number | null> {
+  insertarLogMovimiento(movimiento: any): Observable<number | null> {
     return this.http.post<number | null>(this.url, movimiento);
   }
 }
+
+
