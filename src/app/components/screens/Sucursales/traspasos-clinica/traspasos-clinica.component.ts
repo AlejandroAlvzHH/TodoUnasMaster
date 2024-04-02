@@ -15,6 +15,8 @@ import { InventarioMasterService } from '../../../../core/services/Services Sucu
 import { InventarioService } from '../../../../core/services/inventario.service';
 import { CarritoServiceService } from '../../../../core/services/Services Sucursales/carrito-service.service';
 import { MovimientosService } from '../../../../core/services/movimientos.service';
+import { DetalleMovimientosService } from '../../../../core/services/detalle-movimientos.service';
+import { Movements_Detail } from '../../../../Models/Master/movements_detail';
 
 @Component({
   selector: 'app-traspasos-clinica',
@@ -72,7 +74,8 @@ export class TraspasosClinicaComponent {
     private inventarioServiceMaster: InventarioMasterService,
     private inventarioService: InventarioService,
     private carritoService: CarritoServiceService,
-    private movimientosService: MovimientosService
+    private movimientosService: MovimientosService,
+    private detalleMovimientosService: DetalleMovimientosService
   ) {}
 
   obtenerDetalleSucursal(): void {
@@ -99,7 +102,7 @@ export class TraspasosClinicaComponent {
       );
       console.log('Traspaso confirmado hacia', selectedClinica?.nombre);
       let valor_total_movimiento = 0;
-      const logDetalles = [];
+      const logDetalles: Movements_Detail[] = []; 
       this.items.forEach((item) => {
         valor_total_movimiento += item.precioVenta * item.cantidad;
         console.log(
@@ -179,8 +182,9 @@ export class TraspasosClinicaComponent {
               console.error('Error al registrar traspaso:', error);
             }
           );
-        const logDetalle = {
-          id_movimiento: 0, 
+        const logDetalle: Movements_Detail = {
+          id_detalle_mov: 0, 
+          id_movimiento: 0,
           id_producto: item.idArticulo,
           cantidad: item.cantidad,
           precio: item.precioVenta,
@@ -207,7 +211,7 @@ export class TraspasosClinicaComponent {
             logDetalles.forEach((logDetalle) => {
               logDetalle.id_movimiento = id;
               console.log('LogDetalle con ID de movimiento actualizado: ', logDetalle);
-              this.insertarLogDetalle(logDetalle);
+              this.detalleMovimientosService.insertarLogMovimientoDetail(logDetalle);
             });
           } else {
             console.error('Error al insertar el movimiento');
