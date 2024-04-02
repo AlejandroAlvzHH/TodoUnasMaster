@@ -60,7 +60,6 @@ export class TraspasosClinicaComponent {
   clinicas: Clinics[] = [];
   selectedClinica: number | null = null;
   mostrarModal: boolean = false;
-  defaultClinicId: number | null = null;
   items: any[] = [];
 
   carritoClinicaComponent!: CarritoClinicaComponent;
@@ -75,16 +74,17 @@ export class TraspasosClinicaComponent {
   ) {}
 
   toggleSidebar(): void {
-    console.log('Toggle');
     this.sidebarOpeningService.toggleSidebar();
   }
 
   abrirModal(): void {
     this.mostrarModal = true;
   }
+
   cerrarModal(): void {
     this.mostrarModal = false;
   }
+
   obtenerDetalleSucursal(): void {
     this.route.paramMap.subscribe((params) => {
       const sucursalId = params.get('id');
@@ -103,13 +103,10 @@ export class TraspasosClinicaComponent {
 
   confirmAction(): void {
     const selectedClinica = this.clinicas.find(
-      (clinica) => clinica.id_clinica === this.selectedClinica
+      (clinica) =>
+        clinica.id_clinica === parseInt(this.selectedClinica!.toString(), 10)
     );
-    if (selectedClinica) {
-      console.log('Traspaso confirmado hacia', selectedClinica.nombre, '.');
-    } else {
-      console.warn('No se encontró la clínica seleccionada');
-    }
+    console.log('Traspaso confirmado hacia', selectedClinica?.nombre, '.');
     let valor_total_movimiento = 0;
     this.items.forEach((item) => {
       valor_total_movimiento += item.precioVenta * item.cantidad;
@@ -165,11 +162,11 @@ export class TraspasosClinicaComponent {
         localiza: item.localiza,
       };
       const logDetalle = {
-        "id_movimiento": 0,
-        "id_producto": item.idArticulo,
-        "cantidad": item.cantidad,
-        "precio": item.precioVenta
-      }
+        id_movimiento: 0,
+        id_producto: item.idArticulo,
+        cantidad: item.cantidad,
+        precio: item.precioVenta,
+      };
       console.log('Log creado exitosamente: ', logDetalle);
       console.log('JSON final: ', cambios);
       console.log('JSON final master: ', cambiosMaster);
@@ -191,7 +188,7 @@ export class TraspasosClinicaComponent {
         .registrarSalida(item.idArticulo, cambios)
         .subscribe(
           (response) => {
-            console.log('Traspaso registrado exitosamente: ', response);
+            console.log('Traspaso registrado exitosamente.', response);
           },
           (error) => {
             console.error('Error al registrar traspaso: ', error);
@@ -220,8 +217,7 @@ export class TraspasosClinicaComponent {
       (clinicas) => {
         this.clinicas = clinicas;
         if (this.clinicas.length > 0) {
-          this.defaultClinicId = this.clinicas[0].id_clinica;
-          this.selectedClinica = this.defaultClinicId;
+          this.selectedClinica = this.clinicas[0].id_clinica;
         }
       },
       (error) => {
