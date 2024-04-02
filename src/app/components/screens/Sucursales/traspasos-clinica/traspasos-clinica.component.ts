@@ -181,17 +181,17 @@ export class TraspasosClinicaComponent {
             console.log('Traspaso master registrado exitosamente.');
           },
           (error) => {
-            console.error('Error al registrar traspaso master.');
+            console.error('Error al registrar traspaso master:', error);
           }
         );
       this.inventarioService
         .registrarSalida(item.idArticulo, cambios)
         .subscribe(
           (response) => {
-            console.log('Traspaso registrado exitosamente.', response);
+            console.log('Traspaso registrado exitosamente.');
           },
           (error) => {
-            console.error('Error al registrar traspaso: ', error);
+            console.error('Error al registrar traspaso:', error);
           }
         );
     });
