@@ -19,7 +19,6 @@ export class DetalleMovimientosService {
   }
 
   insertarLogMovimientoDetail(logDetalle: any): Observable<number | null> {
-    console.log('Datos enviados al backend:', logDetalle);
     return this.http.post<number | null>(this.url, logDetalle);
   }
 }

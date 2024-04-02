@@ -187,14 +187,14 @@ export class TraspasosClinicaComponent {
           id_movimiento: 0,
           id_producto: item.idArticulo,
           cantidad: item.cantidad,
-          precio: item.precioVenta,
+          precio: item.precioVenta*item.cantidad,
         };
         logDetalles.push(logDetalle);
         console.log('Log creado exitosamente: ', logDetalle);
       });
       const logGlobal = {
         id_usuario: 1,
-        tipo_movimiento: 'Traspaso',
+        tipo_movimiento: 'Salida',
         sucursal_salida: this.sucursal?.idSucursal,
         sucursal_destino: null,
         id_tipo_salida: 3,
@@ -210,7 +210,6 @@ export class TraspasosClinicaComponent {
             console.log('Movimiento insertado con ID:', id);
             logDetalles.forEach((logDetalle) => {
               logDetalle.id_movimiento = id;
-              console.log('LogDetalle antes de insertar:', logDetalle);
               this.detalleMovimientosService
                 .insertarLogMovimientoDetail(logDetalle)
                 .subscribe();
