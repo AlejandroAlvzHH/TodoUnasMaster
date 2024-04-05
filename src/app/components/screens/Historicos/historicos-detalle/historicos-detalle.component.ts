@@ -14,7 +14,6 @@ import { VistaMovementsDetail } from '../../../../Models/Master/vista-movements-
       <thead>
         <tr>
           <th>ID Detalle</th>
-          <th>ID Movimiento</th>
           <th>Producto</th>
           <th>Cantidad</th>
           <th>Precio</th>
@@ -23,7 +22,6 @@ import { VistaMovementsDetail } from '../../../../Models/Master/vista-movements-
       <tbody>
         <tr *ngFor="let detalle of detallesMovimiento">
           <td>{{ detalle.id_detalle_mov }}</td>
-          <td>{{ detalle.id_movimiento }}</td>
           <td>{{ detalle.nombre_producto }}</td>
           <td>{{ detalle.cantidad }}</td>
           <td>{{ detalle.precio }}</td>

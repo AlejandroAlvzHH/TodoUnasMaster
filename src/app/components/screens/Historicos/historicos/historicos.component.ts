@@ -129,7 +129,7 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
                 <td>{{ movement.sucursal_destino }}</td>
                 <td>{{ movement.tipo_salida }}</td>
                 <td>{{ movement.nombre_clinica }}</td>
-                <td>{{ movement.fecha }}</td>
+                <td>{{ movement.fecha | date : "short"}}</td>
                 <td>
                   {{ movement.precio_total }}
                   <button class="btn" (click)="abrirModal(movement)">Ver Detalle</button>
