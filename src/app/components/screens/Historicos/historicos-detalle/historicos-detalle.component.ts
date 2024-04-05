@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HistoricosMovimientosDetalleService } from '../../../../core/services/Services Historicos/historicos-movimientos-detalle.service';
-import { Movements_Detail } from '../../../../Models/Master/movements_detail';
+import { VistaMovementsDetail } from '../../../../Models/Master/vista-movements-detail';
 
 @Component({
   selector: 'app-historicos-detalle',
@@ -15,7 +15,7 @@ import { Movements_Detail } from '../../../../Models/Master/movements_detail';
         <tr>
           <th>ID Detalle</th>
           <th>ID Movimiento</th>
-          <th>ID Producto</th>
+          <th>Producto</th>
           <th>Cantidad</th>
           <th>Precio</th>
         </tr>
@@ -24,7 +24,7 @@ import { Movements_Detail } from '../../../../Models/Master/movements_detail';
         <tr *ngFor="let detalle of detallesMovimiento">
           <td>{{ detalle.id_detalle_mov }}</td>
           <td>{{ detalle.id_movimiento }}</td>
-          <td>{{ detalle.id_producto }}</td>
+          <td>{{ detalle.nombre_producto }}</td>
           <td>{{ detalle.cantidad }}</td>
           <td>{{ detalle.precio }}</td>
         </tr>
@@ -38,7 +38,7 @@ import { Movements_Detail } from '../../../../Models/Master/movements_detail';
 export class HistoricosDetalleComponent {
   @Output() cancelar = new EventEmitter<void>();
   @Input() movimientoId: number | null = null;
-  detallesMovimiento: Movements_Detail[] = [];
+  detallesMovimiento: VistaMovementsDetail[] = [];
 
   constructor(private historicosMovimientosDetalleService: HistoricosMovimientosDetalleService) { }
 

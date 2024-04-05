@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Movements_Detail } from '../../../Models/Master/movements_detail';
+import { VistaMovementsDetail } from '../../../Models/Master/vista-movements-detail';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -7,12 +7,12 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class HistoricosMovimientosDetalleService {
-  private baseUrl = 'http://localhost:10395/api/DetalleMovimientoApi';
+  private baseUrl = 'http://localhost:10395/api/VistaDetalleMovimientoApi';
 
   constructor(private http: HttpClient) {}
 
-  getDetalleMovimientosByGlobalID(id: number): Observable<Movements_Detail[]> {
-    return this.http.get<Movements_Detail[]>(
+  getDetalleMovimientosByGlobalID(id: number): Observable<VistaMovementsDetail[]> {
+    return this.http.get<VistaMovementsDetail[]>(
       `${this.baseUrl}/ByMovimientoGlobal/${id}`
     );
   }

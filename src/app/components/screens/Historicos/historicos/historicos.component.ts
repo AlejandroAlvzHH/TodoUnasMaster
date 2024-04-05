@@ -3,7 +3,7 @@ import { SidebarComponent } from '../../../sidebar/sidebar.component';
 import { HeaderComponent } from '../../../header/header.component';
 import { SidebaropeningService } from '../../../../core/services/sidebaropening.service';
 import { CommonModule } from '@angular/common';
-import { Movements } from '../../../../Models/Master/movements';
+import { VistaMovements } from '../../../../Models/Master/vista-movements copy';
 import { HistoricosMovimientosService } from '../../../../core/services/Services Historicos/historicos-movimientos.service';
 import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-detalle.component';
 
@@ -46,9 +46,9 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
                   ></i>
                 </th>
                 <th scope="col">
-                  ID Usuario
+                  Usuario
                   <i
-                    *ngIf="columnaOrdenada === 'id_usuario'"
+                    *ngIf="columnaOrdenada === 'nombre_usuario'"
                     class="arrow-icon"
                     [class.asc]="ordenAscendente"
                     [class.desc]="!ordenAscendente"
@@ -73,18 +73,27 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
                   ></i>
                 </th>
                 <th scope="col">
-                  ID Tipo Salida
+                  Sucursal Destino
                   <i
-                    *ngIf="columnaOrdenada === 'id_tipo_salida'"
+                    *ngIf="columnaOrdenada === 'sucursal_destino'"
                     class="arrow-icon"
                     [class.asc]="ordenAscendente"
                     [class.desc]="!ordenAscendente"
                   ></i>
                 </th>
                 <th scope="col">
-                  ID Clínica
+                  Tipo Salida
                   <i
-                    *ngIf="columnaOrdenada === 'id_clinica'"
+                    *ngIf="columnaOrdenada === 'tipo_salida'"
+                    class="arrow-icon"
+                    [class.asc]="ordenAscendente"
+                    [class.desc]="!ordenAscendente"
+                  ></i>
+                </th>
+                <th scope="col">
+                  Clínica
+                  <i
+                    *ngIf="columnaOrdenada === 'nombre_clinica'"
                     class="arrow-icon"
                     [class.asc]="ordenAscendente"
                     [class.desc]="!ordenAscendente"
@@ -108,16 +117,18 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
                     [class.desc]="!ordenAscendente"
                   ></i>
                 </th>
+                
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let movement of movementsList">
                 <td>{{ movement.id_movimiento }}</td>
-                <td>{{ movement.id_usuario }}</td>
+                <td>{{ movement.nombre_usuario }}</td>
                 <td>{{ movement.tipo_movimiento }}</td>
                 <td>{{ movement.sucursal_salida }}</td>
-                <td>{{ movement.id_tipo_salida }}</td>
-                <td>{{ movement.id_clinica }}</td>
+                <td>{{ movement.sucursal_destino }}</td>
+                <td>{{ movement.tipo_salida }}</td>
+                <td>{{ movement.nombre_clinica }}</td>
                 <td>{{ movement.fecha }}</td>
                 <td>
                   {{ movement.precio_total }}
@@ -133,11 +144,11 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
 })
 export class HistoricosComponent {
   isSidebarOpen: boolean = false;
-  movementsList: Movements[] = [];
-  columnaOrdenada: keyof Movements | null = null;
+  movementsList: VistaMovements[] = [];
+  columnaOrdenada: keyof VistaMovements | null = null;
   ordenAscendente: boolean = true;
   mostrarModal: boolean = false;
-  movimientoSeleccionado: Movements | null = null;
+  movimientoSeleccionado: VistaMovements | null = null;
 
   constructor(
     private sidebarOpeningService: SidebaropeningService,
@@ -169,7 +180,7 @@ export class HistoricosComponent {
     }
   }
 
-  abrirModal(movement: Movements): void {
+  abrirModal(movement: VistaMovements): void {
     this.movimientoSeleccionado = movement;
     this.mostrarModal = true;
   }
