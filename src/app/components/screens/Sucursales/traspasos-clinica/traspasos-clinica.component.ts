@@ -165,7 +165,7 @@ export class TraspasosClinicaComponent {
             cambiosMaster
           )
           .subscribe(
-            (response) => {
+            () => {
               console.log('Traspaso master registrado exitosamente.');
             },
             (error) => {
@@ -175,7 +175,7 @@ export class TraspasosClinicaComponent {
         this.inventarioService
           .registrarSalida(item.idArticulo, cambios)
           .subscribe(
-            (response) => {
+            () => {
               console.log('Traspaso registrado exitosamente.');
             },
             (error) => {
@@ -194,10 +194,10 @@ export class TraspasosClinicaComponent {
       });
       const logGlobal = {
         id_usuario: 1,
-        tipo_movimiento: 'Salida',
+        tipo_movimiento: 'Traspaso a clínica',
         sucursal_salida: this.sucursal?.idSucursal,
         sucursal_destino: null,
-        id_tipo_salida: 3,
+        id_tipo_salida: null,
         id_clinica: selectedClinica?.id_clinica,
         fecha: new Date(),
         precio_total: valor_total_movimiento,
@@ -215,7 +215,7 @@ export class TraspasosClinicaComponent {
                 .subscribe();
             });
           } else {
-            console.error('Error al insertar el movimiento');
+            console.error('Error al insertar el movimiento.');
           }
         });
     } else {

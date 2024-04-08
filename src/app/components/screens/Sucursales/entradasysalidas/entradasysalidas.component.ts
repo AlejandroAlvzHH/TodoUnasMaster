@@ -13,6 +13,9 @@ import { InventarioService } from '../../../../core/services/inventario.service'
 import { CarritoServiceService } from '../../../../core/services/Services Sucursales/carrito-service.service';
 import { ViewChild } from '@angular/core';
 import { InventarioMasterService } from '../../../../core/services/Services Sucursales/Entradas y Salidas/inventario-master.service';
+import { Movements_Detail } from '../../../../Models/Master/movements_detail';
+import { DetalleMovimientosService } from '../../../../core/services/detalle-movimientos.service';
+import { MovimientosService } from '../../../../core/services/movimientos.service';
 
 @Component({
   selector: 'app-entradasysalidas',
@@ -72,6 +75,7 @@ export class EntradasysalidasComponent implements OnInit {
   isEntradaSelected: boolean = true;
   mostrarModal: boolean = false;
   items: any[] = [];
+ 
 
   @ViewChild(TablaCarritoComponent)
   tablaCarritoComponent!: TablaCarritoComponent;
@@ -82,7 +86,9 @@ export class EntradasysalidasComponent implements OnInit {
     private sidebarOpeningService: SidebaropeningService,
     private inventarioService: InventarioService,
     private carritoService: CarritoServiceService,
-    private inventarioServiceMaster: InventarioMasterService
+    private inventarioServiceMaster: InventarioMasterService,
+    private movimientosService: MovimientosService,
+    private detalleMovimientosService: DetalleMovimientosService
   ) {}
 
   abrirModal(): void {
@@ -117,7 +123,10 @@ export class EntradasysalidasComponent implements OnInit {
   }
 
   registrarEntrada(): void {
+    let valor_total_movimiento = 0;
+    const logDetalles: Movements_Detail[] = [];
     this.items.forEach((item) => {
+      valor_total_movimiento += item.precioVenta * item.cantidad;
       console.log(
         'Cantidad de entrada para el artículo con id ',
         item.idArticulo,
@@ -178,8 +187,8 @@ export class EntradasysalidasComponent implements OnInit {
           cambiosMaster
         )
         .subscribe(
-          (response) => {
-            console.log('Entrada master registrada exitosamente:', response);
+          () => {
+            console.log('Entrada master registrada exitosamente.');
           },
           (error) => {
             console.error('Error al registrar entrada master:', error);
@@ -188,18 +197,54 @@ export class EntradasysalidasComponent implements OnInit {
       this.inventarioService
         .registrarEntrada(item.idArticulo, cambios)
         .subscribe(
-          (response) => {
-            console.log('Entrada registrada exitosamente:', response);
+          () => {
+            console.log('Entrada registrada exitosamente.');
           },
           (error) => {
             console.error('Error al registrar entrada:', error);
           }
         );
+      const logDetalle: Movements_Detail = {
+        id_detalle_mov: 0,
+        id_movimiento: 0,
+        id_producto: item.idArticulo,
+        cantidad: item.cantidad,
+        precio: item.precioVenta * item.cantidad,
+      };
+      logDetalles.push(logDetalle);
+      console.log('Log creado exitosamente: ', logDetalle);
+    });
+    const logGlobal = {
+      id_usuario: 1,
+      tipo_movimiento: 'Entrada',
+      sucursal_salida: null,
+      sucursal_destino: this.sucursal?.idSucursal,
+      id_tipo_salida: null,
+      id_clinica: null,
+      fecha: new Date(),
+      precio_total: valor_total_movimiento,
+    };
+    console.log('Log Global creado exitosamente: ', logGlobal);
+    this.movimientosService.insertarLogMovimiento(logGlobal).subscribe((id) => {
+      if (id !== null) {
+        console.log('Movimiento insertado con ID:', id);
+        logDetalles.forEach((logDetalle) => {
+          logDetalle.id_movimiento = id;
+          this.detalleMovimientosService
+            .insertarLogMovimientoDetail(logDetalle)
+            .subscribe();
+        });
+      } else {
+        console.error('Error al insertar el movimiento.');
+      }
     });
   }
 
   registrarSalida(): void {
+    let valor_total_movimiento = 0;
+    const logDetalles: Movements_Detail[] = [];
     this.items.forEach((item) => {
+      valor_total_movimiento += item.precioVenta * item.cantidad;
       console.log(
         'Cantidad de salida para el artículo con id',
         item.idArticulo,
@@ -260,8 +305,8 @@ export class EntradasysalidasComponent implements OnInit {
           cambiosMaster
         )
         .subscribe(
-          (response) => {
-            console.log('Salida master registrada exitosamente:', response);
+          () => {
+            console.log('Salida master registrada exitosamente.');
           },
           (error) => {
             console.error('Error al registrar salida master:', error);
@@ -270,15 +315,48 @@ export class EntradasysalidasComponent implements OnInit {
       this.inventarioService
         .registrarSalida(item.idArticulo, cambios)
         .subscribe(
-          (response) => {
-            console.log('Salida registrada exitosamente:', response);
+          () => {
+            console.log('Salida registrada exitosamente.');
           },
           (error) => {
             console.error('Error al registrar salida:', error);
           }
         );
-    });
-  }
+        const logDetalle: Movements_Detail = {
+          id_detalle_mov: 0,
+          id_movimiento: 0,
+          id_producto: item.idArticulo,
+          cantidad: item.cantidad,
+          precio: item.precioVenta * item.cantidad,
+        };
+        logDetalles.push(logDetalle);
+        console.log('Log creado exitosamente: ', logDetalle);
+      });
+      const logGlobal = {
+        id_usuario: 1,
+        tipo_movimiento: 'Salida',
+        sucursal_salida: this.sucursal?.idSucursal,
+        sucursal_destino: null,
+        id_tipo_salida: null,
+        id_clinica: null,
+        fecha: new Date(),
+        precio_total: valor_total_movimiento,
+      };
+      console.log('Log Global creado exitosamente: ', logGlobal);
+      this.movimientosService.insertarLogMovimiento(logGlobal).subscribe((id) => {
+        if (id !== null) {
+          console.log('Movimiento insertado con ID:', id);
+          logDetalles.forEach((logDetalle) => {
+            logDetalle.id_movimiento = id;
+            this.detalleMovimientosService
+              .insertarLogMovimientoDetail(logDetalle)
+              .subscribe();
+          });
+        } else {
+          console.error('Error al insertar el movimiento.');
+        }
+      });
+    }
 
   obtenerDetalleSucursal(): void {
     this.route.paramMap.subscribe((params) => {

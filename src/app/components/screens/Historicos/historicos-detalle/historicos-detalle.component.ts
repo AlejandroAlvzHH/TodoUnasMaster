@@ -16,7 +16,7 @@ import { VistaMovementsDetail } from '../../../../Models/Master/vista-movements-
           <th>ID Detalle</th>
           <th>Producto</th>
           <th>Cantidad</th>
-          <th>Precio</th>
+          <th>Valor $</th>
         </tr>
       </thead>
       <tbody>
