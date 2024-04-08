@@ -116,12 +116,7 @@ export class CarritoClinicaComponent {
       newValue = 1;
       event.target.value = newValue;
     }
-    if (newValue > item.existencia) {
-      item.cantidad = item.existencia;
-      event.target.value = item.existencia;
-    } else {
-      item.cantidad = newValue;
-    }
+    item.cantidad = newValue;
   }
 
   eliminarItem(index: number) {

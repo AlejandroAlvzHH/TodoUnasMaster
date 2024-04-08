@@ -110,6 +110,7 @@ export class EntradasysalidasComponent implements OnInit {
 
   selectSalida(): void {
     this.isEntradaSelected = false;
+    this.cantidadReset();
   }
 
   confirmAction(): void {
@@ -427,6 +428,12 @@ export class EntradasysalidasComponent implements OnInit {
           }
         );
       }
+    });
+  }
+
+  cantidadReset(): void {
+    this.items.forEach((item) => {
+      item.cantidad = 1;
     });
   }
 

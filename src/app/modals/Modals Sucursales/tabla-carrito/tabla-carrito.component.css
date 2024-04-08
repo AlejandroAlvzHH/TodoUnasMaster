@@ -5,3 +5,17 @@ input[type="text"] {
     width: 200px;
     margin-bottom: 8px;
   }
+
+  .quantity-input {
+    width: 60px; 
+  }
+
+  .btn {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  

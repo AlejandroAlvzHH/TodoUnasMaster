@@ -41,11 +41,12 @@ import { CarritoComunicationService } from '../../../core/services/Services Sucu
                 [max]="item.existencia"
                 [(ngModel)]="item.cantidad"
                 (input)="validarCantidad($event, item)"
+                class="quantity-input"
               />
               <button class="btn" (click)="eliminarItem(i)">Eliminar</button>
             </td>
             <td *ngIf="isSalida">
-              <select [(ngModel)]="item.motivoSalida">
+              <select [(ngModel)]="item.motivoSalida" class="select-motivo">
                 <option value="" disabled selected>-- Seleccione --</option>
                 <option
                   *ngFor="let motivo of catalogoSalidas"
@@ -129,12 +130,13 @@ export class TablaCarritoComponent {
       newValue = 1;
       event.target.value = newValue;
     }
+    if (this.isSalida){
     if (newValue > item.existencia) {
       item.cantidad = item.existencia;
       event.target.value = item.existencia;
     } else {
       item.cantidad = newValue;
-    }
+    }}
   }
 
   eliminarItem(index: number) {
