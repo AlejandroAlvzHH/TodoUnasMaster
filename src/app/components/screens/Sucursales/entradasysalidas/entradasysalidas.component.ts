@@ -17,6 +17,8 @@ import { Movements_Detail } from '../../../../Models/Master/movements_detail';
 import { DetalleMovimientosService } from '../../../../core/services/detalle-movimientos.service';
 import { MovimientosService } from '../../../../core/services/movimientos.service';
 import Swal from 'sweetalert2';
+import { CatalogoSalidasService } from '../../../../core/services/Services Sucursales/Entradas y Salidas/catalogo-salidas.service';
+import { CatalogoSalidas } from '../../../../Models/Master/catalogo_salidas';
 
 @Component({
   selector: 'app-entradasysalidas',
@@ -55,6 +57,15 @@ import Swal from 'sweetalert2';
         </button>
       </div>
       <button class="btn" (click)="abrirModal()">Ver Productos Elegidos</button>
+      <select *ngIf="!isEntradaSelected" [(ngModel)]="motivoSalidaSeleccionado">
+        <option value="" disabled selected>-- Motivo --</option>
+        <option
+          *ngFor="let motivo of catalogoSalidas"
+          [value]="motivo.id_tipo_salida"
+        >
+          {{ motivo.tipo }}
+        </option>
+      </select>
       <button class="btn" (click)="confirmAction()">
         {{ isEntradaSelected ? 'Confirmar Entrada' : 'Confirmar Salida' }}
       </button>
@@ -65,7 +76,10 @@ import Swal from 'sweetalert2';
       ></app-tabla-carrito>
       <div class="table">
         <h2>Inventario en {{ sucursal?.nombre }}</h2>
-        <app-tabla-productos [baseUrl]="sucursal?.url"></app-tabla-productos>
+        <app-tabla-productos
+          [baseUrl]="sucursal?.url"
+          #tablaProductos
+        ></app-tabla-productos>
       </div>
     </main> `,
   styleUrl: './entradasysalidas.component.css',
@@ -76,12 +90,15 @@ export class EntradasysalidasComponent implements OnInit {
   isEntradaSelected: boolean = true;
   mostrarModal: boolean = false;
   items: any[] = [];
+  motivoSalidaSeleccionado: string = '';
+  catalogoSalidas: CatalogoSalidas[] = [];
 
   @ViewChild(TablaCarritoComponent)
   tablaCarritoComponent!: TablaCarritoComponent;
 
   constructor(
     private route: ActivatedRoute,
+    private catalogoSalidasService: CatalogoSalidasService,
     private apiService: ApiService,
     private sidebarOpeningService: SidebaropeningService,
     private inventarioService: InventarioService,
@@ -91,26 +108,8 @@ export class EntradasysalidasComponent implements OnInit {
     private detalleMovimientosService: DetalleMovimientosService
   ) {}
 
-  abrirModal(): void {
-    this.mostrarModal = true;
-  }
-
-  cerrarModal(): void {
-    this.mostrarModal = false;
-  }
-
-  toggleSidebar(): void {
-    console.log('Toggle');
-    this.sidebarOpeningService.toggleSidebar();
-  }
-
-  selectEntrada(): void {
-    this.isEntradaSelected = true;
-  }
-
-  selectSalida(): void {
-    this.isEntradaSelected = false;
-    this.cantidadReset();
+  onMotivoSalidaChange(event: any) {
+    this.motivoSalidaSeleccionado = event.target.value;
   }
 
   confirmAction(): void {
@@ -122,7 +121,7 @@ export class EntradasysalidasComponent implements OnInit {
         confirmButtonColor: '#007bff',
         confirmButtonText: 'Aceptar',
       });
-      return; 
+      return;
     }
     if (this.isEntradaSelected) {
       console.log('Entrada:');
@@ -264,11 +263,12 @@ export class EntradasysalidasComponent implements OnInit {
           });
         Swal.fire({
           title: 'Entrada Confirmada',
-          text: `Los productos han sido agregados al inventario de 
-      ${this.sucursal?.nombre}.`,
+          text: `Los productos han sido agregados al inventario de ${this.sucursal?.nombre}.`,
           icon: 'success',
           confirmButtonColor: '#007bff',
           confirmButtonText: 'Aceptar',
+        }).then(() => {
+          window.location.reload();
         });
       }
     });
@@ -382,7 +382,7 @@ export class EntradasysalidasComponent implements OnInit {
           tipo_movimiento: 'Salida',
           sucursal_salida: this.sucursal?.idSucursal,
           sucursal_destino: null,
-          id_tipo_salida: null,
+          id_tipo_salida: this.motivoSalidaSeleccionado,
           id_clinica: null,
           fecha: new Date(),
           precio_total: valor_total_movimiento,
@@ -405,11 +405,12 @@ export class EntradasysalidasComponent implements OnInit {
           });
         Swal.fire({
           title: 'Salida Confirmada',
-          text: `Los productos han sido eliminados del inventario de 
-  ${this.sucursal?.nombre}.`,
+          text: `Los productos han sido eliminados del inventario de ${this.sucursal?.nombre}.`,
           icon: 'success',
           confirmButtonColor: '#007bff',
           confirmButtonText: 'Aceptar',
+        }).then(() => {
+          window.location.reload();
         });
       }
     });
@@ -437,13 +438,54 @@ export class EntradasysalidasComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });
+    this.catalogoSalidas = [];
+    try {
+      const catalogoSalidas = await this.catalogoSalidasService
+        .getCatalogoSalidas()
+        .toPromise();
+      if (catalogoSalidas) {
+        this.catalogoSalidas = catalogoSalidas;
+        console.log(this.catalogoSalidas);
+        if (this.catalogoSalidas.length > 0) {
+          this.motivoSalidaSeleccionado =
+            this.catalogoSalidas[0].id_tipo_salida.toString();
+        }
+      } else {
+        console.error('El catálogo de salidas está vacío.');
+      }
+    } catch (error) {
+      console.error('Error al obtener el catálogo de salidas:', error);
+    }
+
     this.obtenerDetalleSucursal();
     this.carritoService.items$.subscribe((items) => {
       this.items = items;
     });
+  }
+
+  abrirModal(): void {
+    this.mostrarModal = true;
+  }
+
+  cerrarModal(): void {
+    this.mostrarModal = false;
+  }
+
+  toggleSidebar(): void {
+    console.log('Toggle');
+    this.sidebarOpeningService.toggleSidebar();
+  }
+
+  selectEntrada(): void {
+    this.isEntradaSelected = true;
+  }
+
+  selectSalida(): void {
+    this.isEntradaSelected = false;
+    this.cantidadReset();
   }
 }

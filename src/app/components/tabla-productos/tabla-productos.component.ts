@@ -227,6 +227,51 @@ export class TablaProductosComponent implements OnInit {
     item.botonDesactivado = true;
     this.carritoService.agregarItem({ ...item, cantidad: 1 });
   }
+  resetFilteredProductsList(): void {
+    this.filteredProductsList = this.productsList.map((product) => ({
+      idArticulo: product.idArticulo,
+      clave: product.clave,
+      nombre: product.nombre,
+      precioVenta: product.precioVenta,
+      precioCompra: product.precioCompra,
+      unidadVenta: product.unidadVenta,
+      unidadCompra: product.unidadCompra,
+      relacion: product.relacion,
+      idImp1: product.idImp1,
+      idImp2: product.idImp2,
+      idRet1: product.idRet1,
+      idRet2: product.idRet2,
+      existencia: product.existencia,
+      observaciones: product.observaciones,
+      neto: product.neto,
+      netoC: product.netoC,
+      inventariable: product.inventariable,
+      costo: product.costo,
+      lotes: product.lotes,
+      series: product.series,
+      precioSug: product.precioSug,
+      oferta: product.oferta,
+      promocion: product.promocion,
+      impCig: product.impCig,
+      color: product.color,
+      precioLista: product.precioLista,
+      condiciones: product.condiciones,
+      utilidad: product.utilidad,
+      alterna: product.alterna,
+      kit: product.kit,
+      dpc: product.dpc,
+      dpv: product.dpv,
+      reorden: product.reorden,
+      maximo: product.maximo,
+      kitSuelto: product.kitSuelto,
+      idClaseMultiple: product.idClaseMultiple,
+      prcFix: product.prcFix,
+      localiza: product.localiza,
+      enCarrito: false,
+      botonDesactivado: false,
+    }));
+    this.filteredIndices = Array.from({ length: this.filteredProductsList.length }, (_, i) => i);
+  }
 
   filterResults(event: Event) {
     const text = (event.target as HTMLInputElement).value.toLowerCase();

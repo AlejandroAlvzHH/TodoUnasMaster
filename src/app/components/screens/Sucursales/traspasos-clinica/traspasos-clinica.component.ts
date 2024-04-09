@@ -246,6 +246,8 @@ export class TraspasosClinicaComponent {
               icon: 'success',
               confirmButtonColor: '#007bff', 
               confirmButtonText: 'Aceptar' 
+            }).then(() => {
+              window.location.reload();
             });
         }
       });
