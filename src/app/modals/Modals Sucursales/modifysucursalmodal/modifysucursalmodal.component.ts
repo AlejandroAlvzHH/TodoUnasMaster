@@ -8,18 +8,20 @@ import { Branches } from '../../../Models/Master/branches';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `<div class="modal">
-    <h2>Modificar Sucursal</h2>
-    <label>Nombre:</label>
-    <input type="text" [(ngModel)]="nombre" />
-    <label>Dirección:</label>
-    <input type="text" [(ngModel)]="direccion" />
-    <label>URL de servicios:</label>
-    <input type="text" [(ngModel)]="url" />
-    <label>URL de imagen:</label>
-    <input type="text" [(ngModel)]="url_imagen" />
-    <div class="botonera">
-      <button class="btn" (click)="modificarSucursal()">Modificar</button>
-      <button class="btn" (click)="cerrarModal()">Cancelar</button>
+    <div class="modal-content">
+      <h2>Modificar Sucursal</h2>
+      <label>Nombre:</label>
+      <input type="text" [(ngModel)]="nombre" />
+      <label>Dirección:</label>
+      <input type="text" [(ngModel)]="direccion" />
+      <label>URL de servicios:</label>
+      <input type="text" [(ngModel)]="url" />
+      <label>URL de imagen:</label>
+      <input type="text" [(ngModel)]="url_imagen" />
+      <div class="botonera">
+        <button class="btn" (click)="modificarSucursal()">Modificar</button>
+        <button class="btn" (click)="cerrarModal()">Cancelar</button>
+      </div>
     </div>
   </div> `,
   styleUrl: './modifysucursalmodal.component.css',

@@ -7,4 +7,16 @@ header {
   color: white;
 }
 
+button {
+  background-color: #5c5c5c;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #6f6f6f;
+}
 

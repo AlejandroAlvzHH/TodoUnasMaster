@@ -8,6 +8,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { SidebarComponent } from '../../../sidebar/sidebar.component';
 import { HeaderComponent } from '../../../header/header.component';
 import { SidebaropeningService } from '../../../../core/services/sidebaropening.service';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+
 type TipoDeError = HttpErrorResponse;
 @Component({
   selector: 'app-sucursal-selected',
@@ -43,11 +46,13 @@ type TipoDeError = HttpErrorResponse;
           <a href="/traspasos/{{ sucursal?.idSucursal }}" class="opcion"
             >Traspasos</a
           >
-          <a href="#" class="opcion" (click)="eliminarSucursal()">Eliminar</a>
+          <button class="opcion" (click)="eliminarSucursal()">Eliminar</button>
           <button class="opcion" (click)="abrirModal()">
             Modificar Sucursal
           </button>
-          <a href="/traspasosclinica/{{ sucursal?.idSucursal }}" class="opcion">Traspaso a Clínica</a>
+          <a href="/traspasosclinica/{{ sucursal?.idSucursal }}" class="opcion"
+            >Traspaso a Clínica</a
+          >
         </div>
       </div>
     </main>`,
@@ -61,7 +66,8 @@ export class SucursalSelectedComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private sidebarOpeningService: SidebaropeningService
+    private sidebarOpeningService: SidebaropeningService,
+    private router: Router
   ) {}
 
   toggleSidebar(): void {
@@ -100,24 +106,36 @@ export class SucursalSelectedComponent implements OnInit {
     this.mostrarModal = false;
   }
 
-  eliminarSucursal() {
-    if (this.sucursal) {
-      this.sucursal.status = 0;
-      this.apiService
-        .modificarStatusSucursal(this.sucursal.idSucursal, 0)
-        .subscribe(
-          (success: boolean) => {
-            if (success) {
-              this.obtenerDetalleSucursal();
-              this.mostrarModal = false;
-            } else {
-              console.error('Error al eliminar la sucursal.');
-            }
-          },
-          (error: TipoDeError) => {
-            console.error('Error al eliminar la sucursal:', error);
-          }
-        );
+  async eliminarSucursal() {
+    const result = await Swal.fire({
+      title: 'Confirmar Eliminación',
+      text: `¿Estás seguro de eliminar ${this.sucursal?.nombre}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, confirmar eliminación',
+      cancelButtonText: 'Cancelar',
+    });
+    if (result.isConfirmed) {
+      if (this.sucursal) {
+        this.apiService
+          .modificarStatusSucursal(this.sucursal.idSucursal, 0)
+          .toPromise();
+
+        await Swal.fire({
+          title: 'Sucursal Eliminada',
+          text: 'Los registros permanecerán en la base de datos.',
+          icon: 'success',
+          confirmButtonColor: '#007bff',
+          confirmButtonText: 'Aceptar',
+        });
+        this.obtenerDetalleSucursal();
+        this.mostrarModal = false;
+        this.router.navigate(['/']);
+      } else {
+        console.error('Error al eliminar la sucursal.');
+      }
     }
   }
 

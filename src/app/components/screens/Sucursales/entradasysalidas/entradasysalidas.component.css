@@ -102,3 +102,8 @@ th {
 td {
   border-bottom: 1px solid #ddd; 
 }
+
+h1, h2{
+  margin-top: 1%;
+  font-family: "Montserrat", sans-serif;
+}

@@ -8,6 +8,7 @@ import { Branches } from '../../../Models/Master/branches';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `<div class="modal">
+    <div class="modal-content">
     <h2>Agregar Sucursal</h2>
     <label>Nombre:</label>
     <input type="text" [(ngModel)]="nuevaSucursal.nombre" />
@@ -20,6 +21,7 @@ import { Branches } from '../../../Models/Master/branches';
     <div class="botonera">
       <button class="btn" (click)="agregarSucursal()">Añadir</button>
       <button class="btn" (click)="cerrarModal()">Cancelar</button>
+    </div>
     </div>
   </div>`,
   styleUrl: './sucursalesmodal.component.css',

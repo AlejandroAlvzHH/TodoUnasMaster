@@ -26,7 +26,6 @@ import { CarritoComunicationService } from '../../../core/services/Services Sucu
             <th scope="col">Clave</th>
             <th scope="col">Nombre</th>
             <th scope="col">Cantidad</th>
-            <th *ngIf="isSalida" scope="col">Motivo de Salida</th>
           </tr>
         </thead>
         <tbody>
@@ -73,7 +72,7 @@ export class CarritoClinicaComponent {
   constructor(
     private carritoService: CarritoServiceService,
     private catalogoSalidasService: CatalogoSalidasService,
-    private carritoCommunicationService: CarritoComunicationService
+    private carritoCommunicationService: CarritoComunicationService,
   ) {
     this.carritoService.items$.subscribe((items) => {
       this.items = items;

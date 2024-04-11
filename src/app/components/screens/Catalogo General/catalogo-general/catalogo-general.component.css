@@ -20,3 +20,9 @@ input[type="text"] {
 .main-content.opened-sidebar .overlay {
   display: block;
 }
+
+h1,
+h2 {
+  margin-top: 1%;
+  font-family: "Montserrat", sans-serif;
+}

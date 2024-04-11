@@ -18,6 +18,7 @@ import { MovimientosService } from '../../../../core/services/movimientos.servic
 import { DetalleMovimientosService } from '../../../../core/services/detalle-movimientos.service';
 import { Movements_Detail } from '../../../../Models/Master/movements_detail';
 import Swal from 'sweetalert2';
+import { PdfServiceService } from '../../../../core/services/pdf-service.service';
 
 @Component({
   selector: 'app-traspasos-clinica',
@@ -40,7 +41,7 @@ import Swal from 'sweetalert2';
         (click)="toggleSidebar()"
       ></div>
       <h1>TRASPASOS A CLÍNICA</h1>
-      <h2>DESDE {{ sucursal?.nombre }} HACIA:</h2>
+      <h2>Desde {{ sucursal?.nombre }} hacia:</h2>
       <select [(ngModel)]="selectedClinica">
         <option *ngFor="let clinica of clinicas" [value]="clinica.id_clinica">
           {{ clinica.nombre }}
@@ -76,7 +77,8 @@ export class TraspasosClinicaComponent {
     private inventarioService: InventarioService,
     private carritoService: CarritoServiceService,
     private movimientosService: MovimientosService,
-    private detalleMovimientosService: DetalleMovimientosService
+    private detalleMovimientosService: DetalleMovimientosService,
+    private pdfService: PdfServiceService
   ) {}
 
   obtenerDetalleSucursal(): void {
@@ -104,13 +106,21 @@ export class TraspasosClinicaComponent {
         confirmButtonColor: '#007bff',
         confirmButtonText: 'Aceptar',
       });
-      return; 
+      return;
     }
     if (this.selectedClinica !== null && this.selectedClinica !== undefined) {
       const selectedClinica = this.clinicas.find(
         (clinica) =>
           clinica.id_clinica === parseInt(this.selectedClinica!.toString(), 10)
       );
+      const detallesProductos = this.items.map((item, index) => {
+        return {
+          IdDetalle: index + 1,
+          Producto: item.nombre,
+          Cantidad: item.cantidad,
+          Valor: item.precioVenta * item.cantidad,
+        };
+      });
       Swal.fire({
         title: 'Confirmar Traspaso',
         text: `¿Estás seguro de traspasar los productos a ${selectedClinica?.nombre}?`,
@@ -119,7 +129,7 @@ export class TraspasosClinicaComponent {
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, confirmar traspaso',
-        cancelButtonText: 'Cancelar' 
+        cancelButtonText: 'Cancelar',
       }).then((result) => {
         if (result.isConfirmed) {
           console.log('Traspaso confirmado hacia', selectedClinica?.nombre);
@@ -216,7 +226,7 @@ export class TraspasosClinicaComponent {
           });
           const logGlobal = {
             id_usuario: 1,
-            tipo_movimiento: 'Traspaso a clínica',
+            tipo_movimiento: 'Traspaso a Clinica',
             sucursal_salida: this.sucursal?.idSucursal,
             sucursal_destino: null,
             id_tipo_salida: null,
@@ -240,15 +250,40 @@ export class TraspasosClinicaComponent {
                 console.error('Error al insertar el movimiento.');
               }
             });
-            Swal.fire({
-              title: 'Traspaso Confirmado',
-              text: `Los productos han sido traspasados a ${selectedClinica?.nombre}.`,
-              icon: 'success',
-              confirmButtonColor: '#007bff', 
-              confirmButtonText: 'Aceptar' 
-            }).then(() => {
-              window.location.reload();
-            });
+          const data = {
+            Usuario: '1',
+            Tipo: 'Traspaso a Clinica',
+            SucursalSalida: this.sucursal?.nombre,
+            SucursalDestino: '',
+            TipoSalida: '',
+            Clinica: selectedClinica?.nombre,
+            Fecha: new Date(),
+            PrecioTotal: valor_total_movimiento,
+            Detalles: detallesProductos,
+          };
+          this.pdfService.generarReporte(data).subscribe(
+            (blob: Blob) => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'reporte_movimiento.pdf';
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+            },
+            (error: any) => {
+              console.error('Error al generar el reporte:', error);
+            }
+          );
+          Swal.fire({
+            title: 'Traspaso Confirmado',
+            text: `Los productos han sido traspasados a ${selectedClinica?.nombre}.`,
+            icon: 'success',
+            confirmButtonColor: '#007bff',
+            confirmButtonText: 'Aceptar',
+          }).then(() => {
+            window.location.reload();
+          });
         }
       });
     } else {

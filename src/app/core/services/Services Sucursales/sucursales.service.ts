@@ -10,6 +10,7 @@ export class ApiService {
   url = 'http://localhost:10395/api/SucursalApi';
 
   constructor(private http: HttpClient) {}
+
   agregarSucursal(sucursal: Branches): Observable<Branches> {
     return this.http.post<Branches>(this.url, sucursal);
   }

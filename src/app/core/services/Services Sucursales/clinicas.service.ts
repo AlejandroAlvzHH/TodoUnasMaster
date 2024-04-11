@@ -4,12 +4,12 @@ import { Observable } from 'rxjs';
 import { Clinics } from '../../../Models/Master/clinics';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ClinicasService {
-  private clinicasUrl = 'http://localhost:10395/api/ClinicasApi'; 
+  private clinicasUrl = 'http://localhost:10395/api/ClinicasApi';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getClinicas(): Observable<Clinics[]> {
     return this.http.get<Clinics[]>(this.clinicasUrl);
