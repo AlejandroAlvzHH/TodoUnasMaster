@@ -46,7 +46,7 @@ type TipoDeError = HttpErrorResponse;
           <a href="/traspasos/{{ sucursal?.idSucursal }}" class="opcion"
             >Traspasos</a
           >
-          <button class="opcion" (click)="eliminarSucursal()">Eliminar</button>
+          <button class="opcion" (click)="eliminarSucursal()">Eliminar Sucursal</button>
           <button class="opcion" (click)="abrirModal()">
             Modificar Sucursal
           </button>

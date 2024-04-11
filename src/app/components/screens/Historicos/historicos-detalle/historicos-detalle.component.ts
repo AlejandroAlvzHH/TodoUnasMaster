@@ -21,8 +21,8 @@ import { PdfServiceService } from '../../../../core/services/pdf-service.service
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let detalle of detallesMovimiento">
-            <td>{{ detalle.id_detalle_mov }}</td>
+          <tr *ngFor="let detalle of detallesMovimiento; let i = index">
+            <td>{{ i + 1 }}</td>
             <td>{{ detalle.nombre_producto }}</td>
             <td>{{ detalle.cantidad }}</td>
             <td>{{ detalle.precio }}</td>
@@ -40,7 +40,7 @@ export class HistoricosDetalleComponent {
   @Input() movimientoId: number | null = null;
   detallesMovimiento: VistaMovementsDetail[] = [];
 
-  //Datos del movimiento master
+  //Datos del movimiento master que recibo por inputsss
   @Input() tipoMovimiento: string | null = null;
   @Input() sucursalSalida: string | null = null;
   @Input() sucursalDestino: string | null = null;
@@ -87,7 +87,7 @@ export class HistoricosDetalleComponent {
       PrecioTotal: this.valorTotal,
       Detalles: detallesProductos,
     };
-    
+
     this.pdfService.generarReporte(data).subscribe(
       (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
