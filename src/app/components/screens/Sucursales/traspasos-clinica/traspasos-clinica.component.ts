@@ -41,7 +41,7 @@ import { PdfServiceService } from '../../../../core/services/pdf-service.service
         (click)="toggleSidebar()"
       ></div>
       <h1>TRASPASOS A CLÍNICA</h1>
-      <h2>Desde {{ sucursal?.nombre }} hacia:</h2>
+      <h2>Desde {{ sucursal?.nombre }} -> hacia:</h2>
       <select [(ngModel)]="selectedClinica">
         <option *ngFor="let clinica of clinicas" [value]="clinica.id_clinica">
           {{ clinica.nombre }}

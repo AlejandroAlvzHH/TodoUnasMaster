@@ -38,7 +38,7 @@ import { PdfServiceService } from '../../../../core/services/pdf-service.service
         (click)="toggleSidebar()"
       ></div>
       <h1>TRASPASOS A SUCURSAL</h1>
-      <h2>Desde {{ sucursal?.nombre }} hacia:</h2>
+      <h2>Desde {{ sucursal?.nombre }} -> hacia:</h2>
       <select [(ngModel)]="selectedSucursalDestino">
         <option
           *ngFor="let sucursal of sucursalDestino"
