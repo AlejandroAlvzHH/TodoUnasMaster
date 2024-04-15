@@ -14,7 +14,7 @@ import { PdfServiceService } from '../../../../core/services/pdf-service.service
       <table>
         <thead>
           <tr>
-            <th>ID Detalle</th>
+            <th>#</th>
             <th>Producto</th>
             <th>Cantidad</th>
             <th>Valor $</th>
