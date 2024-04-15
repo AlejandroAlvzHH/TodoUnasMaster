@@ -138,12 +138,6 @@ export class TraspasosComponent {
           const logDetalles: Movements_Detail[] = [];
           this.items.forEach((item) => {
             valor_total_movimiento += item.precioVenta * item.cantidad;
-            console.log(
-              'Cantidad de traspaso para el artículo con id ',
-              item.idArticulo,
-              ':',
-              item.cantidad
-            );
             const cambiosMaster = {
               id_sucursal: this.sucursal?.idSucursal ?? 0,
               id_producto: item.idArticulo,
@@ -189,8 +183,6 @@ export class TraspasosComponent {
               prcFix: item.prcFix,
               localiza: item.localiza,
             };
-            console.log('JSON final: ', cambios);
-            console.log('JSON final master: ', cambiosMaster);
             this.inventarioServiceMaster
               .registrarSalidaMaster(
                 this.sucursal?.idSucursal ?? 0,
@@ -223,7 +215,6 @@ export class TraspasosComponent {
               precio: item.precioVenta * item.cantidad,
             };
             logDetalles.push(logDetalle);
-            console.log('Log creado exitosamente: ', logDetalle);
           });
           const logGlobal = {
             id_usuario: 1,
@@ -235,12 +226,10 @@ export class TraspasosComponent {
             fecha: new Date(),
             precio_total: valor_total_movimiento,
           };
-          console.log('Log Global creado exitosamente: ', logGlobal);
           this.movimientosService
             .insertarLogMovimiento(logGlobal)
             .subscribe((id) => {
               if (id !== null) {
-                console.log('Movimiento insertado con ID:', id);
                 logDetalles.forEach((logDetalle) => {
                   logDetalle.id_movimiento = id;
                   this.detalleMovimientosService
@@ -288,7 +277,6 @@ export class TraspasosComponent {
         }
       });
     } else {
-      console.error('selectedSucursalDestino es null o undefined.');
       return;
     }
   }
