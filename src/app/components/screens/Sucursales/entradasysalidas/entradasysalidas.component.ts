@@ -58,7 +58,11 @@ import { PdfServiceService } from '../../../../core/services/pdf-service.service
         </button>
       </div>
       <button class="btn" (click)="abrirModal()">Ver Productos Elegidos</button>
-      <select *ngIf="!isEntradaSelected" [(ngModel)]="motivoSalidaSeleccionado">
+      <select
+        *ngIf="!isEntradaSelected"
+        [(ngModel)]="motivoSalidaSeleccionado"
+        (change)="onMotivoSalidaChange($event)"
+      >
         <option value="" disabled selected>-- Motivo --</option>
         <option
           *ngFor="let motivo of catalogoSalidas"
@@ -92,6 +96,7 @@ export class EntradasysalidasComponent implements OnInit {
   mostrarModal: boolean = false;
   items: any[] = [];
   motivoSalidaSeleccionado: string = '';
+  nombreMotivoSalidaSeleccionado: string = '';
   catalogoSalidas: CatalogoSalidas[] = [];
 
   @ViewChild(TablaCarritoComponent)
@@ -112,6 +117,7 @@ export class EntradasysalidasComponent implements OnInit {
 
   onMotivoSalidaChange(event: any) {
     this.motivoSalidaSeleccionado = event.target.value;
+    this.nombreMotivoSalidaSeleccionado = event.target.options[event.target.selectedIndex].text;
   }
 
   confirmAction(): void {
@@ -271,31 +277,31 @@ export class EntradasysalidasComponent implements OnInit {
               console.error('Error al insertar el movimiento.');
             }
           });
-          const data = {
-            Usuario: '1',
-            Tipo: 'Entrada',
-            SucursalSalida: '',
-            SucursalDestino: this.sucursal?.nombre,
-            TipoSalida: '',
-            Clinica: '',
-            Fecha: new Date(),
-            PrecioTotal: valor_total_movimiento,
-            Detalles: detallesProductos,
-          };
-          this.pdfService.generarReporte(data).subscribe(
-            (blob: Blob) => {
-              const url = window.URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = 'reporte_movimiento.pdf';
-              document.body.appendChild(a);
-              a.click();
-              window.URL.revokeObjectURL(url);
-            },
-            (error: any) => {
-              console.error('Error al generar el reporte:', error);
-            }
-          );
+        const data = {
+          Usuario: '1',
+          Tipo: 'Entrada',
+          SucursalSalida: '',
+          SucursalDestino: this.sucursal?.nombre,
+          TipoSalida: '',
+          Clinica: '',
+          Fecha: new Date(),
+          PrecioTotal: valor_total_movimiento,
+          Detalles: detallesProductos,
+        };
+        this.pdfService.generarReporte(data).subscribe(
+          (blob: Blob) => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'reporte_movimiento.pdf';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+          },
+          (error: any) => {
+            console.error('Error al generar el reporte:', error);
+          }
+        );
         Swal.fire({
           title: 'Entrada Confirmada',
           text: `Los productos han sido agregados al inventario de ${this.sucursal?.nombre}.`,
@@ -446,31 +452,31 @@ export class EntradasysalidasComponent implements OnInit {
               console.error('Error al insertar el movimiento.');
             }
           });
-          const data = {
-            Usuario: '1',
-            Tipo: 'Salida',
-            SucursalSalida: this.sucursal?.nombre,
-            SucursalDestino: '',
-            TipoSalida: this.motivoSalidaSeleccionado,
-            Clinica: '',
-            Fecha: new Date(),
-            PrecioTotal: valor_total_movimiento,
-            Detalles: detallesProductos,
-          };
-          this.pdfService.generarReporte(data).subscribe(
-            (blob: Blob) => {
-              const url = window.URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = 'reporte_movimiento.pdf';
-              document.body.appendChild(a);
-              a.click();
-              window.URL.revokeObjectURL(url);
-            },
-            (error: any) => {
-              console.error('Error al generar el reporte:', error);
-            }
-          );
+        const data = {
+          Usuario: '1',
+          Tipo: 'Salida',
+          SucursalSalida: this.sucursal?.nombre,
+          SucursalDestino: '',
+          TipoSalida: this.nombreMotivoSalidaSeleccionado,
+          Clinica: '',
+          Fecha: new Date(),
+          PrecioTotal: valor_total_movimiento,
+          Detalles: detallesProductos,
+        };
+        this.pdfService.generarReporte(data).subscribe(
+          (blob: Blob) => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'reporte_movimiento.pdf';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+          },
+          (error: any) => {
+            console.error('Error al generar el reporte:', error);
+          }
+        );
         Swal.fire({
           title: 'Salida Confirmada',
           text: `Los productos han sido eliminados del inventario de ${this.sucursal?.nombre}.`,
@@ -521,6 +527,8 @@ export class EntradasysalidasComponent implements OnInit {
         if (this.catalogoSalidas.length > 0) {
           this.motivoSalidaSeleccionado =
             this.catalogoSalidas[0].id_tipo_salida.toString();
+          this.nombreMotivoSalidaSeleccionado =
+            this.catalogoSalidas[0].tipo.toString();
         }
       } else {
         console.error('El catálogo de salidas está vacío.');
