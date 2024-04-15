@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { VistaMovements } from '../../../../Models/Master/vista-movements copy';
 import { HistoricosMovimientosService } from '../../../../core/services/Services Historicos/historicos-movimientos.service';
 import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-detalle.component';
+import { Movements } from '../../../../Models/Master/movements';
 
 @Component({
   selector: 'app-historicos',
@@ -17,16 +18,24 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
     HistoricosDetalleComponent,
   ],
   template: ` <app-header></app-header>
-  <app-sidebar></app-sidebar>
-  <main class="main-content" [class.opened-sidebar]="isSidebarOpen">
-    <div
-      class="overlay"
-      *ngIf="isSidebarOpen"
-      (click)="toggleSidebar()"
-    ></div>
-    <h1>HISTÓRICOS</h1>
-    <div>
+    <app-sidebar></app-sidebar>
+    <main class="main-content" [class.opened-sidebar]="isSidebarOpen">
+      <div
+        class="overlay"
+        *ngIf="isSidebarOpen"
+        (click)="toggleSidebar()"
+      ></div>
+      <h1>HISTÓRICOS</h1>
       <div>
+        <form class="search-form">
+          <div class="search-input">
+            <input
+              type="text"
+              placeholder="Buscar por ID de movimiento"
+              (input)="filterByIdMovimiento($event)"
+            />
+          </div>
+        </form>
         <app-historicos-detalle
           *ngIf="mostrarModal"
           [movimientoId]="movimientoSeleccionado!.id_movimiento"
@@ -42,7 +51,11 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
         <table border="2">
           <thead>
             <tr>
-              <th scope="col">
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('id_movimiento')"
+                [class.interactive]="columnaOrdenada === 'id_movimiento'"
+              >
                 ID Movimiento
                 <i
                   *ngIf="columnaOrdenada === 'id_movimiento'"
@@ -51,7 +64,11 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
                   [class.desc]="!ordenAscendente"
                 ></i>
               </th>
-              <th scope="col">
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('nombre_usuario')"
+                [class.interactive]="columnaOrdenada === 'nombre_usuario'"
+              >
                 Usuario
                 <i
                   *ngIf="columnaOrdenada === 'nombre_usuario'"
@@ -60,7 +77,11 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
                   [class.desc]="!ordenAscendente"
                 ></i>
               </th>
-              <th scope="col">
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('tipo_movimiento')"
+                [class.interactive]="columnaOrdenada === 'tipo_movimiento'"
+              >
                 Tipo
                 <i
                   *ngIf="columnaOrdenada === 'tipo_movimiento'"
@@ -69,7 +90,11 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
                   [class.desc]="!ordenAscendente"
                 ></i>
               </th>
-              <th scope="col">
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('sucursal_salida')"
+                [class.interactive]="columnaOrdenada === 'sucursal_salida'"
+              >
                 Sucursal de Salida
                 <i
                   *ngIf="columnaOrdenada === 'sucursal_salida'"
@@ -78,7 +103,11 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
                   [class.desc]="!ordenAscendente"
                 ></i>
               </th>
-              <th scope="col">
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('sucursal_destino')"
+                [class.interactive]="columnaOrdenada === 'sucursal_destino'"
+              >
                 Sucursal Destino
                 <i
                   *ngIf="columnaOrdenada === 'sucursal_destino'"
@@ -87,7 +116,11 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
                   [class.desc]="!ordenAscendente"
                 ></i>
               </th>
-              <th scope="col">
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('tipo_salida')"
+                [class.interactive]="columnaOrdenada === 'tipo_salida'"
+              >
                 Motivo de Salida
                 <i
                   *ngIf="columnaOrdenada === 'tipo_salida'"
@@ -96,7 +129,11 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
                   [class.desc]="!ordenAscendente"
                 ></i>
               </th>
-              <th scope="col">
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('nombre_clinica')"
+                [class.interactive]="columnaOrdenada === 'nombre_clinica'"
+              >
                 Clínica
                 <i
                   *ngIf="columnaOrdenada === 'nombre_clinica'"
@@ -105,7 +142,11 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
                   [class.desc]="!ordenAscendente"
                 ></i>
               </th>
-              <th scope="col">
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('fecha')"
+                [class.interactive]="columnaOrdenada === 'fecha'"
+              >
                 Fecha
                 <i
                   *ngIf="columnaOrdenada === 'fecha'"
@@ -114,7 +155,11 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
                   [class.desc]="!ordenAscendente"
                 ></i>
               </th>
-              <th scope="col">
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('precio_total')"
+                [class.interactive]="columnaOrdenada === 'precio_total'"
+              >
                 Precio Total
                 <i
                   *ngIf="columnaOrdenada === 'precio_total'"
@@ -126,18 +171,21 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let movement of movementsList">
-              <td>{{ movement.id_movimiento }}</td>
-              <td>{{ movement.nombre_usuario }}</td>
-              <td>{{ movement.tipo_movimiento }}</td>
-              <td>{{ movement.sucursal_salida }}</td>
-              <td>{{ movement.sucursal_destino }}</td>
-              <td>{{ movement.tipo_salida }}</td>
-              <td>{{ movement.nombre_clinica }}</td>
-              <td>{{ movement.fecha | date : 'short' }}</td>
+            <tr *ngFor="let index of filteredIndices">
+              <td>{{ filteredMovementsList[index].id_movimiento }}</td>
+              <td>{{ filteredMovementsList[index].nombre_usuario }}</td>
+              <td>{{ filteredMovementsList[index].tipo_movimiento }}</td>
+              <td>{{ filteredMovementsList[index].sucursal_salida }}</td>
+              <td>{{ filteredMovementsList[index].sucursal_destino }}</td>
+              <td>{{ filteredMovementsList[index].tipo_salida }}</td>
+              <td>{{ filteredMovementsList[index].nombre_clinica }}</td>
+              <td>{{ filteredMovementsList[index].fecha | date : 'short' }}</td>
               <td>
-                {{ movement.precio_total }}
-                <button class="btn" (click)="abrirModal(movement)">
+                {{ filteredMovementsList[index].precio_total }}
+                <button
+                  class="btn"
+                  (click)="abrirModal(filteredMovementsList[index])"
+                >
                   Ver Detalle
                 </button>
               </td>
@@ -145,28 +193,25 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
           </tbody>
         </table>
       </div>
-    </div>
-  </main>`,
+    </main>`,
   styleUrl: './historicos.component.css',
 })
 export class HistoricosComponent {
   isSidebarOpen: boolean = false;
-  movementsList: VistaMovements[] = [];
-  columnaOrdenada: keyof VistaMovements | null = null;
-  ordenAscendente: boolean = true;
   mostrarModal: boolean = false;
   movimientoSeleccionado: VistaMovements | null = null;
+
+  movementsList: VistaMovements[] = [];
+  filteredMovementsList: VistaMovements[] = [];
+  filteredIndices: number[] = [];
+  columnaOrdenada: keyof VistaMovements | null = null;
+  ordenAscendente: boolean = true;
 
   constructor(
     private sidebarOpeningService: SidebaropeningService,
     private historicosMovimientosService: HistoricosMovimientosService,
     private cdr: ChangeDetectorRef
   ) {}
-
-  toggleSidebar(): void {
-    console.log('Toggle');
-    this.sidebarOpeningService.toggleSidebar();
-  }
 
   ngOnInit(): void {
     this.initialize();
@@ -177,14 +222,86 @@ export class HistoricosComponent {
 
   private async initialize() {
     try {
-      console.log('Antes de llamar a getAllMovimientos');
       this.movementsList =
         await this.historicosMovimientosService.getAllMovimientos();
-      console.log('Después de obtener los movimientos:', this.movementsList);
+      this.filteredMovementsList = this.movementsList.map((movement) => ({
+        id_movimiento: movement.id_movimiento,
+        nombre_usuario: movement.nombre_usuario,
+        tipo_movimiento: movement.tipo_movimiento,
+        sucursal_salida: movement.sucursal_salida,
+        sucursal_destino: movement.sucursal_destino,
+        tipo_salida: movement.tipo_salida,
+        nombre_clinica: movement.nombre_clinica,
+        fecha: movement.fecha,
+        precio_total: movement.precio_total,
+      }));
+      this.filteredIndices = Array.from(
+        { length: this.filteredMovementsList.length },
+        (_, i) => i
+      );
       this.cdr.detectChanges();
     } catch (error) {
       console.error('Error al obtener los movimientos:', error);
     }
+  }
+
+  resetFilteredMovementsList(): void {
+    this.filteredMovementsList = this.movementsList.map((movement) => ({
+      id_movimiento: movement.id_movimiento,
+      nombre_usuario: movement.nombre_usuario,
+      tipo_movimiento: movement.tipo_movimiento,
+      sucursal_salida: movement.sucursal_salida,
+      sucursal_destino: movement.sucursal_destino,
+      tipo_salida: movement.tipo_salida,
+      nombre_clinica: movement.nombre_clinica,
+      fecha: movement.fecha,
+      precio_total: movement.precio_total,
+    }));
+    this.filteredIndices = Array.from(
+      { length: this.filteredMovementsList.length },
+      (_, i) => i
+    );
+  }
+
+  filterByIdMovimiento(event: Event) {
+    const text = (event.target as HTMLInputElement).value.trim();
+    if (text === '') {
+      this.filteredIndices = Array.from(
+        { length: this.movementsList.length },
+        (_, i) => i
+      );
+    } else {
+      const id_movimiento = parseInt(text, 10);
+      this.filteredIndices = this.movementsList
+        .map((movement, index) => ({ movement, index }))
+        .filter(({ movement }) => movement.id_movimiento === id_movimiento)
+        .map(({ index }) => index);
+    }
+  }
+
+  ordenarPorColumna(columna: keyof VistaMovements) {
+    if (this.columnaOrdenada === columna) {
+      this.ordenAscendente = !this.ordenAscendente;
+    } else {
+      this.columnaOrdenada = columna;
+      this.ordenAscendente = true;
+    }
+    this.filteredIndices.sort((a, b) => {
+      const productA = this.filteredMovementsList[a];
+      const productB = this.filteredMovementsList[b];
+      if (this.columnaOrdenada === null) {
+        return 0;
+      }
+      if (productA[this.columnaOrdenada] > productB[this.columnaOrdenada]) {
+        return this.ordenAscendente ? 1 : -1;
+      } else if (
+        productA[this.columnaOrdenada] < productB[this.columnaOrdenada]
+      ) {
+        return this.ordenAscendente ? -1 : 1;
+      } else {
+        return 0;
+      }
+    });
   }
 
   abrirModal(movement: VistaMovements): void {
@@ -194,5 +311,10 @@ export class HistoricosComponent {
 
   cerrarModal(): void {
     this.mostrarModal = false;
+  }
+
+  toggleSidebar(): void {
+    console.log('Toggle');
+    this.sidebarOpeningService.toggleSidebar();
   }
 }

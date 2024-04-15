@@ -17,6 +17,10 @@ input[type="text"] {
   margin-bottom: 8px;
 }
 
+th {
+  cursor: pointer; 
+}
+
 .overlay {
   position: fixed;
   top: 0;
@@ -26,6 +30,46 @@ input[type="text"] {
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 10;
   display: none;
+}
+
+.arrow-icon {
+  margin-left: 5px;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  transition: transform 0.3s ease; 
+}
+
+
+.asc {
+  border-top: 6px solid black; 
+  transform: rotate(180deg); 
+}
+
+.desc {
+  border-bottom: 6px solid black; 
+  transform: rotate(180deg); 
+}
+
+.interactive:hover {
+  text-decoration: underline; 
+}
+
+.search-form {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px; 
+}
+
+.search-input {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.search-input:last-child {
+  margin-right: 0;
 }
 
 .main-content.opened-sidebar .overlay {

@@ -124,6 +124,8 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
 })
 export class TablaProductosComponent implements OnInit {
   private _baseUrl?: string;
+
+  
   productsList: Products[] = [];
   filteredProductsList: ProductListItem[] = [];
   filteredIndices: number[] = [];
@@ -141,18 +143,6 @@ export class TablaProductosComponent implements OnInit {
     if (this.baseUrl) {
       this.initialize();
     }
-  }
-
-  @Input()
-  set baseUrl(value: string | undefined) {
-    this._baseUrl = value;
-    if (value) {
-      this.initialize();
-    }
-  }
-
-  get baseUrl(): string | undefined {
-    return this._baseUrl;
   }
 
   private async initialize() {
@@ -222,11 +212,6 @@ export class TablaProductosComponent implements OnInit {
     }
   }
 
-  agregarAlCarrito(item: ProductListItem) {
-    item.enCarrito = true;
-    item.botonDesactivado = true;
-    this.carritoService.agregarItem({ ...item, cantidad: 1 });
-  }
   resetFilteredProductsList(): void {
     this.filteredProductsList = this.productsList.map((product) => ({
       idArticulo: product.idArticulo,
@@ -328,5 +313,23 @@ export class TablaProductosComponent implements OnInit {
         return 0;
       }
     });
+  }
+
+  @Input()
+  set baseUrl(value: string | undefined) {
+    this._baseUrl = value;
+    if (value) {
+      this.initialize();
+    }
+  }
+
+  get baseUrl(): string | undefined {
+    return this._baseUrl;
+  }
+
+  agregarAlCarrito(item: ProductListItem) {
+    item.enCarrito = true;
+    item.botonDesactivado = true;
+    this.carritoService.agregarItem({ ...item, cantidad: 1 });
   }
 }

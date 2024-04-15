@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../../../sidebar/sidebar.component';
 import { SidebaropeningService } from '../../../../core/services/sidebaropening.service';
@@ -240,31 +240,31 @@ export class TraspasosComponent {
                 console.error('Error al insertar el movimiento.');
               }
             });
-            const data = {
-              Usuario: '1',
-              Tipo: 'Traspaso a Sucursal',
-              SucursalSalida: this.sucursal?.nombre,
-              SucursalDestino: selectedSucursalDestino?.nombre,
-              TipoSalida: '',
-              Clinica: '',
-              Fecha: new Date(),
-              PrecioTotal: valor_total_movimiento,
-              Detalles: detallesProductos,
-            };
-            this.pdfService.generarReporte(data).subscribe(
-              (blob: Blob) => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'reporte_movimiento.pdf';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-              },
-              (error: any) => {
-                console.error('Error al generar el reporte:', error);
-              }
-            );
+          const data = {
+            Usuario: '1',
+            Tipo: 'Traspaso a Sucursal',
+            SucursalSalida: this.sucursal?.nombre,
+            SucursalDestino: selectedSucursalDestino?.nombre,
+            TipoSalida: '',
+            Clinica: '',
+            Fecha: new Date(),
+            PrecioTotal: valor_total_movimiento,
+            Detalles: detallesProductos,
+          };
+          this.pdfService.generarReporte(data).subscribe(
+            (blob: Blob) => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'reporte_movimiento.pdf';
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+            },
+            (error: any) => {
+              console.error('Error al generar el reporte:', error);
+            }
+          );
           Swal.fire({
             title: 'Traspaso Confirmado',
             text: `Los productos han sido traspasados a ${selectedSucursalDestino?.nombre}.`,
