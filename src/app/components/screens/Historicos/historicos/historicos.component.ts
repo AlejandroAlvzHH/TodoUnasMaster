@@ -88,7 +88,7 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
                 ></i>
               </th>
               <th scope="col">
-                Tipo Salida
+                Motivo de Salida
                 <i
                   *ngIf="columnaOrdenada === 'tipo_salida'"
                   class="arrow-icon"

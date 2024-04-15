@@ -19,6 +19,7 @@ import { MovimientosService } from '../../../../core/services/movimientos.servic
 import Swal from 'sweetalert2';
 import { CatalogoSalidasService } from '../../../../core/services/Services Sucursales/Entradas y Salidas/catalogo-salidas.service';
 import { CatalogoSalidas } from '../../../../Models/Master/catalogo_salidas';
+import { PdfServiceService } from '../../../../core/services/pdf-service.service';
 
 @Component({
   selector: 'app-entradasysalidas',
@@ -105,7 +106,8 @@ export class EntradasysalidasComponent implements OnInit {
     private carritoService: CarritoServiceService,
     private inventarioServiceMaster: InventarioMasterService,
     private movimientosService: MovimientosService,
-    private detalleMovimientosService: DetalleMovimientosService
+    private detalleMovimientosService: DetalleMovimientosService,
+    private pdfService: PdfServiceService
   ) {}
 
   onMotivoSalidaChange(event: any) {
@@ -133,6 +135,14 @@ export class EntradasysalidasComponent implements OnInit {
   }
 
   registrarEntrada(): void {
+    const detallesProductos = this.items.map((item, index) => {
+      return {
+        IdDetalle: index + 1,
+        Producto: item.nombre,
+        Cantidad: item.cantidad,
+        Valor: item.precioVenta * item.cantidad,
+      };
+    });
     Swal.fire({
       title: 'Confirmar Entrada',
       text: `¿Estás seguro de registrar la entrada de productos en ${this.sucursal?.nombre}?`,
@@ -261,6 +271,31 @@ export class EntradasysalidasComponent implements OnInit {
               console.error('Error al insertar el movimiento.');
             }
           });
+          const data = {
+            Usuario: '1',
+            Tipo: 'Entrada',
+            SucursalSalida: '',
+            SucursalDestino: this.sucursal?.nombre,
+            TipoSalida: '',
+            Clinica: '',
+            Fecha: new Date(),
+            PrecioTotal: valor_total_movimiento,
+            Detalles: detallesProductos,
+          };
+          this.pdfService.generarReporte(data).subscribe(
+            (blob: Blob) => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'reporte_movimiento.pdf';
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+            },
+            (error: any) => {
+              console.error('Error al generar el reporte:', error);
+            }
+          );
         Swal.fire({
           title: 'Entrada Confirmada',
           text: `Los productos han sido agregados al inventario de ${this.sucursal?.nombre}.`,
@@ -275,6 +310,14 @@ export class EntradasysalidasComponent implements OnInit {
   }
 
   registrarSalida(): void {
+    const detallesProductos = this.items.map((item, index) => {
+      return {
+        IdDetalle: index + 1,
+        Producto: item.nombre,
+        Cantidad: item.cantidad,
+        Valor: item.precioVenta * item.cantidad,
+      };
+    });
     Swal.fire({
       title: 'Confirmar Salida',
       text: `¿Estás seguro de registrar la salida de productos en ${this.sucursal?.nombre}?`,
@@ -403,6 +446,31 @@ export class EntradasysalidasComponent implements OnInit {
               console.error('Error al insertar el movimiento.');
             }
           });
+          const data = {
+            Usuario: '1',
+            Tipo: 'Salida',
+            SucursalSalida: this.sucursal?.nombre,
+            SucursalDestino: '',
+            TipoSalida: this.motivoSalidaSeleccionado,
+            Clinica: '',
+            Fecha: new Date(),
+            PrecioTotal: valor_total_movimiento,
+            Detalles: detallesProductos,
+          };
+          this.pdfService.generarReporte(data).subscribe(
+            (blob: Blob) => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'reporte_movimiento.pdf';
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+            },
+            (error: any) => {
+              console.error('Error al generar el reporte:', error);
+            }
+          );
         Swal.fire({
           title: 'Salida Confirmada',
           text: `Los productos han sido eliminados del inventario de ${this.sucursal?.nombre}.`,

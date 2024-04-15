@@ -16,6 +16,7 @@ import { CarritoServiceService } from '../../../../core/services/Services Sucurs
 import { MovimientosService } from '../../../../core/services/movimientos.service';
 import { DetalleMovimientosService } from '../../../../core/services/detalle-movimientos.service';
 import { Movements_Detail } from '../../../../Models/Master/movements_detail';
+import { PdfServiceService } from '../../../../core/services/pdf-service.service';
 
 @Component({
   selector: 'app-traspasos',
@@ -74,7 +75,8 @@ export class TraspasosComponent {
     private inventarioService: InventarioService,
     private carritoService: CarritoServiceService,
     private movimientosService: MovimientosService,
-    private detalleMovimientosService: DetalleMovimientosService
+    private detalleMovimientosService: DetalleMovimientosService,
+    private pdfService: PdfServiceService
   ) {}
 
   obtenerDetalleSucursal(): void {
@@ -113,6 +115,14 @@ export class TraspasosComponent {
           sucursalDestiny.idSucursal ===
           parseInt(this.selectedSucursalDestino!.toString(), 10)
       );
+      const detallesProductos = this.items.map((item, index) => {
+        return {
+          IdDetalle: index + 1,
+          Producto: item.nombre,
+          Cantidad: item.cantidad,
+          Valor: item.precioVenta * item.cantidad,
+        };
+      });
       Swal.fire({
         title: 'Confirmar Traspaso',
         text: `¿Estás seguro de traspasar los productos a ${selectedSucursalDestino?.nombre}?`,
@@ -241,6 +251,31 @@ export class TraspasosComponent {
                 console.error('Error al insertar el movimiento.');
               }
             });
+            const data = {
+              Usuario: '1',
+              Tipo: 'Traspaso a Sucursal',
+              SucursalSalida: this.sucursal?.nombre,
+              SucursalDestino: selectedSucursalDestino?.nombre,
+              TipoSalida: '',
+              Clinica: '',
+              Fecha: new Date(),
+              PrecioTotal: valor_total_movimiento,
+              Detalles: detallesProductos,
+            };
+            this.pdfService.generarReporte(data).subscribe(
+              (blob: Blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'reporte_movimiento.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+              },
+              (error: any) => {
+                console.error('Error al generar el reporte:', error);
+              }
+            );
           Swal.fire({
             title: 'Traspaso Confirmado',
             text: `Los productos han sido traspasados a ${selectedSucursalDestino?.nombre}.`,
