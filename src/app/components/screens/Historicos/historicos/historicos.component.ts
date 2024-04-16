@@ -27,7 +27,7 @@ import { Movements } from '../../../../Models/Master/movements';
       ></div>
       <h1>HISTÓRICOS</h1>
       <div>
-        <form class="search-form">
+        <!--<form class="search-form">
           <div class="search-input">
             <input
               type="text"
@@ -35,7 +35,7 @@ import { Movements } from '../../../../Models/Master/movements';
               (input)="filterByIdMovimiento($event)"
             />
           </div>
-        </form>
+        </form>-->
         <app-historicos-detalle
           *ngIf="mostrarModal"
           [movimientoId]="movimientoSeleccionado!.id_movimiento"

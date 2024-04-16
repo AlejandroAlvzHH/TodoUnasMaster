@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebaropeningService } from '../../core/services/sidebaropening.service';
-import { Observable } from 'rxjs';
+import { AuthService } from '../../core/services/auth/auth.service';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-sidebar',
@@ -15,6 +17,7 @@ import { Observable } from 'rxjs';
         <li><a href="/catalogogeneral">Catálogo General</a></li>
         <li><a href="/historicos">Históricos</a></li>
         <li><a href="/configuracion">Ajustes</a></li>
+        <li><a (click)="logout()">Cerrar Sesión</a></li>
       </ul>
     </aside>
   `,
@@ -23,15 +26,35 @@ import { Observable } from 'rxjs';
 export class SidebarComponent implements OnInit {
   isOpen = false;
 
-  constructor(private SidebaropeningService: SidebaropeningService) {}
+  constructor(
+    private SidebaropeningService: SidebaropeningService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.SidebaropeningService.isOpen$.subscribe(isOpen => {
+    this.SidebaropeningService.isOpen$.subscribe((isOpen) => {
       this.isOpen = isOpen;
     });
   }
 
   getSidebarLeft(): string {
-    return this.isOpen ? '0' : '-100%'; // Mueve el aside fuera de la pantalla
+    return this.isOpen ? '0' : '-100%';
+  }
+
+  logout(): void {
+    Swal.fire({
+      title: '¿Desea cerrar la sesión?',
+      showCancelButton: true,
+      confirmButtonColor: '#5c5c5c',
+      cancelButtonColor: '#5c5c5c',
+      confirmButtonText: 'Cerrar sesión',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }

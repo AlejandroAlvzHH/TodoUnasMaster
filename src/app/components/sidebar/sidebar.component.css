@@ -50,3 +50,13 @@
 .sidebar ul li a:hover {
   background-color: #555;
 }
+
+.sidebar ul li:last-child a {
+  color: #ea5060; 
+  cursor: pointer;
+}
+
+.sidebar ul li:last-child a:hover {
+  color: #d53f4e; 
+  cursor: pointer;
+}

@@ -7,14 +7,18 @@ import { HistoricosComponent } from './components/screens/Historicos/historicos/
 import { EntradasysalidasComponent } from './components/screens/Sucursales/entradasysalidas/entradasysalidas.component';
 import { TraspasosComponent } from './components/screens/Sucursales/traspasos/traspasos.component';
 import { TraspasosClinicaComponent } from './components/screens/Sucursales/traspasos-clinica/traspasos-clinica.component';
+import { LoginComponent } from './components/screens/Login/login/login.component';
+import { AuthGuard } from './auth.guard';
 
 export const routes: Routes = [
-    {'path':'',component:HomeComponent},
-    {'path':'sucursalselected/:id',component:SucursalSelectedComponent},
-    {'path':'configuracion',component:ConfiguracionComponent},
-    {'path':'catalogogeneral',component:CatalogoGeneralComponent},
-    {'path':'historicos',component:HistoricosComponent},
-    {'path':'entradasysalidas/:id',component:EntradasysalidasComponent},
-    {'path':'traspasos/:id',component:TraspasosComponent},
-    {'path':'traspasosclinica/:id',component:TraspasosClinicaComponent},
+  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'sucursalselected/:id', component: SucursalSelectedComponent, canActivate: [AuthGuard] },
+  { path: 'configuracion', component: ConfiguracionComponent, canActivate: [AuthGuard] },
+  { path: 'login', component: LoginComponent },
+  { path: 'catalogogeneral', component: CatalogoGeneralComponent, canActivate: [AuthGuard] },
+  { path: 'historicos', component: HistoricosComponent, canActivate: [AuthGuard] },
+  { path: 'entradasysalidas/:id', component: EntradasysalidasComponent, canActivate: [AuthGuard] },
+  { path: 'traspasos/:id', component: TraspasosComponent, canActivate: [AuthGuard] },
+  { path: 'traspasosclinica/:id', component: TraspasosClinicaComponent, canActivate: [AuthGuard] },
 ];
+
