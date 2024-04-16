@@ -9,6 +9,7 @@ import { TraspasosComponent } from './components/screens/Sucursales/traspasos/tr
 import { TraspasosClinicaComponent } from './components/screens/Sucursales/traspasos-clinica/traspasos-clinica.component';
 import { LoginComponent } from './components/screens/Login/login/login.component';
 import { AuthGuard } from './auth.guard';
+import { InventarioSucursalComponent } from './components/screens/Sucursales/inventario-sucursal/inventario-sucursal.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -20,5 +21,6 @@ export const routes: Routes = [
   { path: 'entradasysalidas/:id', component: EntradasysalidasComponent, canActivate: [AuthGuard] },
   { path: 'traspasos/:id', component: TraspasosComponent, canActivate: [AuthGuard] },
   { path: 'traspasosclinica/:id', component: TraspasosClinicaComponent, canActivate: [AuthGuard] },
+  { path: 'inventariosucursal/:id', component: InventarioSucursalComponent, canActivate: [AuthGuard] }
 ];
 

@@ -6,14 +6,13 @@ import { BehaviorSubject, Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-
 export class AuthService {
   private apiUrl = 'http://localhost:10395/api/UsuariosApi';
   private currentUserSubject: BehaviorSubject<Users | null>;
   public currentUser: Observable<Users | null>;
 
   constructor(private http: HttpClient) {
-    this.currentUserSubject = new BehaviorSubject<Users | null>(JSON.parse(localStorage.getItem('currentUser') || '{}'));
+    this.currentUserSubject = new BehaviorSubject<Users | null>(JSON.parse(localStorage.getItem('currentUser') || 'null'));
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
