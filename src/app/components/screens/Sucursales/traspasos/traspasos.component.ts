@@ -17,6 +17,8 @@ import { MovimientosService } from '../../../../core/services/movimientos.servic
 import { DetalleMovimientosService } from '../../../../core/services/detalle-movimientos.service';
 import { Movements_Detail } from '../../../../Models/Master/movements_detail';
 import { PdfServiceService } from '../../../../core/services/pdf-service.service';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { Users } from '../../../../Models/Master/users';
 
 @Component({
   selector: 'app-traspasos',
@@ -65,6 +67,7 @@ export class TraspasosComponent {
   selectedSucursalDestino: number | null = null;
   mostrarModal: boolean = false;
   items: any[] = [];
+  currentUser?: Users | null;
 
   carritoClinicaComponent!: CarritoClinicaComponent;
   constructor(
@@ -76,7 +79,8 @@ export class TraspasosComponent {
     private carritoService: CarritoServiceService,
     private movimientosService: MovimientosService,
     private detalleMovimientosService: DetalleMovimientosService,
-    private pdfService: PdfServiceService
+    private pdfService: PdfServiceService,
+    private authService: AuthService
   ) {}
 
   obtenerDetalleSucursal(): void {
@@ -217,7 +221,7 @@ export class TraspasosComponent {
             logDetalles.push(logDetalle);
           });
           const logGlobal = {
-            id_usuario: 1,
+            id_usuario: this.currentUser?.id_usuario,
             tipo_movimiento: 'Traspaso a Sucursal',
             sucursal_salida: this.sucursal?.idSucursal,
             sucursal_destino: selectedSucursalDestino?.idSucursal,
@@ -240,8 +244,15 @@ export class TraspasosComponent {
                 console.error('Error al insertar el movimiento.');
               }
             });
+          const usuario = (
+            (this.currentUser?.nombre ?? '') +
+            ' ' +
+            (this.currentUser?.apellido_paterno ?? '') +
+            ' ' +
+            (this.currentUser?.apellido_materno ?? '')
+          ).trim();
           const data = {
-            Usuario: '1',
+            Usuario: usuario,
             Tipo: 'Traspaso a Sucursal',
             SucursalSalida: this.sucursal?.nombre,
             SucursalDestino: selectedSucursalDestino?.nombre,
@@ -282,6 +293,9 @@ export class TraspasosComponent {
   }
 
   ngOnInit(): void {
+    this.authService.currentUser.subscribe((user) => {
+      this.currentUser = user;
+    });
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });

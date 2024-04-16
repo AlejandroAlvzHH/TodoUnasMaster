@@ -20,6 +20,8 @@ import Swal from 'sweetalert2';
 import { CatalogoSalidasService } from '../../../../core/services/Services Sucursales/Entradas y Salidas/catalogo-salidas.service';
 import { CatalogoSalidas } from '../../../../Models/Master/catalogo_salidas';
 import { PdfServiceService } from '../../../../core/services/pdf-service.service';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { Users } from '../../../../Models/Master/users';
 
 @Component({
   selector: 'app-entradasysalidas',
@@ -98,6 +100,7 @@ export class EntradasysalidasComponent implements OnInit {
   motivoSalidaSeleccionado: string = '';
   nombreMotivoSalidaSeleccionado: string = '';
   catalogoSalidas: CatalogoSalidas[] = [];
+  currentUser?: Users | null;
 
   @ViewChild(TablaCarritoComponent)
   tablaCarritoComponent!: TablaCarritoComponent;
@@ -112,7 +115,8 @@ export class EntradasysalidasComponent implements OnInit {
     private inventarioServiceMaster: InventarioMasterService,
     private movimientosService: MovimientosService,
     private detalleMovimientosService: DetalleMovimientosService,
-    private pdfService: PdfServiceService
+    private pdfService: PdfServiceService,
+    private authService: AuthService
   ) {}
 
   onMotivoSalidaChange(event: any) {
@@ -252,7 +256,7 @@ export class EntradasysalidasComponent implements OnInit {
           console.log('Log creado exitosamente: ', logDetalle);
         });
         const logGlobal = {
-          id_usuario: 1,
+          id_usuario: this.currentUser?.id_usuario,
           tipo_movimiento: 'Entrada',
           sucursal_salida: null,
           sucursal_destino: this.sucursal?.idSucursal,
@@ -277,8 +281,15 @@ export class EntradasysalidasComponent implements OnInit {
               console.error('Error al insertar el movimiento.');
             }
           });
+          const usuario = (
+            (this.currentUser?.nombre ?? '') +
+            ' ' +
+            (this.currentUser?.apellido_paterno ?? '') +
+            ' ' +
+            (this.currentUser?.apellido_materno ?? '')
+          ).trim();
         const data = {
-          Usuario: '1',
+          Usuario: usuario,
           Tipo: 'Entrada',
           SucursalSalida: '',
           SucursalDestino: this.sucursal?.nombre,
@@ -427,7 +438,7 @@ export class EntradasysalidasComponent implements OnInit {
           console.log('Log creado exitosamente: ', logDetalle);
         });
         const logGlobal = {
-          id_usuario: 1,
+          id_usuario: this.currentUser?.id_usuario,
           tipo_movimiento: 'Salida',
           sucursal_salida: this.sucursal?.idSucursal,
           sucursal_destino: null,
@@ -452,8 +463,15 @@ export class EntradasysalidasComponent implements OnInit {
               console.error('Error al insertar el movimiento.');
             }
           });
+          const usuario = (
+            (this.currentUser?.nombre ?? '') +
+            ' ' +
+            (this.currentUser?.apellido_paterno ?? '') +
+            ' ' +
+            (this.currentUser?.apellido_materno ?? '')
+          ).trim();
         const data = {
-          Usuario: '1',
+          Usuario: usuario,
           Tipo: 'Salida',
           SucursalSalida: this.sucursal?.nombre,
           SucursalDestino: '',
@@ -513,6 +531,9 @@ export class EntradasysalidasComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    this.authService.currentUser.subscribe((user) => {
+      this.currentUser = user;
+    });
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });

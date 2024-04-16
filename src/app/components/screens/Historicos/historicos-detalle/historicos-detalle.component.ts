@@ -41,6 +41,7 @@ export class HistoricosDetalleComponent {
   detallesMovimiento: VistaMovementsDetail[] = [];
 
   //Datos del movimiento master que recibo por inputsss
+  @Input() nombre_usuario: string | null = null;
   @Input() tipoMovimiento: string | null = null;
   @Input() sucursalSalida: string | null = null;
   @Input() sucursalDestino: string | null = null;
@@ -77,7 +78,7 @@ export class HistoricosDetalleComponent {
       };
     });
     const data = {
-      Usuario: '1',
+      Usuario: this.nombre_usuario,
       Tipo: this.tipoMovimiento,
       SucursalSalida: this.sucursalSalida,
       SucursalDestino: this.sucursalDestino,

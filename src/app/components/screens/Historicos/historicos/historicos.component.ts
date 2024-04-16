@@ -38,6 +38,7 @@ import { Movements } from '../../../../Models/Master/movements';
         </form>-->
         <app-historicos-detalle
           *ngIf="mostrarModal"
+          [nombre_usuario]="movimientoSeleccionado!.nombre_usuario"
           [movimientoId]="movimientoSeleccionado!.id_movimiento"
           [tipoMovimiento]="movimientoSeleccionado!.tipo_movimiento"
           [sucursalSalida]="movimientoSeleccionado!.sucursal_salida"
@@ -168,6 +169,7 @@ import { Movements } from '../../../../Models/Master/movements';
                   [class.desc]="!ordenAscendente"
                 ></i>
               </th>
+              <th scope="col">Acción</th>
             </tr>
           </thead>
           <tbody>
@@ -182,6 +184,8 @@ import { Movements } from '../../../../Models/Master/movements';
               <td>{{ filteredMovementsList[index].fecha | date : 'short' }}</td>
               <td>
                 {{ filteredMovementsList[index].precio_total }}
+              </td>
+              <td>
                 <button
                   class="btn"
                   (click)="abrirModal(filteredMovementsList[index])"

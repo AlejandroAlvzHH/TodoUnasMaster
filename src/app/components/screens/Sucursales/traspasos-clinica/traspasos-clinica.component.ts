@@ -19,6 +19,8 @@ import { DetalleMovimientosService } from '../../../../core/services/detalle-mov
 import { Movements_Detail } from '../../../../Models/Master/movements_detail';
 import Swal from 'sweetalert2';
 import { PdfServiceService } from '../../../../core/services/pdf-service.service';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { Users } from '../../../../Models/Master/users';
 
 @Component({
   selector: 'app-traspasos-clinica',
@@ -66,6 +68,7 @@ export class TraspasosClinicaComponent {
   selectedClinica: number | null = null;
   mostrarModal: boolean = false;
   items: any[] = [];
+  currentUser?: Users | null;
 
   carritoClinicaComponent!: CarritoClinicaComponent;
   constructor(
@@ -78,7 +81,8 @@ export class TraspasosClinicaComponent {
     private carritoService: CarritoServiceService,
     private movimientosService: MovimientosService,
     private detalleMovimientosService: DetalleMovimientosService,
-    private pdfService: PdfServiceService
+    private pdfService: PdfServiceService,
+    private authService: AuthService
   ) {}
 
   obtenerDetalleSucursal(): void {
@@ -225,7 +229,7 @@ export class TraspasosClinicaComponent {
             console.log('Log creado exitosamente: ', logDetalle);
           });
           const logGlobal = {
-            id_usuario: 1,
+            id_usuario: this.currentUser?.id_usuario,
             tipo_movimiento: 'Traspaso a Clinica',
             sucursal_salida: this.sucursal?.idSucursal,
             sucursal_destino: null,
@@ -250,8 +254,15 @@ export class TraspasosClinicaComponent {
                 console.error('Error al insertar el movimiento.');
               }
             });
+          const usuario = (
+            (this.currentUser?.nombre ?? '') +
+            ' ' +
+            (this.currentUser?.apellido_paterno ?? '') +
+            ' ' +
+            (this.currentUser?.apellido_materno ?? '')
+          ).trim();
           const data = {
-            Usuario: '1',
+            Usuario: usuario,
             Tipo: 'Traspaso a Clinica',
             SucursalSalida: this.sucursal?.nombre,
             SucursalDestino: '',
@@ -293,6 +304,9 @@ export class TraspasosClinicaComponent {
   }
 
   ngOnInit(): void {
+    this.authService.currentUser.subscribe((user) => {
+      this.currentUser = user;
+    });
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });
