@@ -27,7 +27,7 @@ import { Movements } from '../../../../Models/Master/movements';
       ></div>
       <h1>HISTÓRICOS</h1>
       <div>
-        <!--<form class="search-form">
+        <form class="search-form">
           <div class="search-input">
             <input
               type="text"
@@ -35,7 +35,7 @@ import { Movements } from '../../../../Models/Master/movements';
               (input)="filterByIdMovimiento($event)"
             />
           </div>
-        </form>-->
+        </form>
         <app-historicos-detalle
           *ngIf="mostrarModal"
           [nombre_usuario]="movimientoSeleccionado!.nombre_usuario"
@@ -270,16 +270,16 @@ export class HistoricosComponent {
   filterByIdMovimiento(event: Event) {
     const text = (event.target as HTMLInputElement).value.trim();
     if (text === '') {
+      this.resetFilteredMovementsList();
+    } else {
+      const filteredList = this.movementsList.filter((movement) =>
+        movement.id_movimiento.toString().startsWith(text)
+      );
+      this.filteredMovementsList = filteredList;
       this.filteredIndices = Array.from(
-        { length: this.movementsList.length },
+        { length: filteredList.length },
         (_, i) => i
       );
-    } else {
-      const id_movimiento = parseInt(text, 10);
-      this.filteredIndices = this.movementsList
-        .map((movement, index) => ({ movement, index }))
-        .filter(({ movement }) => movement.id_movimiento === id_movimiento)
-        .map(({ index }) => index);
     }
   }
 

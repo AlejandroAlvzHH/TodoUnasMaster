@@ -136,10 +136,8 @@ export class EntradasysalidasComponent implements OnInit {
       return;
     }
     if (this.isEntradaSelected) {
-      console.log('Entrada:');
       this.registrarEntrada();
     } else {
-      console.log('Salida:');
       this.registrarSalida();
     }
   }
@@ -168,12 +166,6 @@ export class EntradasysalidasComponent implements OnInit {
         const logDetalles: Movements_Detail[] = [];
         this.items.forEach((item) => {
           valor_total_movimiento += item.precioVenta * item.cantidad;
-          console.log(
-            'Cantidad de entrada para el artículo con id ',
-            item.idArticulo,
-            ':',
-            item.cantidad
-          );
           const cambiosMaster = {
             id_sucursal: this.sucursal?.idSucursal ?? 0,
             id_producto: item.idArticulo,
@@ -270,7 +262,6 @@ export class EntradasysalidasComponent implements OnInit {
           .insertarLogMovimiento(logGlobal)
           .subscribe((id) => {
             if (id !== null) {
-              console.log('Movimiento insertado con ID:', id);
               logDetalles.forEach((logDetalle) => {
                 logDetalle.id_movimiento = id;
                 this.detalleMovimientosService
@@ -299,6 +290,7 @@ export class EntradasysalidasComponent implements OnInit {
           PrecioTotal: valor_total_movimiento,
           Detalles: detallesProductos,
         };
+        console.log("la data para el pdf es:", data)
         this.pdfService.generarReporte(data).subscribe(
           (blob: Blob) => {
             const url = window.URL.createObjectURL(blob);
@@ -350,12 +342,6 @@ export class EntradasysalidasComponent implements OnInit {
         const logDetalles: Movements_Detail[] = [];
         this.items.forEach((item) => {
           valor_total_movimiento += item.precioVenta * item.cantidad;
-          console.log(
-            'Cantidad de salida para el artículo con id',
-            item.idArticulo,
-            ':',
-            item.cantidad
-          );
           const cambiosMaster = {
             id_sucursal: this.sucursal?.idSucursal,
             id_producto: item.idArticulo,
@@ -452,7 +438,6 @@ export class EntradasysalidasComponent implements OnInit {
           .insertarLogMovimiento(logGlobal)
           .subscribe((id) => {
             if (id !== null) {
-              console.log('Movimiento insertado con ID:', id);
               logDetalles.forEach((logDetalle) => {
                 logDetalle.id_movimiento = id;
                 this.detalleMovimientosService
@@ -544,7 +529,6 @@ export class EntradasysalidasComponent implements OnInit {
         .toPromise();
       if (catalogoSalidas) {
         this.catalogoSalidas = catalogoSalidas;
-        console.log(this.catalogoSalidas);
         if (this.catalogoSalidas.length > 0) {
           this.motivoSalidaSeleccionado =
             this.catalogoSalidas[0].id_tipo_salida.toString();
@@ -573,7 +557,6 @@ export class EntradasysalidasComponent implements OnInit {
   }
 
   toggleSidebar(): void {
-    console.log('Toggle');
     this.sidebarOpeningService.toggleSidebar();
   }
 

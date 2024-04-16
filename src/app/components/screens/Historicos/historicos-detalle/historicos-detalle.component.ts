@@ -88,7 +88,7 @@ export class HistoricosDetalleComponent {
       PrecioTotal: this.valorTotal,
       Detalles: detallesProductos,
     };
-
+    console.log("la data del pdf histórico es:", data)
     this.pdfService.generarReporte(data).subscribe(
       (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
