@@ -35,18 +35,24 @@ type TipoDeError = HttpErrorResponse;
         (modificar)="modificarSucursal($event)"
         (cancelar)="cerrarModal()"
       ></app-modifysucursalmodal>
-      <h1>{{ sucursal?.nombre }}</h1>
+      <h1 class="mayusculas">{{ sucursal?.nombre }}</h1>
       <h2>URL de servicios: {{ sucursal?.url }}</h2>
       <div class="menu-container">
         <div class="menu">
           <a href="/entradasysalidas/{{ sucursal?.idSucursal }}" class="opcion"
             >Entradas y Salidas</a
           >
-          <a href="#" class="opcion">Inventario</a>
+          <a
+            href="/inventariosucursal/{{ sucursal?.idSucursal }}"
+            class="opcion"
+            >Inventario</a
+          >
           <a href="/traspasos/{{ sucursal?.idSucursal }}" class="opcion"
             >Traspaso a Sucursal</a
           >
-          <button class="opcion" (click)="eliminarSucursal()">Eliminar Sucursal</button>
+          <button class="opcion" (click)="eliminarSucursal()">
+            Eliminar Sucursal
+          </button>
           <button class="opcion" (click)="abrirModal()">
             Modificar Sucursal
           </button>

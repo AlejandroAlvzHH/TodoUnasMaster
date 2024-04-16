@@ -1,8 +1,3 @@
-.main-content.opened-sidebar {
-  margin-left: 20%;
-  transition: margin-left 0.3s ease;
-}
-
 .overlay {
   position: fixed;
   top: 0;
