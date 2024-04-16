@@ -29,7 +29,8 @@ export class SidebarComponent implements OnInit {
   constructor(
     private SidebaropeningService: SidebaropeningService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private sidebarOpeningService: SidebaropeningService
   ) {}
 
   ngOnInit(): void {
@@ -53,6 +54,7 @@ export class SidebarComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.authService.logout();
+        this.sidebarOpeningService.toggleSidebar();
         this.router.navigate(['/login']);
       }
     });

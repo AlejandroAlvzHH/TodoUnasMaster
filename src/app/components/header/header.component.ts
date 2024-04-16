@@ -42,7 +42,6 @@ export class HeaderComponent {
   }
 
   toggleSidebar(): void {
-    console.log('Toggle Sidebar called from HeaderComponent');
     this.sidebarOpeningService.toggleSidebar();
   }
 }
