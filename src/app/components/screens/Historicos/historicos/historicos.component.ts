@@ -35,6 +35,58 @@ import { Movements } from '../../../../Models/Master/movements';
               (input)="filterByIdMovimiento($event)"
             />
           </div>
+          <div class="search-input">
+            <input
+              type="text"
+              placeholder="Buscar por nombre de usuario"
+              (input)="filterByUsuario($event)"
+            />
+          </div>
+          <div class="search-input">
+            <input
+              type="text"
+              placeholder="Buscar por tipo de movimiento"
+              (input)="filterByTipoMovimiento($event)"
+            />
+          </div>
+
+          <div class="search-input">
+            <input
+              type="text"
+              placeholder="Buscar por sucursal de salida"
+              (input)="filterBySucursalSalida($event)"
+            />
+          </div>
+        </form>
+        <form class="search-form">
+          <div class="search-input">
+            <input
+              type="text"
+              placeholder="Buscar por sucursal de destino"
+              (input)="filterBySucursalDestino($event)"
+            />
+          </div>
+          <div class="search-input">
+            <input
+              type="text"
+              placeholder="Buscar por motivo de salida"
+              (input)="filterByMotivoSalida($event)"
+            />
+          </div>
+          <div class="search-input">
+            <input
+              type="text"
+              placeholder="Buscar por clínica"
+              (input)="filterByClinica($event)"
+            />
+          </div>
+          <div class="search-input">
+            <input
+              type="text"
+              placeholder="Fecha YYYY-MM-DDTHH:MM:SS"
+              (input)="filterByFecha($event)"
+            />
+          </div>
         </form>
         <app-historicos-detalle
           *ngIf="mostrarModal"
@@ -244,6 +296,7 @@ export class HistoricosComponent {
         (_, i) => i
       );
       this.cdr.detectChanges();
+      console.log(this.movementsList)
     } catch (error) {
       console.error('Error al obtener los movimientos:', error);
     }
@@ -274,6 +327,118 @@ export class HistoricosComponent {
     } else {
       const filteredList = this.movementsList.filter((movement) =>
         movement.id_movimiento.toString().startsWith(text)
+      );
+      this.filteredMovementsList = filteredList;
+      this.filteredIndices = Array.from(
+        { length: filteredList.length },
+        (_, i) => i
+      );
+    }
+  }
+
+  filterByUsuario(event: Event) {
+    const text = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    if (text === '') {
+      this.resetFilteredMovementsList();
+    } else {
+      const filteredList = this.movementsList.filter((movement) =>
+        movement.nombre_usuario.toString().toLowerCase().startsWith(text)
+      );
+      this.filteredMovementsList = filteredList;
+      this.filteredIndices = Array.from(
+        { length: filteredList.length },
+        (_, i) => i
+      );
+    }
+  }
+
+  filterByTipoMovimiento(event: Event) {
+    const text = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    if (text === '') {
+      this.resetFilteredMovementsList();
+    } else {
+      const filteredList = this.movementsList.filter((movement) =>
+        movement.tipo_movimiento.toString().toLowerCase().startsWith(text)
+      );
+      this.filteredMovementsList = filteredList;
+      this.filteredIndices = Array.from(
+        { length: filteredList.length },
+        (_, i) => i
+      );
+    }
+  }
+
+  filterBySucursalSalida(event: Event) {
+    const text = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    if (text === '') {
+      this.resetFilteredMovementsList();
+    } else {
+      const filteredList = this.movementsList.filter((movement) =>
+        movement.sucursal_salida.toString().toLowerCase().startsWith(text)
+      );
+      this.filteredMovementsList = filteredList;
+      this.filteredIndices = Array.from(
+        { length: filteredList.length },
+        (_, i) => i
+      );
+    }
+  }
+
+  filterBySucursalDestino(event: Event) {
+    const text = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    if (text === '') {
+      this.resetFilteredMovementsList();
+    } else {
+      const filteredList = this.movementsList.filter((movement) =>
+        movement.sucursal_destino.toString().toLowerCase().startsWith(text)
+      );
+      this.filteredMovementsList = filteredList;
+      this.filteredIndices = Array.from(
+        { length: filteredList.length },
+        (_, i) => i
+      );
+    }
+  }
+
+  filterByMotivoSalida(event: Event) {
+    const text = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    if (text === '') {
+      this.resetFilteredMovementsList();
+    } else {
+      const filteredList = this.movementsList.filter((movement) =>
+        movement.tipo_salida.toString().toLowerCase().startsWith(text)
+      );
+      this.filteredMovementsList = filteredList;
+      this.filteredIndices = Array.from(
+        { length: filteredList.length },
+        (_, i) => i
+      );
+    }
+  }
+
+  filterByClinica(event: Event) {
+    const text = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    if (text === '') {
+      this.resetFilteredMovementsList();
+    } else {
+      const filteredList = this.movementsList.filter((movement) =>
+        movement.nombre_clinica.toString().toLowerCase().startsWith(text)
+      );
+      this.filteredMovementsList = filteredList;
+      this.filteredIndices = Array.from(
+        { length: filteredList.length },
+        (_, i) => i
+      );
+    }
+  }
+
+  filterByFecha(event: Event) {
+    const text = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    if (text === '') {
+      this.resetFilteredMovementsList();
+    } else {
+      const filteredList = this.movementsList.filter((movement) =>
+        movement.fecha.toString().toLowerCase().startsWith(text)
       );
       this.filteredMovementsList = filteredList;
       this.filteredIndices = Array.from(

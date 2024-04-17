@@ -82,6 +82,12 @@ export class SucursalSelectedComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const sucursalModificada: any = {
+      ...this.sucursal,
+      fecha_actualizacion: new Date(),
+    };
+    console.log("Sucursal modificada es:", sucursalModificada)
+    this.modificarSucursal(sucursalModificada);
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });
