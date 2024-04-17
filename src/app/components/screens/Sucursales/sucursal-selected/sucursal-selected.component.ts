@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Branches } from '../../../../Models/Master/branches';
@@ -10,6 +10,7 @@ import { HeaderComponent } from '../../../header/header.component';
 import { SidebaropeningService } from '../../../../core/services/sidebaropening.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 type TipoDeError = HttpErrorResponse;
 @Component({
@@ -64,10 +65,12 @@ type TipoDeError = HttpErrorResponse;
     </main>`,
   styleUrls: ['./sucursal-selected.component.css'],
 })
-export class SucursalSelectedComponent implements OnInit {
+export class SucursalSelectedComponent implements OnInit, OnDestroy {
   sucursal: Branches | null = null;
   mostrarModal: boolean = false;
   isSidebarOpen: boolean = false;
+
+  private isOpenSubscription!: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -82,16 +85,16 @@ export class SucursalSelectedComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const sucursalModificada: any = {
-      ...this.sucursal,
-      fecha_actualizacion: new Date(),
-    };
-    console.log("Sucursal modificada es:", sucursalModificada)
-    this.modificarSucursal(sucursalModificada);
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });
     this.obtenerDetalleSucursal();
+  }
+
+  ngOnDestroy(): void {
+    if (this.isOpenSubscription) {
+      this.isOpenSubscription.unsubscribe();
+    }
   }
 
   obtenerDetalleSucursal(): void {
@@ -101,6 +104,13 @@ export class SucursalSelectedComponent implements OnInit {
         this.apiService.getSucursalById(parseInt(sucursalId, 10)).subscribe(
           (sucursal) => {
             this.sucursal = sucursal;
+            if (this.sucursal) {
+              this.modificarSucursal({
+                ...this.sucursal,
+                fechaActualizacion: new Date(),
+                estado: "Online 🟢",
+              });
+            }
           },
           (error) => {
             console.error('Error al obtener la sucursal:', error);
@@ -109,6 +119,7 @@ export class SucursalSelectedComponent implements OnInit {
       }
     });
   }
+  
 
   abrirModal(): void {
     this.mostrarModal = true;
@@ -152,11 +163,10 @@ export class SucursalSelectedComponent implements OnInit {
   }
 
   modificarSucursal(sucursalModificada: Branches): void {
-    if (this.sucursal) {
+    if (sucursalModificada) {
       this.apiService.modificarSucursal(sucursalModificada).subscribe(
         (resultado: boolean) => {
-          this.obtenerDetalleSucursal();
-          this.mostrarModal = false;
+          // Puedes realizar alguna acción después de modificar la sucursal si es necesario.
         },
         (error: TipoDeError) => {
           console.error('Error al modificar la sucursal:', error);
