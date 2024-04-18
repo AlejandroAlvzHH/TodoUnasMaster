@@ -96,6 +96,15 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
       this.isOpenSubscription.unsubscribe();
     }
   }
+  formatearFecha(fecha: Date): string {
+    const dia = ('0' + fecha.getDate()).slice(-2);
+    const mes = ('0' + (fecha.getMonth() + 1)).slice(-2);
+    const año = fecha.getFullYear();
+    const horas = ('0' + fecha.getHours()).slice(-2);
+    const minutos = ('0' + fecha.getMinutes()).slice(-2);
+    const segundos = ('0' + fecha.getSeconds()).slice(-2);
+    return `${dia}/${mes}/${año} ${horas}:${minutos}:${segundos}`;
+  }
 
   obtenerDetalleSucursal(): void {
     this.route.paramMap.subscribe((params) => {
@@ -105,10 +114,12 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
           (sucursal) => {
             this.sucursal = sucursal;
             if (this.sucursal) {
+              const fechaActual = new Date();
+              fechaActual.setHours(fechaActual.getHours() - 6);
               this.modificarSucursal({
                 ...this.sucursal,
                 estado: 'Online 🟢',
-                fechaActualizacion: new Date(),
+                fechaActualizacion: fechaActual,
               });
             }
           },
