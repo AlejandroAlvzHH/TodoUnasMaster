@@ -107,8 +107,8 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
             if (this.sucursal) {
               this.modificarSucursal({
                 ...this.sucursal,
+                estado: 'Online 🟢',
                 fechaActualizacion: new Date(),
-                estado: "Online 🟢",
               });
             }
           },
@@ -119,7 +119,6 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
 
   abrirModal(): void {
     this.mostrarModal = true;
@@ -165,9 +164,7 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
   modificarSucursal(sucursalModificada: Branches): void {
     if (sucursalModificada) {
       this.apiService.modificarSucursal(sucursalModificada).subscribe(
-        (resultado: boolean) => {
-          // Puedes realizar alguna acción después de modificar la sucursal si es necesario.
-        },
+        (resultado: boolean) => {},
         (error: TipoDeError) => {
           console.error('Error al modificar la sucursal:', error);
         }
