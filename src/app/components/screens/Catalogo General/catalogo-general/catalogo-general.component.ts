@@ -7,6 +7,7 @@ import { TablaCatalogoComponent } from '../tabla-catalogo/tabla-catalogo.compone
 import { General_Catalogue } from '../../../../Models/Master/general_catalogue';
 import { AgregarProductoCatalogoComponent } from '../agregar-producto-catalogo/agregar-producto-catalogo.component';
 import { CatalogoGeneralService } from '../../../../core/services/Services Catalogo General/catalogo-general.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-catalogo-general',
@@ -68,7 +69,6 @@ export class CatalogoGeneralComponent {
       .addCatalogueProduct(producto)
       .then((success) => {
         console.log('Éxito al agregar el producto:', success);
-        this.cerrarModal();
       })
       .catch((error) => {
         console.error('Error al agregar el producto:', error);

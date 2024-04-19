@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
-import { ApiService } from '../../core/services/Services Catalogo General/api.service';
+import { CatalogoSucursalService } from '../../core/services/Services Catalogo General/catalogo-sucursal';
 import { Products } from '../../Models/Factuprint/products';
 import { CarritoServiceService } from '../../core/services/Services Sucursales/carrito-service.service';
 import { ProductListItem } from '../../Models/Master/product_list_item';
@@ -132,7 +132,7 @@ export class TablaProductosComponent implements OnInit {
   ordenAscendente: boolean = true;
 
   constructor(
-    private apiService: ApiService,
+    private catalogoSucursalService: CatalogoSucursalService,
     private carritoService: CarritoServiceService,
     private carritoCommunicationService: CarritoComunicationService,
     private cdr: ChangeDetectorRef
@@ -146,7 +146,7 @@ export class TablaProductosComponent implements OnInit {
 
   private async initialize() {
     try {
-      this.productsList = await this.apiService.getAllProducts(this.baseUrl!);
+      this.productsList = await this.catalogoSucursalService.getAllProducts(this.baseUrl!);
       this.carritoCommunicationService.itemRemoved$.subscribe((idArticulo) => {
         const indexInFilteredProductsList = this.filteredProductsList.findIndex(
           (product) => product.idArticulo === idArticulo

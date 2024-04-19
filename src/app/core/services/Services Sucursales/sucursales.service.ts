@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Branches } from '../../../Models/Master/branches';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -33,5 +34,12 @@ export class ApiService {
   modificarStatusSucursal(id: number, status: number): Observable<boolean> {
     const url = `${this.url}/${id}/status`;
     return this.http.put<boolean>(url, { status });
+  }
+
+  getAllBranchesUrlsConStatus1(): Observable<string[]> {
+    return this.getAllSucursales().pipe(
+      map(sucursales => sucursales.filter(sucursal => sucursal.status === 1)),
+      map(filteredSucursales => filteredSucursales.map(sucursal => sucursal.url))
+    );
   }
 }
