@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input} from '@angular/core';
-import { ApiService } from '../../../../core/services/Services Catalogo General/api.service';
-import { Products } from '../../../../Models/Factuprint/products';
+import { Component, ChangeDetectorRef } from '@angular/core';
+import { General_Catalogue } from '../../../../Models/Master/general_catalogue';
+import { CatalogoGeneralService } from '../../../../core/services/Services Catalogo General/catalogo-general.service';
+import { DetalleProductoCatalogoComponent } from '../detalle-producto-catalogo/detalle-producto-catalogo.component';
 
 @Component({
   selector: 'app-tabla-catalogo',
@@ -13,25 +14,43 @@ import { Products } from '../../../../Models/Factuprint/products';
         <div class="search-input">
           <input
             type="text"
-            placeholder="Buscar por ID de artículo"
-            (input)="filterByIdArticulo($event)"
+            placeholder="Buscar por ID"
+            (input)="filterById($event)"
           />
         </div>
         <div class="search-input">
           <input
             type="text"
-            placeholder="Buscar por clave"
+            placeholder="Buscar por nombre clave"
             (input)="filterByClave($event)"
           />
         </div>
         <div class="search-input">
           <input
             type="text"
-            placeholder="Buscar por nombre"
-            (input)="filterResults($event)"
+            placeholder="Buscar por nombre del artículo"
+            (input)="filterByNombre($event)"
+          />
+        </div>
+        <div class="search-input">
+          <input
+            type="text"
+            placeholder="Buscar por precio"
+            (input)="filterByPrecio($event)"
           />
         </div>
       </form>
+      <!--<app-detalle-producto-catalogo
+        *ngIf="mostrarModal"
+        [id_producto]="movimientoSeleccionado!.id_producto"
+        [usuario_creador]="movimientoSeleccionado!.usuario_creador"
+        [fecha_creado]="movimientoSeleccionado!.fecha_creado"
+        [usuario_modificador]="movimientoSeleccionado!.usuario_modificador"
+        [fecha_modificado]="movimientoSeleccionado!.fecha_modificado"
+        [usuario_eliminador]="movimientoSeleccionado!.usuario_eliminador"
+        [fecha_eliminado]="movimientoSeleccionado!.fecha_eliminado"
+        (cancelar)="cerrarModal()"
+      ></app-detalle-producto-catalogo>-->
     </div>
     <div>
       <table border="2">
@@ -39,12 +58,12 @@ import { Products } from '../../../../Models/Factuprint/products';
           <tr>
             <th
               scope="col"
-              (click)="ordenarPorColumna('idArticulo')"
-              [class.interactive]="columnaOrdenada === 'idArticulo'"
+              (click)="ordenarPorColumna('id_producto')"
+              [class.interactive]="columnaOrdenada === 'id_producto'"
             >
               Id_Artículo
               <i
-                *ngIf="columnaOrdenada === 'idArticulo'"
+                *ngIf="columnaOrdenada === 'id_producto'"
                 class="arrow-icon"
                 [class.asc]="ordenAscendente"
                 [class.desc]="!ordenAscendente"
@@ -78,12 +97,12 @@ import { Products } from '../../../../Models/Factuprint/products';
             </th>
             <th
               scope="col"
-              (click)="ordenarPorColumna('precioCompra')"
-              [class.interactive]="columnaOrdenada === 'precioCompra'"
+              (click)="ordenarPorColumna('cantidad_total')"
+              [class.interactive]="columnaOrdenada === 'cantidad_total'"
             >
-              Precio Compra
+              Existencia Global
               <i
-                *ngIf="columnaOrdenada === 'precioCompra'"
+                *ngIf="columnaOrdenada === 'cantidad_total'"
                 class="arrow-icon"
                 [class.asc]="ordenAscendente"
                 [class.desc]="!ordenAscendente"
@@ -91,43 +110,31 @@ import { Products } from '../../../../Models/Factuprint/products';
             </th>
             <th
               scope="col"
-              (click)="ordenarPorColumna('precioVenta')"
-              [class.interactive]="columnaOrdenada === 'precioVenta'"
+              (click)="ordenarPorColumna('precio')"
+              [class.interactive]="columnaOrdenada === 'precio'"
             >
-              Precio Venta
+              Precio
               <i
-                *ngIf="columnaOrdenada === 'precioVenta'"
+                *ngIf="columnaOrdenada === 'precio'"
                 class="arrow-icon"
                 [class.asc]="ordenAscendente"
                 [class.desc]="!ordenAscendente"
               ></i>
             </th>
-            <th
-              scope="col"
-              (click)="ordenarPorColumna('existencia')"
-              [class.interactive]="columnaOrdenada === 'existencia'"
-            >
-              Existencia
-              <i
-                *ngIf="columnaOrdenada === 'existencia'"
-                class="arrow-icon"
-                [class.asc]="ordenAscendente"
-                [class.desc]="!ordenAscendente"
-              ></i>
-            </th>
+            <!--<th>Detalles</th>-->
             <th>Acción</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let product of filteredProductsList">
-            <td>{{ product.idArticulo }}</td>
+            <td>{{ product.id_producto }}</td>
             <td>{{ product.clave }}</td>
             <td>{{ product.nombre }}</td>
-            <td>{{ product.precioCompra }}</td>
-            <td>{{ product.precioVenta }}</td>
-            <td>
-              {{ product.existencia }}
-            </td>
+            <td>{{ product.cantidad_total }}</td>
+            <td>{{ product.precio }}</td>
+            <!--<td>
+              <button class="btn">Ver Detalles</button>
+            </td>-->
             <td>
               <button class="btn">Editar</button>
             </td>
@@ -139,21 +146,74 @@ import { Products } from '../../../../Models/Factuprint/products';
   styleUrl: './tabla-catalogo.component.css',
 })
 export class TablaCatalogoComponent {
-  productsList: Products[] = [];
-  apiService: ApiService = inject(ApiService);
-  filteredProductsList: Products[] = [];
-  columnaOrdenada: keyof Products | null = null;
+  productsList: General_Catalogue[] = [];
+  filteredProductsList: General_Catalogue[] = [];
+  filteredIndices: number[] = [];
+  columnaOrdenada: keyof General_Catalogue | null = null;
   ordenAscendente: boolean = true;
-  @Input() baseUrl?: string;
 
-  constructor() {
-    this.apiService.getAllProducts(this.baseUrl || '').then((productsList: Products[]) => {
-      this.productsList = productsList;
-      this.filteredProductsList = productsList;
-    });
+  constructor(
+    private catalogoGeneralService: CatalogoGeneralService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    this.initialize();
   }
 
-  filterResults(event: Event) {
+  private async initialize() {
+    try {
+      this.productsList =
+        await this.catalogoGeneralService.getAllCatalogueProducts();
+      this.filteredProductsList = this.productsList.map((product) => ({
+        id_producto: product.id_producto,
+        clave: product.clave,
+        nombre: product.nombre,
+        descripcion: product.descripcion,
+        cantidad_total: product.cantidad_total,
+        precio: product.precio,
+        usuario_creador: product.usuario_creador,
+        fecha_creado: product.fecha_creado,
+        usuario_modificador: product.usuario_modificador,
+        fecha_modificado: product.fecha_modificado,
+        usuario_eliminador: product.usuario_eliminador,
+        fecha_eliminado: product.fecha_eliminado,
+      }));
+      this.filteredIndices = Array.from(
+        { length: this.filteredProductsList.length },
+        (_, i) => i
+      );
+      this.cdr.detectChanges();
+    } catch (error) {
+      console.error(
+        'Error al obtener los productos del catálogo general:',
+        error
+      );
+    }
+  }
+
+  resetFilteredProductsList(): void {
+    this.filteredProductsList = this.productsList.map((product) => ({
+      id_producto: product.id_producto,
+      clave: product.clave,
+      nombre: product.nombre,
+      descripcion: product.descripcion,
+      cantidad_total: product.cantidad_total,
+      precio: product.precio,
+      usuario_creador: product.usuario_creador,
+      fecha_creado: product.fecha_creado,
+      usuario_modificador: product.usuario_modificador,
+      fecha_modificado: product.fecha_modificado,
+      usuario_eliminador: product.usuario_eliminador,
+      fecha_eliminado: product.fecha_eliminado,
+    }));
+    this.filteredIndices = Array.from(
+      { length: this.filteredProductsList.length },
+      (_, i) => i
+    );
+  }
+
+  filterByNombre(event: Event) {
     const text = (event.target as HTMLInputElement).value;
     if (!text) {
       this.filteredProductsList = this.productsList;
@@ -163,6 +223,7 @@ export class TablaCatalogoComponent {
       product.nombre.toLowerCase().includes(text.toLowerCase())
     );
   }
+
   filterByClave(event: Event) {
     const text = (event.target as HTMLInputElement).value.trim();
     if (!text) {
@@ -174,18 +235,29 @@ export class TablaCatalogoComponent {
     );
   }
 
-  filterByIdArticulo(event: Event) {
+  filterById(event: Event) {
     const text = (event.target as HTMLInputElement).value.trim();
     if (!text) {
       this.filteredProductsList = this.productsList;
       return;
     }
-    const idArticulo = parseInt(text, 10);
-    this.filteredProductsList = this.productsList.filter(
-      (product) => product.idArticulo === idArticulo
+    this.filteredProductsList = this.productsList.filter((product) =>
+      product.id_producto.toString().startsWith(text)
     );
   }
-  ordenarPorColumna(columna: keyof Products) {
+
+  filterByPrecio(event: Event) {
+    const text = (event.target as HTMLInputElement).value.trim();
+    if (!text) {
+      this.filteredProductsList = this.productsList;
+      return;
+    }
+    this.filteredProductsList = this.productsList.filter((product) =>
+      product.precio.toString().startsWith(text)
+    );
+  }
+
+  ordenarPorColumna(columna: keyof General_Catalogue) {
     if (this.columnaOrdenada === columna) {
       this.ordenAscendente = !this.ordenAscendente;
     } else {
@@ -205,4 +277,13 @@ export class TablaCatalogoComponent {
       }
     });
   }
+
+  /*abrirModal(): void {
+    this.movimientoSeleccionado = movement;
+    this.mostrarModal = true;
+  }
+
+  cerrarModal(): void {
+    this.mostrarModal = false;
+  }*/
 }

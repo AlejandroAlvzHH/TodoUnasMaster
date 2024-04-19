@@ -6,7 +6,7 @@ import { Products } from '../../../Models/Factuprint/products';
 })
 export class ApiService {
   constructor() {}
-
+//esto es el catálogo de una sucursal, no del catálogo general
   async getAllProducts(baseUrl: string): Promise<Products[]> {
     try {
       const url = `${baseUrl}/api/ProductApi/instock`;
@@ -19,3 +19,4 @@ export class ApiService {
     }
   }
 }
+

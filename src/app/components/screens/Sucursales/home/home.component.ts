@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Branches } from '../../../../Models/Master/branches';
 import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
@@ -54,11 +54,12 @@ import { SidebaropeningService } from '../../../../core/services/sidebaropening.
   `,
   styleUrl: './home.component.css',
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   sucursalesList: Branches[] = [];
   filteredSucursalesList: Branches[] = [];
   mostrarModal: boolean = false;
   isSidebarOpen: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private sidebarOpeningService: SidebaropeningService

@@ -1,5 +1,6 @@
 export interface General_Catalogue {
   id_producto: number;
+  clave: string;
   nombre: string;
   descripcion: string;
   cantidad_total: number;

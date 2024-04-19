@@ -125,7 +125,6 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
 export class TablaProductosComponent implements OnInit {
   private _baseUrl?: string;
 
-  
   productsList: Products[] = [];
   filteredProductsList: ProductListItem[] = [];
   filteredIndices: number[] = [];
@@ -255,7 +254,10 @@ export class TablaProductosComponent implements OnInit {
       enCarrito: false,
       botonDesactivado: false,
     }));
-    this.filteredIndices = Array.from({ length: this.filteredProductsList.length }, (_, i) => i);
+    this.filteredIndices = Array.from(
+      { length: this.filteredProductsList.length },
+      (_, i) => i
+    );
   }
 
   filterResults(event: Event) {

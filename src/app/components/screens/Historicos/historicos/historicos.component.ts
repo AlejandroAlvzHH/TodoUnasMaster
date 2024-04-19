@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { VistaMovements } from '../../../../Models/Master/vista-movements copy';
 import { HistoricosMovimientosService } from '../../../../core/services/Services Historicos/historicos-movimientos.service';
 import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-detalle.component';
-import { Movements } from '../../../../Models/Master/movements';
 
 @Component({
   selector: 'app-historicos',
