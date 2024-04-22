@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { CatalogoSucursalService } from '../../../../core/services/Services Catalogo General/catalogo-sucursal';
 import { Products } from '../../../../Models/Factuprint/products';
 import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
+import { SincronizacionPendienteService } from '../../../../core/services/Services Catalogo General/sincronizacion-pendiente.service';
 
 @Component({
   selector: 'app-agregar-producto-catalogo',
@@ -15,6 +16,11 @@ import { ApiService } from '../../../../core/services/Services Sucursales/sucurs
     <div class="modal">
       <div class="modal-content">
         <h2>Agregar Producto al Catálogo General</h2>
+        <div *ngIf="loading" class="loading-overlay">
+      <div class="loading-spinner"></div>
+    </div>
+        <label>ID del Producto:</label>
+        <input type="text" [(ngModel)]="nuevoProducto.id_producto" />
         <label>Clave:</label>
         <input type="text" [(ngModel)]="nuevoProducto.clave" />
         <label>Nombre:</label>
@@ -59,17 +65,23 @@ import { ApiService } from '../../../../core/services/Services Sucursales/sucurs
 export class AgregarProductoCatalogoComponent {
   @Output() addProducto = new EventEmitter<General_Catalogue>();
   @Output() cancelar = new EventEmitter<void>();
-  urls: string[] = [];
+  sucursales: any[] = [];
+  loading: boolean = false;
 
   ngOnInit(): void {
-    this.apiService.getAllBranchesUrlsConStatus1().subscribe((urls) => {
-      this.urls = urls;
+    this.apiService.getAllBranchesUrlsConStatus1().subscribe((sucursales) => {
+      this.sucursales = sucursales.map((sucursal) => ({
+        url: sucursal.url,
+        idSucursal: sucursal.idSucursal,
+        nombre: sucursal.nombre,
+      }));
     });
   }
 
   constructor(
     private catalogoSucursalService: CatalogoSucursalService,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private sincronizacionPendienteService: SincronizacionPendienteService
   ) {}
 
   nuevoProducto: General_Catalogue = {
@@ -97,6 +109,7 @@ export class AgregarProductoCatalogoComponent {
       text: `¿Estás seguro de registrar el nuevo producto ${this.nuevoProducto?.nombre}?`,
       icon: 'question',
       showCancelButton: true,
+      showConfirmButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Sí, confirmar registro',
@@ -106,37 +119,93 @@ export class AgregarProductoCatalogoComponent {
       },
     }).then((result) => {
       if (result.isConfirmed) {
-        this.urls.forEach((url) => {
-          const productoSucursal = this.mapToProductsModel(this.nuevoProducto);
-          this.catalogoSucursalService
-            .agregarProductoSucursal(url, productoSucursal)
-            .subscribe(
-              () => {
-                console.log(
-                  `Producto insertado en la sucursal con URL: ${url}`
-                );
-              },
-              (error: any) => {
-                console.error(
-                  `Error al insertar producto en la sucursal con URL: ${url}`,
-                  error
-                );
-                Swal.fire({
-                  title: 'Error',
-                  text: `Error al insertar producto en la sucursal con URL: ${url}`,
-                  icon: 'error',
-                  confirmButtonColor: '#3085d6',
-                  confirmButtonText: 'OK',
-                  customClass: {
-                    container: 'swal2-container',
-                  },
-                });
-              }
-            );
-        });
+        this.loading = true;
         this.addProducto.emit(this.nuevoProducto);
+        const requests = this.sucursales.map((sucursal) => {
+          const productoSucursal = this.mapToProductsModel(this.nuevoProducto);
+          return this.catalogoSucursalService
+            .agregarProductoSucursal(sucursal.url, productoSucursal)
+            .toPromise()
+            .then(() => ({ success: true, sucursalNombre: sucursal.nombre }))
+            .catch((error: any) => {
+              this.registrarFalloSincronizacion(
+                sucursal.idSucursal,
+                productoSucursal.idArticulo,
+                error.message
+              );
+              return { success: false, sucursalNombre: sucursal.nombre };
+            });
+        });
+        Promise.all(requests).then((results) => {
+          const errores = results.filter((result) => !result.success);
+          if (errores.length > 0) {
+            const mensaje = errores
+              .map(
+                (error) =>
+                  `Error al agregar producto en la sucursal: ${error.sucursalNombre}`
+              )
+              .join('\n');
+            console.error(mensaje);
+            Swal.fire({
+              title: 'Error',
+              text: mensaje,
+              icon: 'error',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'OK',
+              customClass: {
+                container: 'swal2-container',
+              },
+            });
+          } else {
+            console.log('Todos los productos agregados correctamente.');
+            Swal.fire({
+              title: 'Éxito',
+              text: 'Todos los productos se agregaron correctamente en las sucursales.',
+              icon: 'success',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'OK',
+              customClass: {
+                container: 'swal2-container',
+              },
+            });
+          }
+          this.loading = false;
+          this.cerrarModal();
+        });
       }
     });
+  }
+
+
+  registrarFalloSincronizacion(
+    idSucursal: number,
+    id_producto: number,
+    mensaje: string
+  ) {
+    const fechaActual = new Date();
+    fechaActual.setHours(fechaActual.getHours() - 6);
+    const body = {
+      id_producto: id_producto,
+      id_sucursal: idSucursal,
+      fecha_registro: fechaActual,
+      estado: 'Sincronización Pendiente',
+      mensaje_error: mensaje,
+    };
+    this.sincronizacionPendienteService
+      .registrarFalloSincronizacion(body)
+      .subscribe(
+        () => {
+          console.log(
+            'Fallo registrado en la tabla de sincronización pendiente.'
+          );
+        },
+        (error: any) => {
+          console.error(
+            'Error al registrar fallo en la tabla de sincronización pendiente',
+            error
+          );
+        }
+      );
   }
 
   mapToProductsModel(generalCatalogueData: General_Catalogue): Products {

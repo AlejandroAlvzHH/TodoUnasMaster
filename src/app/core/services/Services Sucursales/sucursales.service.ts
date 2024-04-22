@@ -36,10 +36,20 @@ export class ApiService {
     return this.http.put<boolean>(url, { status });
   }
 
-  getAllBranchesUrlsConStatus1(): Observable<string[]> {
+  getAllBranchesUrlsConStatus1(): Observable<
+    { idSucursal: number; nombre: string; url: string }[]
+  > {
     return this.getAllSucursales().pipe(
-      map(sucursales => sucursales.filter(sucursal => sucursal.status === 1)),
-      map(filteredSucursales => filteredSucursales.map(sucursal => sucursal.url))
+      map((sucursales) =>
+        sucursales.filter((sucursal) => sucursal.status === 1)
+      ),
+      map((filteredSucursales) =>
+        filteredSucursales.map((sucursal) => ({
+          idSucursal: sucursal.idSucursal,
+          nombre: sucursal.nombre,
+          url: sucursal.url,
+        }))
+      )
     );
   }
 }
