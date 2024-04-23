@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { VistaMovements } from '../../../Models/Master/vista-movements copy';
+import { VistaMovements } from '../../../Models/Master/vista-movements';
 @Injectable({
   providedIn: 'root',
 })

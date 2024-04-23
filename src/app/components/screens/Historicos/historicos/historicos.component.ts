@@ -3,7 +3,7 @@ import { SidebarComponent } from '../../../sidebar/sidebar.component';
 import { HeaderComponent } from '../../../header/header.component';
 import { SidebaropeningService } from '../../../../core/services/sidebaropening.service';
 import { CommonModule } from '@angular/common';
-import { VistaMovements } from '../../../../Models/Master/vista-movements copy';
+import { VistaMovements } from '../../../../Models/Master/vista-movements';
 import { HistoricosMovimientosService } from '../../../../core/services/Services Historicos/historicos-movimientos.service';
 import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-detalle.component';
 

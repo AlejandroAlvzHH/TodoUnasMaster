@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { General_Catalogue } from '../../../../Models/Master/general_catalogue';
-import { CatalogoGeneralService } from '../../../../core/services/Services Catalogo General/catalogo-general.service';
-import { DetalleProductoCatalogoComponent } from '../detalle-producto-catalogo/detalle-producto-catalogo.component';
+import { CatalogoSincronizacionService } from '../../../../core/services/Services Catalogo General/catalogo-sincronizacion.service';
+import { VistaCatalogoSincronizacion } from '../../../../Models/Master/vista-catalogo-sincronizacion';
 
 @Component({
   selector: 'app-tabla-catalogo',
@@ -121,7 +120,19 @@ import { DetalleProductoCatalogoComponent } from '../detalle-producto-catalogo/d
                 [class.desc]="!ordenAscendente"
               ></i>
             </th>
-            <!--<th>Detalles</th>-->
+            <th
+              scope="col"
+              (click)="ordenarPorColumna('sincronizacion')"
+              [class.interactive]="columnaOrdenada === 'sincronizacion'"
+            >
+              Sincronización
+              <i
+                *ngIf="columnaOrdenada === 'sincronizacion'"
+                class="arrow-icon"
+                [class.asc]="ordenAscendente"
+                [class.desc]="!ordenAscendente"
+              ></i>
+            </th>
             <th>Acción</th>
           </tr>
         </thead>
@@ -132,6 +143,7 @@ import { DetalleProductoCatalogoComponent } from '../detalle-producto-catalogo/d
             <td>{{ product.nombre }}</td>
             <td>{{ product.cantidad_total }}</td>
             <td>{{ product.precio }}</td>
+            <td>{{ product.sincronizacion }}</td>
             <!--<td>
               <button class="btn">Ver Detalles</button>
             </td>-->
@@ -146,15 +158,15 @@ import { DetalleProductoCatalogoComponent } from '../detalle-producto-catalogo/d
   styleUrl: './tabla-catalogo.component.css',
 })
 export class TablaCatalogoComponent {
-  productsList: General_Catalogue[] = [];
-  filteredProductsList: General_Catalogue[] = [];
+  productsList: VistaCatalogoSincronizacion[] = [];
+  filteredProductsList: VistaCatalogoSincronizacion[] = [];
   filteredIndices: number[] = [];
-  columnaOrdenada: keyof General_Catalogue | null = null;
+  columnaOrdenada: keyof VistaCatalogoSincronizacion | null = null;
   ordenAscendente: boolean = true;
 
   constructor(
-    private catalogoGeneralService: CatalogoGeneralService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private catalogoSincronizacionService: CatalogoSincronizacionService
   ) {}
 
   ngOnInit(): void {
@@ -164,20 +176,14 @@ export class TablaCatalogoComponent {
   private async initialize() {
     try {
       this.productsList =
-        await this.catalogoGeneralService.getAllCatalogueProducts();
+        await this.catalogoSincronizacionService.getAllVistaCatalogoSincronizacion();
       this.filteredProductsList = this.productsList.map((product) => ({
         id_producto: product.id_producto,
         clave: product.clave,
         nombre: product.nombre,
-        descripcion: product.descripcion,
         cantidad_total: product.cantidad_total,
         precio: product.precio,
-        usuario_creador: product.usuario_creador,
-        fecha_creado: product.fecha_creado,
-        usuario_modificador: product.usuario_modificador,
-        fecha_modificado: product.fecha_modificado,
-        usuario_eliminador: product.usuario_eliminador,
-        fecha_eliminado: product.fecha_eliminado,
+        sincronizacion: product.sincronizacion,
       }));
       this.filteredIndices = Array.from(
         { length: this.filteredProductsList.length },
@@ -195,17 +201,11 @@ export class TablaCatalogoComponent {
   resetFilteredProductsList(): void {
     this.filteredProductsList = this.productsList.map((product) => ({
       id_producto: product.id_producto,
-      clave: product.clave,
-      nombre: product.nombre,
-      descripcion: product.descripcion,
-      cantidad_total: product.cantidad_total,
-      precio: product.precio,
-      usuario_creador: product.usuario_creador,
-      fecha_creado: product.fecha_creado,
-      usuario_modificador: product.usuario_modificador,
-      fecha_modificado: product.fecha_modificado,
-      usuario_eliminador: product.usuario_eliminador,
-      fecha_eliminado: product.fecha_eliminado,
+        clave: product.clave,
+        nombre: product.nombre,
+        cantidad_total: product.cantidad_total,
+        precio: product.precio,
+        sincronizacion: product.sincronizacion,
     }));
     this.filteredIndices = Array.from(
       { length: this.filteredProductsList.length },
@@ -257,7 +257,7 @@ export class TablaCatalogoComponent {
     );
   }
 
-  ordenarPorColumna(columna: keyof General_Catalogue) {
+  ordenarPorColumna(columna: keyof VistaCatalogoSincronizacion) {
     if (this.columnaOrdenada === columna) {
       this.ordenAscendente = !this.ordenAscendente;
     } else {
@@ -277,13 +277,4 @@ export class TablaCatalogoComponent {
       }
     });
   }
-
-  /*abrirModal(): void {
-    this.movimientoSeleccionado = movement;
-    this.mostrarModal = true;
-  }
-
-  cerrarModal(): void {
-    this.mostrarModal = false;
-  }*/
 }

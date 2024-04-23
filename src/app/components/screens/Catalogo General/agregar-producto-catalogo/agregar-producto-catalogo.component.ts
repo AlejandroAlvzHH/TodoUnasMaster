@@ -17,8 +17,8 @@ import { SincronizacionPendienteService } from '../../../../core/services/Servic
       <div class="modal-content">
         <h2>Agregar Producto al Catálogo General</h2>
         <div *ngIf="loading" class="loading-overlay">
-      <div class="loading-spinner"></div>
-    </div>
+          <div class="loading-spinner"></div>
+        </div>
         <label>ID del Producto:</label>
         <input type="text" [(ngModel)]="nuevoProducto.id_producto" />
         <label>Clave:</label>
@@ -176,7 +176,6 @@ export class AgregarProductoCatalogoComponent {
     });
   }
 
-
   registrarFalloSincronizacion(
     idSucursal: number,
     id_producto: number,
@@ -188,7 +187,7 @@ export class AgregarProductoCatalogoComponent {
       id_producto: id_producto,
       id_sucursal: idSucursal,
       fecha_registro: fechaActual,
-      estado: 'Sincronización Pendiente',
+      estado: 'PENDIENTE',
       mensaje_error: mensaje,
     };
     this.sincronizacionPendienteService
