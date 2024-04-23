@@ -20,7 +20,12 @@ import { SincronizacionPendienteService } from '../../../../core/services/Servic
           <div class="loading-spinner"></div>
         </div>
         <label>ID del Producto:</label>
-        <input type="text" [(ngModel)]="nuevoProducto.id_producto" />
+        <input
+          type="number"
+          [(ngModel)]="nuevoProducto.id_producto"
+          (blur)="checkCantidad()"
+          (input)="validateID($event)"
+        />
         <label>Clave:</label>
         <input type="text" [(ngModel)]="nuevoProducto.clave" />
         <label>Nombre:</label>
@@ -42,13 +47,7 @@ import { SincronizacionPendienteService } from '../../../../core/services/Servic
           (input)="validatePrecio($event)"
         />
         <div class="botonera">
-          <button
-            class="btn"
-            (click)="agregarProducto()"
-            [disabled]="!isValid()"
-          >
-            Añadir
-          </button>
+          <button class="btn" (click)="agregarProducto()">Añadir</button>
           <button
             class="btn"
             (click)="cerrarModal()"
@@ -103,7 +102,30 @@ export class AgregarProductoCatalogoComponent {
     this.cancelar.emit();
   }
 
-  agregarProducto() {
+  agregarProducto(): void {
+    if (this.nuevoProducto.id_producto == 0) {
+      Swal.fire({
+        title: 'ID no modificado',
+        text: 'Por favor recuerde ingresar un ID válido.',
+        icon: 'warning',
+        confirmButtonColor: '#007bff',
+        confirmButtonText: 'Aceptar',
+      });
+      return;
+    } else if (
+      this.nuevoProducto.clave == '' ||
+      this.nuevoProducto.nombre == '' ||
+      this.nuevoProducto.descripcion == ''
+    ) {
+      Swal.fire({
+        title: 'Campos Vacíos',
+        text: 'Por favor rellene todos los campos para agregar el nuevo producto.',
+        icon: 'warning',
+        confirmButtonColor: '#007bff',
+        confirmButtonText: 'Aceptar',
+      });
+      return;
+    }
     Swal.fire({
       title: 'Confirmar Traspaso',
       text: `¿Estás seguro de registrar el nuevo producto ${this.nuevoProducto?.nombre}?`,
@@ -250,10 +272,6 @@ export class AgregarProductoCatalogoComponent {
     };
   }
 
-  isValid(): boolean {
-    return this.nuevoProducto.cantidad_total > 0;
-  }
-
   validateCantidad(event: any) {
     let input = event.target.value;
     input = input.replace(/[^0-9.]/g, '');
@@ -284,6 +302,21 @@ export class AgregarProductoCatalogoComponent {
     }
   }
 
+  validateID(event: any) {
+    let input = event.target.value;
+    input = input.replace(/[^0-9.]/g, '');
+    const decimalCount = (input.match(/\./g) || []).length;
+    if (decimalCount > 1) {
+      input = input.slice(0, input.lastIndexOf('.'));
+    }
+    event.target.value = input;
+    const value = parseFloat(input);
+    if (isNaN(value) || value < 0) {
+      event.target.value = '0';
+      this.nuevoProducto.id_producto = 0;
+    }
+  }
+
   checkCantidad() {
     if (
       this.nuevoProducto.cantidad_total === null ||
@@ -299,6 +332,15 @@ export class AgregarProductoCatalogoComponent {
       this.nuevoProducto.precio === undefined
     ) {
       this.nuevoProducto.precio = 0;
+    }
+  }
+
+  checkID() {
+    if (
+      this.nuevoProducto.id_producto === null ||
+      this.nuevoProducto.id_producto === undefined
+    ) {
+      this.nuevoProducto.id_producto = 0;
     }
   }
 }

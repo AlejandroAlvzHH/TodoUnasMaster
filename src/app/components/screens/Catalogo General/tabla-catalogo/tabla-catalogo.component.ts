@@ -2,12 +2,18 @@ import { CommonModule } from '@angular/common';
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { CatalogoSincronizacionService } from '../../../../core/services/Services Catalogo General/catalogo-sincronizacion.service';
 import { VistaCatalogoSincronizacion } from '../../../../Models/Master/vista-catalogo-sincronizacion';
+import { ModalDetallesSincronizacionComponent } from '../modal-detalles-sincronizacion/modal-detalles-sincronizacion.component';
 
 @Component({
   selector: 'app-tabla-catalogo',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ModalDetallesSincronizacionComponent],
   template: `
+    <app-modal-detalles-sincronizacion
+        *ngIf="mostrarModalDetalles"
+        (cancelar)="cerrarModalDetalles()"
+        [id_producto]="productoSeleccionado!.id_producto"
+      ></app-modal-detalles-sincronizacion>
     <div>
       <form class="search-form">
         <div class="search-input">
@@ -20,14 +26,14 @@ import { VistaCatalogoSincronizacion } from '../../../../Models/Master/vista-cat
         <div class="search-input">
           <input
             type="text"
-            placeholder="Buscar por nombre clave"
+            placeholder="Buscar por clave"
             (input)="filterByClave($event)"
           />
         </div>
         <div class="search-input">
           <input
             type="text"
-            placeholder="Buscar por nombre del artículo"
+            placeholder="Buscar por nombre"
             (input)="filterByNombre($event)"
           />
         </div>
@@ -133,7 +139,7 @@ import { VistaCatalogoSincronizacion } from '../../../../Models/Master/vista-cat
                 [class.desc]="!ordenAscendente"
               ></i>
             </th>
-            <th>Acción</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -148,6 +154,9 @@ import { VistaCatalogoSincronizacion } from '../../../../Models/Master/vista-cat
               <button class="btn">Ver Detalles</button>
             </td>-->
             <td>
+              <button class="btn" (click)="abrirModalDetalles()">
+                Detalles
+              </button>
               <button class="btn">Editar</button>
             </td>
           </tr>
@@ -163,6 +172,8 @@ export class TablaCatalogoComponent {
   filteredIndices: number[] = [];
   columnaOrdenada: keyof VistaCatalogoSincronizacion | null = null;
   ordenAscendente: boolean = true;
+  mostrarModalDetalles: boolean = false;
+  productoSeleccionado: VistaCatalogoSincronizacion | null = null;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -201,11 +212,11 @@ export class TablaCatalogoComponent {
   resetFilteredProductsList(): void {
     this.filteredProductsList = this.productsList.map((product) => ({
       id_producto: product.id_producto,
-        clave: product.clave,
-        nombre: product.nombre,
-        cantidad_total: product.cantidad_total,
-        precio: product.precio,
-        sincronizacion: product.sincronizacion,
+      clave: product.clave,
+      nombre: product.nombre,
+      cantidad_total: product.cantidad_total,
+      precio: product.precio,
+      sincronizacion: product.sincronizacion,
     }));
     this.filteredIndices = Array.from(
       { length: this.filteredProductsList.length },
@@ -276,5 +287,17 @@ export class TablaCatalogoComponent {
         return 0;
       }
     });
+  }
+
+  abrirModalDetalles(): void {
+    this.mostrarModalDetalles = true;
+  }
+  /*abrirModalDetalles(producto: VistaCatalogoSincronizacion): void {
+    this.mostrarModalDetalles = true;
+    this.productoSeleccionado = producto;
+  }*/
+
+  cerrarModalDetalles(): void {
+    this.mostrarModalDetalles = false;
   }
 }
