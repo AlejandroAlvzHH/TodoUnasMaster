@@ -35,7 +35,9 @@ select option {
 }
 
 select option:hover {
-  background-color: #007bff;
+  background: #5c5c5c;
+  background-color: #5c5c5c;
+  color: #5c5c5c;
   color: white;
 }
 
@@ -55,7 +57,7 @@ select option:hover {
 }
 
 .switch-container button.active {
-  background-color: #007bff;
+  background-color: #5c5c5c;
   color: white;
 }
 

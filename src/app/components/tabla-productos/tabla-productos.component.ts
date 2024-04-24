@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CatalogoSucursalService } from '../../core/services/Services Catalogo General/catalogo-sucursal';
+import { CatalogoSucursalService } from '../../core/services/Services Catalogo General/catalogo-sucursal.service';
 import { Products } from '../../Models/Factuprint/products';
 import { CarritoServiceService } from '../../core/services/Services Sucursales/carrito-service.service';
 import { ProductListItem } from '../../Models/Master/product_list_item';

@@ -10,10 +10,10 @@ import { ModalDetallesSincronizacionComponent } from '../modal-detalles-sincroni
   imports: [CommonModule, ModalDetallesSincronizacionComponent],
   template: `
     <app-modal-detalles-sincronizacion
-        *ngIf="mostrarModalDetalles"
-        (cancelar)="cerrarModalDetalles()"
-        [id_producto]="productoSeleccionado!.id_producto"
-      ></app-modal-detalles-sincronizacion>
+      *ngIf="mostrarModalDetalles"
+      (cancelar)="cerrarModalDetalles()"
+      [id_producto]="productoSeleccionado!.id_producto"
+    ></app-modal-detalles-sincronizacion>
     <div>
       <form class="search-form">
         <div class="search-input">
@@ -45,17 +45,6 @@ import { ModalDetallesSincronizacionComponent } from '../modal-detalles-sincroni
           />
         </div>
       </form>
-      <!--<app-detalle-producto-catalogo
-        *ngIf="mostrarModal"
-        [id_producto]="movimientoSeleccionado!.id_producto"
-        [usuario_creador]="movimientoSeleccionado!.usuario_creador"
-        [fecha_creado]="movimientoSeleccionado!.fecha_creado"
-        [usuario_modificador]="movimientoSeleccionado!.usuario_modificador"
-        [fecha_modificado]="movimientoSeleccionado!.fecha_modificado"
-        [usuario_eliminador]="movimientoSeleccionado!.usuario_eliminador"
-        [fecha_eliminado]="movimientoSeleccionado!.fecha_eliminado"
-        (cancelar)="cerrarModal()"
-      ></app-detalle-producto-catalogo>-->
     </div>
     <div>
       <table border="2">
@@ -66,7 +55,7 @@ import { ModalDetallesSincronizacionComponent } from '../modal-detalles-sincroni
               (click)="ordenarPorColumna('id_producto')"
               [class.interactive]="columnaOrdenada === 'id_producto'"
             >
-              Id_Artículo
+              Id Artículo
               <i
                 *ngIf="columnaOrdenada === 'id_producto'"
                 class="arrow-icon"
@@ -143,18 +132,15 @@ import { ModalDetallesSincronizacionComponent } from '../modal-detalles-sincroni
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let product of filteredProductsList">
-            <td>{{ product.id_producto }}</td>
-            <td>{{ product.clave }}</td>
-            <td>{{ product.nombre }}</td>
-            <td>{{ product.cantidad_total }}</td>
-            <td>{{ product.precio }}</td>
-            <td>{{ product.sincronizacion }}</td>
-            <!--<td>
-              <button class="btn">Ver Detalles</button>
-            </td>-->
+          <tr *ngFor="let index of filteredIndices">
+            <td>{{ filteredProductsList[index].id_producto }}</td>
+            <td>{{ filteredProductsList[index].clave }}</td>
+            <td>{{ filteredProductsList[index].nombre }}</td>
+            <td>{{ filteredProductsList[index].cantidad_total }}</td>
+            <td>{{ filteredProductsList[index].precio }}</td>
+            <td>{{ filteredProductsList[index].sincronizacion }}</td>
             <td>
-              <button class="btn" (click)="abrirModalDetalles()">
+              <button class="btn" (click)="abrirModalDetalles(filteredProductsList[index])">
                 Detalles
               </button>
               <button class="btn">Editar</button>
@@ -289,13 +275,10 @@ export class TablaCatalogoComponent {
     });
   }
 
-  abrirModalDetalles(): void {
-    this.mostrarModalDetalles = true;
-  }
-  /*abrirModalDetalles(producto: VistaCatalogoSincronizacion): void {
+  abrirModalDetalles(producto: VistaCatalogoSincronizacion): void{
     this.mostrarModalDetalles = true;
     this.productoSeleccionado = producto;
-  }*/
+  }
 
   cerrarModalDetalles(): void {
     this.mostrarModalDetalles = false;

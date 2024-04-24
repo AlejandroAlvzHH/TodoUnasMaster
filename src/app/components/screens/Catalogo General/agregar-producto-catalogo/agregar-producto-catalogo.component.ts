@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { General_Catalogue } from '../../../../Models/Master/general_catalogue';
 import Swal from 'sweetalert2';
-import { CatalogoSucursalService } from '../../../../core/services/Services Catalogo General/catalogo-sucursal';
+import { CatalogoSucursalService } from '../../../../core/services/Services Catalogo General/catalogo-sucursal.service';
 import { Products } from '../../../../Models/Factuprint/products';
 import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
 import { SincronizacionPendienteService } from '../../../../core/services/Services Catalogo General/sincronizacion-pendiente.service';
@@ -148,7 +148,14 @@ export class AgregarProductoCatalogoComponent {
           return this.catalogoSucursalService
             .agregarProductoSucursal(sucursal.url, productoSucursal)
             .toPromise()
-            .then(() => ({ success: true, sucursalNombre: sucursal.nombre }))
+            .then(() => {
+              this.registrarFalloSincronizacion(
+                sucursal.idSucursal,
+                productoSucursal.idArticulo,
+                ''
+              );
+              return { success: true, sucursalNombre: sucursal.nombre };
+            })
             .catch((error: any) => {
               this.registrarFalloSincronizacion(
                 sucursal.idSucursal,
@@ -205,13 +212,25 @@ export class AgregarProductoCatalogoComponent {
   ) {
     const fechaActual = new Date();
     fechaActual.setHours(fechaActual.getHours() - 6);
-    const body = {
-      id_producto: id_producto,
-      id_sucursal: idSucursal,
-      fecha_registro: fechaActual,
-      estado: 'PENDIENTE',
-      mensaje_error: mensaje,
-    };
+    let body: any;
+    if (mensaje !== '') {
+      body = {
+        id_producto: id_producto,
+        id_sucursal: idSucursal,
+        fecha_registro: fechaActual,
+        estado: 'PENDIENTE',
+        mensaje_error: mensaje,
+      };
+    } else {
+      body = {
+        id_producto: id_producto,
+        id_sucursal: idSucursal,
+        fecha_registro: fechaActual,
+        estado: 'SINCRONIZADO',
+        mensaje_error: mensaje,
+      };
+    }
+
     this.sincronizacionPendienteService
       .registrarFalloSincronizacion(body)
       .subscribe(

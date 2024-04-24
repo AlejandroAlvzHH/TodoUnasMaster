@@ -136,8 +136,8 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
       text: `¿Estás seguro de eliminar ${this.sucursal?.nombre}?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: '#5c5c5c',
+      cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar eliminación',
       cancelButtonText: 'Cancelar',
     });

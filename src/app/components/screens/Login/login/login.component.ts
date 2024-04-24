@@ -10,31 +10,35 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <h1>TODO UNAS MASTER</h1>
-    <form (ngSubmit)="login()">
-      <div>
-        <label for="username">Usuario:</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          [(ngModel)]="username"
-          required
-        />
+    <div class="container">
+      <div class="title-container">
+        <h1>TODO UNAS MASTER</h1>
       </div>
-      <div>
-        <label for="password">Contraseña:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          [(ngModel)]="password"
-          required
-        />
-      </div>
-      <button type="submit">Iniciar sesión</button>
-      <div *ngIf="error" class="error">{{ error }}</div>
-    </form>
+      <form (ngSubmit)="login()">
+        <div>
+          <label for="username">Usuario:</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            [(ngModel)]="username"
+            required
+          />
+        </div>
+        <div>
+          <label for="password">Contraseña:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            required
+          />
+        </div>
+        <button type="submit">Iniciar sesión</button>
+        <div *ngIf="error" class="error">{{ error }}</div>
+      </form>
+    </div>
   `,
   styleUrl: './login.component.css',
 })
@@ -50,7 +54,7 @@ export class LoginComponent {
     try {
       const user = await this.authService.login(this.username, this.password);
       console.log('Inicio de sesión exitoso:', user);
-      this.router.navigate(['/']); 
+      this.router.navigate(['/']);
     } catch (error: any) {
       if (error.message === 'Credenciales incorrectas') {
         Swal.fire({

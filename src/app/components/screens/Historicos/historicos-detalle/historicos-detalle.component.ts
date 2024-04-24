@@ -68,6 +68,7 @@ export class HistoricosDetalleComponent {
         this.detallesMovimiento = detalles;
       });
   }
+  
   generarPdf(): void {
     const detallesProductos = this.detallesMovimiento.map((item, index) => {
       return {
