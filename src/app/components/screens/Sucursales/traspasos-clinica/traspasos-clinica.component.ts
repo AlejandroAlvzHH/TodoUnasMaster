@@ -107,7 +107,7 @@ export class TraspasosClinicaComponent {
         title: 'Carrito Vacío',
         text: 'El carrito está vacío. Por favor, agrega productos antes de confirmar el traspaso.',
         icon: 'warning',
-        confirmButtonColor: '#007bff',
+        confirmButtonColor: '#5c5c5c',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -130,8 +130,8 @@ export class TraspasosClinicaComponent {
         text: `¿Estás seguro de traspasar los productos a ${selectedClinica?.nombre}?`,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
+        confirmButtonColor: '#5c5c5c',
+        cancelButtonColor: '#bcbcbs',
         confirmButtonText: 'Sí, confirmar traspaso',
         cancelButtonText: 'Cancelar',
       }).then((result) => {
@@ -290,7 +290,7 @@ export class TraspasosClinicaComponent {
             title: 'Traspaso Confirmado',
             text: `Los productos han sido traspasados a ${selectedClinica?.nombre}.`,
             icon: 'success',
-            confirmButtonColor: '#007bff',
+            confirmButtonColor: '#5c5c5c',
             confirmButtonText: 'Aceptar',
           }).then(() => {
             window.location.reload();

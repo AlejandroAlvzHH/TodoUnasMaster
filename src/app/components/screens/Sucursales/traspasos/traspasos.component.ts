@@ -105,7 +105,7 @@ export class TraspasosComponent {
         title: 'Carrito Vacío',
         text: 'El carrito está vacío. Por favor, agrega productos antes de confirmar el traspaso.',
         icon: 'warning',
-        confirmButtonColor: '#007bff',
+        confirmButtonColor: '#5c5c5c',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -132,8 +132,8 @@ export class TraspasosComponent {
         text: `¿Estás seguro de traspasar los productos a ${selectedSucursalDestino?.nombre}?`,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
+        confirmButtonColor: '#5c5c5c',
+        cancelButtonColor: '#bcbcbs',
         confirmButtonText: 'Sí, confirmar traspaso',
         cancelButtonText: 'Cancelar',
       }).then((result) => {
@@ -280,7 +280,7 @@ export class TraspasosComponent {
             title: 'Traspaso Confirmado',
             text: `Los productos han sido traspasados a ${selectedSucursalDestino?.nombre}.`,
             icon: 'success',
-            confirmButtonColor: '#007bff',
+            confirmButtonColor: '#5c5c5c',
             confirmButtonText: 'Aceptar',
           }).then(() => {
             window.location.reload();

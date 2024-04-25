@@ -130,7 +130,7 @@ export class EntradasysalidasComponent implements OnInit {
         title: 'Carrito Vacío',
         text: 'No se seleccionó ningún producto. Por favor, agrega ítems antes de confirmar la acción.',
         icon: 'warning',
-        confirmButtonColor: '#007bff',
+        confirmButtonColor: '#5c5c5c',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -156,8 +156,8 @@ export class EntradasysalidasComponent implements OnInit {
       text: `¿Estás seguro de registrar la entrada de productos en ${this.sucursal?.nombre}?`,
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: '#5c5c5c',
+      cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar entrada',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
@@ -309,7 +309,7 @@ export class EntradasysalidasComponent implements OnInit {
           title: 'Entrada Confirmada',
           text: `Los productos han sido agregados al inventario de ${this.sucursal?.nombre}.`,
           icon: 'success',
-          confirmButtonColor: '#007bff',
+          confirmButtonColor: '#5c5c5c',
           confirmButtonText: 'Aceptar',
         }).then(() => {
           window.location.reload();
@@ -332,8 +332,8 @@ export class EntradasysalidasComponent implements OnInit {
       text: `¿Estás seguro de registrar la salida de productos en ${this.sucursal?.nombre}?`,
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: '#5c5c5c',
+      cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar salida',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
@@ -484,7 +484,7 @@ export class EntradasysalidasComponent implements OnInit {
           title: 'Salida Confirmada',
           text: `Los productos han sido eliminados del inventario de ${this.sucursal?.nombre}.`,
           icon: 'success',
-          confirmButtonColor: '#007bff',
+          confirmButtonColor: '#5c5c5c',
           confirmButtonText: 'Aceptar',
         }).then(() => {
           window.location.reload();

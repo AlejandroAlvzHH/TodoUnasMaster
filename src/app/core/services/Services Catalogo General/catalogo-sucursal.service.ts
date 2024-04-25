@@ -27,6 +27,8 @@ export class CatalogoSucursalService {
     product: Products
   ): Observable<Products> {
     const url = `${baseUrl}/api/ProductApi`;
+    console.log(url)
+    console.log(product)
     return this.http.post<Products>(url, product).pipe(
       catchError((error) => {
         return throwError(error);

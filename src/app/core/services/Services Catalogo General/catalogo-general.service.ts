@@ -19,6 +19,21 @@ export class CatalogoGeneralService {
     }
   }
 
+  async getCatalogueProductByID(id: number): Promise<General_Catalogue | null> {
+    try {
+      const response = await fetch(`${this.url}/${id}`, { method: 'GET' });
+      if (!response.ok) {
+        throw new Error('Failed to fetch product');
+      }
+      const data = await response.json();
+      return data as General_Catalogue;
+    } catch (error) {
+      console.error('Error fetching product:', error);
+      return null;
+    }
+  }
+  
+
   async addCatalogueProduct(
     product: General_Catalogue
   ): Promise<General_Catalogue> {

@@ -151,7 +151,7 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
           title: 'Sucursal Eliminada',
           text: 'Los registros permanecerán en la base de datos.',
           icon: 'success',
-          confirmButtonColor: '#007bff',
+          confirmButtonColor: '#5c5c5c',
           confirmButtonText: 'Aceptar',
         });
         this.obtenerDetalleSucursal();

@@ -17,34 +17,25 @@
 
 .sidebar ul li {
   margin-bottom: 10px;
+  text-align: center;
 }
 
 .sidebar ul li a {
   color: #fff;
   text-decoration: none;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
+  display: block;
+  padding: 10px;
+  color: #fff;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  font-family: "Montserrat", sans-serif;
 }
 
 .sidebar ul h2 {
   margin-top: 20px;
   color: #fff;
   text-align: center;
-}
-
-.sidebar ul li {
-  text-align: center;
-}
-
-.sidebar ul li a {
-  display: block;
-  padding: 10px;
-  color: #fff;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
+  font-family: "Montserrat", sans-serif;
 }
 
 .sidebar ul li a:hover {

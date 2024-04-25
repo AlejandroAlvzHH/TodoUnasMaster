@@ -6,10 +6,6 @@ input[type="text"] {
   margin-bottom: 8px;
 }
 
-th {
-  cursor: pointer; 
-}
-
 .arrow-icon {
   margin-left: 5px;
   display: inline-block;

@@ -71,6 +71,7 @@ export class HomeComponent {
   }
 
   ngOnInit(): void {
+    
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });

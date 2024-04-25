@@ -108,7 +108,7 @@ export class AgregarProductoCatalogoComponent {
         title: 'ID no modificado',
         text: 'Por favor recuerde ingresar un ID válido.',
         icon: 'warning',
-        confirmButtonColor: '#007bff',
+        confirmButtonColor: '#5c5c5c',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -121,24 +121,21 @@ export class AgregarProductoCatalogoComponent {
         title: 'Campos Vacíos',
         text: 'Por favor rellene todos los campos para agregar el nuevo producto.',
         icon: 'warning',
-        confirmButtonColor: '#007bff',
+        confirmButtonColor: '#5c5c5c',
         confirmButtonText: 'Aceptar',
       });
       return;
     }
     Swal.fire({
-      title: 'Confirmar Traspaso',
+      title: 'Confirmar Registro',
       text: `¿Estás seguro de registrar el nuevo producto ${this.nuevoProducto?.nombre}?`,
       icon: 'question',
       showCancelButton: true,
       showConfirmButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: '#5c5c5c',
+      cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar registro',
       cancelButtonText: 'Cancelar',
-      customClass: {
-        container: 'swal2-container',
-      },
     }).then((result) => {
       if (result.isConfirmed) {
         this.loading = true;
@@ -174,32 +171,36 @@ export class AgregarProductoCatalogoComponent {
                   `Error al agregar producto en la sucursal: ${error.sucursalNombre}`
               )
               .join('\n');
-            console.error(mensaje);
             Swal.fire({
               title: 'Error',
               text: mensaje,
               icon: 'error',
-              confirmButtonColor: '#3085d6',
+              confirmButtonColor: '#5c5c5c',
               confirmButtonText: 'OK',
               customClass: {
                 container: 'swal2-container',
               },
+            }).then((result) => {
+              this.loading = false;
+              this.cerrarModal();
+              window.location.reload();
             });
           } else {
-            console.log('Todos los productos agregados correctamente.');
             Swal.fire({
               title: 'Éxito',
               text: 'Todos los productos se agregaron correctamente en las sucursales.',
               icon: 'success',
-              confirmButtonColor: '#3085d6',
+              confirmButtonColor: '#5c5c5c',
               confirmButtonText: 'OK',
               customClass: {
                 container: 'swal2-container',
               },
+            }).then((result) => {
+              this.loading = false;
+              this.cerrarModal();
+              window.location.reload();
             });
           }
-          this.loading = false;
-          this.cerrarModal();
         });
       }
     });

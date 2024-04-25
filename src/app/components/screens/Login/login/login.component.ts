@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
   template: `
     <div class="container">
       <div class="title-container">
-        <h1>TODO UNAS MASTER</h1>
+        <h1>TODO UÑAS MASTER</h1>
       </div>
       <form (ngSubmit)="login()">
         <div>
