@@ -3,17 +3,23 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { CatalogoSincronizacionService } from '../../../../core/services/Services Catalogo General/catalogo-sincronizacion.service';
 import { VistaCatalogoSincronizacion } from '../../../../Models/Master/vista-catalogo-sincronizacion';
 import { ModalDetallesSincronizacionComponent } from '../modal-detalles-sincronizacion/modal-detalles-sincronizacion.component';
+import { EditarProductoCatalogoComponent } from '../editar-producto-catalogo/editar-producto-catalogo';
 
 @Component({
   selector: 'app-tabla-catalogo',
   standalone: true,
-  imports: [CommonModule, ModalDetallesSincronizacionComponent],
+  imports: [CommonModule, ModalDetallesSincronizacionComponent, EditarProductoCatalogoComponent],
   template: `
     <app-modal-detalles-sincronizacion
       *ngIf="mostrarModalDetalles"
       (cancelar)="cerrarModalDetalles()"
       [id_producto]="productoSeleccionado!.id_producto"
     ></app-modal-detalles-sincronizacion>
+    <app-editar-producto-catalogo
+      *ngIf="mostrarModalEditar"
+      (cancelar)="cerrarModalEditar()"
+      [id_producto]="productoSeleccionado!.id_producto"
+    ></app-editar-producto-catalogo>
     <div>
       <form class="search-form">
         <div class="search-input">
@@ -140,10 +146,18 @@ import { ModalDetallesSincronizacionComponent } from '../modal-detalles-sincroni
             <td>{{ filteredProductsList[index].precio }}</td>
             <td>{{ filteredProductsList[index].sincronizacion }}</td>
             <td>
-              <button class="btn" (click)="abrirModalDetalles(filteredProductsList[index])">
+              <button
+                class="btn"
+                (click)="abrirModalDetalles(filteredProductsList[index])"
+              >
                 Detalles
               </button>
-              <button class="btn">Editar</button>
+              <button
+                class="btn"
+                (click)="abrirModalEditar(filteredProductsList[index])"
+              >
+                Editar
+              </button>
             </td>
           </tr>
         </tbody>
@@ -159,6 +173,7 @@ export class TablaCatalogoComponent {
   columnaOrdenada: keyof VistaCatalogoSincronizacion | null = null;
   ordenAscendente: boolean = true;
   mostrarModalDetalles: boolean = false;
+  mostrarModalEditar: boolean = false;
   productoSeleccionado: VistaCatalogoSincronizacion | null = null;
 
   constructor(
@@ -275,12 +290,21 @@ export class TablaCatalogoComponent {
     });
   }
 
-  abrirModalDetalles(producto: VistaCatalogoSincronizacion): void{
+  abrirModalDetalles(producto: VistaCatalogoSincronizacion): void {
     this.mostrarModalDetalles = true;
     this.productoSeleccionado = producto;
   }
 
   cerrarModalDetalles(): void {
     this.mostrarModalDetalles = false;
+  }
+
+  abrirModalEditar(producto: VistaCatalogoSincronizacion): void {
+    this.mostrarModalEditar = true;
+    this.productoSeleccionado = producto;
+  }
+
+  cerrarModalEditar(): void {
+    this.mostrarModalEditar = false;
   }
 }

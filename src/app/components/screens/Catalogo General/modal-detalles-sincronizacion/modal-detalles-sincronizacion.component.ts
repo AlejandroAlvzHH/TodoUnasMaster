@@ -77,6 +77,7 @@ export class ModalDetallesSincronizacionComponent {
   cerrarModal() {
     this.cancelar.emit();
   }
+  
   async reintentarSincronizacion() {
     this.loading = true;
     let algunoPendiente = false;
