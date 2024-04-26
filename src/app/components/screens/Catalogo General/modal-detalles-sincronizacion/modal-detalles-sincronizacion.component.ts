@@ -77,91 +77,99 @@ export class ModalDetallesSincronizacionComponent {
   cerrarModal() {
     this.cancelar.emit();
   }
-
-  reintentarSincronizacion() {
+  async reintentarSincronizacion() {
     this.loading = true;
     let algunoPendiente = false;
-    this.detallesProducto.forEach(async (producto) => {
+    for (const producto of this.detallesProducto) {
       if (producto.estado === 'PENDIENTE') {
-        console.log(`El producto ${producto.nombre} tiene estado PENDIENTE.`);
-        console.log('el registro idsync: ', producto.id_sync);
         algunoPendiente = true;
-        const productByID =
-          await this.catalogoGeneralService.getCatalogueProductByID(
-            producto.id_producto
-          );
-        if (productByID) {
-          const JSON = {
-            idArticulo: productByID.id_producto,
-            clave: productByID.clave,
-            nombre: productByID.nombre,
-            precioVenta: productByID.precio,
-            precioCompra: 0,
-            unidadVenta: '',
-            unidadCompra: '',
-            relacion: 0,
-            idImp1: 0,
-            idImp2: 0,
-            idRet1: 0,
-            idRet2: 0,
-            existencia: productByID.cantidad_total,
-            observaciones: productByID.descripcion,
-            neto: 0,
-            netoC: 0,
-            inventariable: 0,
-            costo: 0,
-            lotes: 0,
-            series: 0,
-            precioSug: 0,
-            oferta: '',
-            promocion: '',
-            impCig: 0,
-            color: 0,
-            precioLista: 0,
-            condiciones: '',
-            utilidad: 0,
-            alterna: '',
-            kit: 0,
-            dpc: 0,
-            dpv: 0,
-            reorden: 0,
-            maximo: 0,
-            kitSuelto: 0,
-            idClaseMultiple: 0,
-            prcFix: 0,
-            localiza: '',
-          };
-          this.sincronizacionPendienteService
-            .obtenerFalloSincronizacionPorId(producto.id_sync)
-            .subscribe((registroFallo) => {
-              const fechaActual = new Date();
-              fechaActual.setHours(fechaActual.getHours() - 6);
-              const JSON1 = {
-                id_sync: registroFallo.id_sync,
-                id_producto: registroFallo.id_producto,
-                id_sucursal: registroFallo.id_sucursal,
-                fecha_registro: fechaActual,
-                estado: 'SINCRONIZADO',
-                mensaje_error: '',
-              };
-              console.log('BODY QUE SE MANDA', JSON1);
-              this.catalogoSucursalService
-                .agregarProductoSucursal(producto.url, JSON)
-                .toPromise()
-                .then(() => {
-                  this.sincronizacionPendienteService
-                    .actualizarFalloSincronizacion(producto.id_sync, JSON1)
-                    .toPromise();
-                });
-            });
-        } else {
-          console.log(
-            'No se pudo obtener información del producto con ID:',
-            producto.id_producto
-          );
+        try {
+          const productByID =
+            await this.catalogoGeneralService.getCatalogueProductByID(
+              producto.id_producto
+            );
+          if (productByID) {
+            const JSON = {
+              idArticulo: productByID.id_producto,
+              clave: productByID.clave,
+              nombre: productByID.nombre,
+              precioVenta: productByID.precio,
+              precioCompra: 0,
+              unidadVenta: '',
+              unidadCompra: '',
+              relacion: 0,
+              idImp1: 0,
+              idImp2: 0,
+              idRet1: 0,
+              idRet2: 0,
+              existencia: productByID.cantidad_total,
+              observaciones: productByID.descripcion,
+              neto: 0,
+              netoC: 0,
+              inventariable: 0,
+              costo: 0,
+              lotes: 0,
+              series: 0,
+              precioSug: 0,
+              oferta: '',
+              promocion: '',
+              impCig: 0,
+              color: 0,
+              precioLista: 0,
+              condiciones: '',
+              utilidad: 0,
+              alterna: '',
+              kit: 0,
+              dpc: 0,
+              dpv: 0,
+              reorden: 0,
+              maximo: 0,
+              kitSuelto: 0,
+              idClaseMultiple: 0,
+              prcFix: 0,
+              localiza: '',
+            };
+            const registroFallo = await this.sincronizacionPendienteService
+              .obtenerFalloSincronizacionPorId(producto.id_sync)
+              .toPromise();
+            const fechaActual = new Date();
+            fechaActual.setHours(fechaActual.getHours() - 6);
+            const JSON1 = {
+              id_sync: registroFallo.id_sync,
+              id_producto: registroFallo.id_producto,
+              id_sucursal: registroFallo.id_sucursal,
+              fecha_registro: fechaActual,
+              estado: 'SINCRONIZADO',
+              mensaje_error: '',
+            };
+            await this.catalogoSucursalService
+              .agregarProductoSucursal(producto.url, JSON)
+              .toPromise();
+            await this.sincronizacionPendienteService
+              .actualizarFalloSincronizacion(producto.id_sync, JSON1)
+              .toPromise();
+          } else {
+            console.log(
+              'No se pudo obtener información del producto con ID:',
+              producto.id_producto
+            );
+          }
+        } catch (error) {
+          console.error('Error durante la sincronización:', error);
+          Swal.fire({
+            title: 'Error durante la sincronización, intente de nuevo más tarde',
+            text: `${error}`,
+            icon: 'error',
+            confirmButtonColor: '#5c5c5c',
+            confirmButtonText: 'Aceptar',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.loading = false;
+            }
+          });
         }
       }
-    });
+    }
     if (!algunoPendiente) {
       console.log('No hay productos con estado PENDIENTE.');
       Swal.fire({
@@ -177,5 +185,18 @@ export class ModalDetallesSincronizacionComponent {
       });
       return;
     }
+    Swal.fire({
+      title: 'Se sincronizaron los productos con éxito',
+      text: 'Los productos ahora se encuentran sincronizados en todas las sucursales.',
+      icon: 'success',
+      confirmButtonColor: '#5c5c5c',
+      confirmButtonText: 'Aceptar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.loading = false;
+        this.cerrarModal();
+        window.location.reload();
+      }
+    });
   }
 }
