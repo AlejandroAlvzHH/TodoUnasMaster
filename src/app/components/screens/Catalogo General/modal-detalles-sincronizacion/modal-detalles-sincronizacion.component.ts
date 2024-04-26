@@ -40,7 +40,7 @@ import Swal from 'sweetalert2';
         <button class="btn" (click)="reintentarSincronizacion()">
           Reintentar Sincronización
         </button>
-        <button class="btn" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn" (click)="cerrarModal()">Cerrar</button>
       </div>
     </div>
   `,
@@ -51,7 +51,7 @@ export class ModalDetallesSincronizacionComponent {
   @Input() id_producto: number | null = null;
   detallesProducto: VistaSucursalesaConSincronizacionPendiente[] = [];
   loading: boolean = false;
-  
+
   constructor(
     private sucursalesConSincronizacionPendienteService: SucursalesConSincronizacionPendienteService,
     private catalogoGeneralService: CatalogoGeneralService,
@@ -79,10 +79,12 @@ export class ModalDetallesSincronizacionComponent {
   }
 
   reintentarSincronizacion() {
+    this.loading = true;
     let algunoPendiente = false;
     this.detallesProducto.forEach(async (producto) => {
       if (producto.estado === 'PENDIENTE') {
         console.log(`El producto ${producto.nombre} tiene estado PENDIENTE.`);
+        console.log('el registro idsync: ', producto.id_sync);
         algunoPendiente = true;
         const productByID =
           await this.catalogoGeneralService.getCatalogueProductByID(
@@ -129,14 +131,28 @@ export class ModalDetallesSincronizacionComponent {
             prcFix: 0,
             localiza: '',
           };
-          this.catalogoSucursalService
-            .agregarProductoSucursal(producto.url, JSON)
-            .toPromise()
-            .then(() => {
-              const JSON1 = 'SINCRONIZADO';
-              /*this.sincronizacionPendienteService
-                .marcarComoSincronizado(producto.id_sync, body2)
-                .toPromise();*/
+          this.sincronizacionPendienteService
+            .obtenerFalloSincronizacionPorId(producto.id_sync)
+            .subscribe((registroFallo) => {
+              const fechaActual = new Date();
+              fechaActual.setHours(fechaActual.getHours() - 6);
+              const JSON1 = {
+                id_sync: registroFallo.id_sync,
+                id_producto: registroFallo.id_producto,
+                id_sucursal: registroFallo.id_sucursal,
+                fecha_registro: fechaActual,
+                estado: 'SINCRONIZADO',
+                mensaje_error: '',
+              };
+              console.log('BODY QUE SE MANDA', JSON1);
+              this.catalogoSucursalService
+                .agregarProductoSucursal(producto.url, JSON)
+                .toPromise()
+                .then(() => {
+                  this.sincronizacionPendienteService
+                    .actualizarFalloSincronizacion(producto.id_sync, JSON1)
+                    .toPromise();
+                });
             });
         } else {
           console.log(
@@ -154,6 +170,10 @@ export class ModalDetallesSincronizacionComponent {
         icon: 'success',
         confirmButtonColor: '#5c5c5c',
         confirmButtonText: 'Aceptar',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.loading = false;
+        }
       });
       return;
     }
