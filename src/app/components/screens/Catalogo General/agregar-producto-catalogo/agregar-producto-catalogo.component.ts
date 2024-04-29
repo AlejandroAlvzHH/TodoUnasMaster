@@ -23,7 +23,7 @@ import { SincronizacionPendienteService } from '../../../../core/services/Servic
         <input
           type="number"
           [(ngModel)]="nuevoProducto.id_producto"
-          (blur)="checkCantidad()"
+          (blur)="checkID()"
           (input)="validateID($event)"
         />
         <label>Clave:</label>
@@ -32,13 +32,6 @@ import { SincronizacionPendienteService } from '../../../../core/services/Servic
         <input type="text" [(ngModel)]="nuevoProducto.nombre" />
         <label>Descripción:</label>
         <input type="text" [(ngModel)]="nuevoProducto.descripcion" />
-        <label>Cantidad:</label>
-        <input
-          type="number"
-          [(ngModel)]="nuevoProducto.cantidad_total"
-          (blur)="checkCantidad()"
-          (input)="validateCantidad($event)"
-        />
         <label>Precio:</label>
         <input
           type="number"
@@ -48,13 +41,7 @@ import { SincronizacionPendienteService } from '../../../../core/services/Servic
         />
         <div class="botonera">
           <button class="btn" (click)="agregarProducto()">Añadir</button>
-          <button
-            class="btn"
-            (click)="cerrarModal()"
-            (input)="validateCantidad($event)"
-          >
-            Cancelar
-          </button>
+          <button class="btn" (click)="cerrarModal()">Cancelar</button>
         </div>
       </div>
     </div>
@@ -263,7 +250,7 @@ export class AgregarProductoCatalogoComponent {
       idImp2: 0,
       idRet1: 0,
       idRet2: 0,
-      existencia: generalCatalogueData.cantidad_total,
+      existencia: 0,
       observaciones: generalCatalogueData.descripcion,
       neto: 0,
       netoC: 0,
@@ -290,21 +277,6 @@ export class AgregarProductoCatalogoComponent {
       prcFix: 0,
       localiza: '',
     };
-  }
-
-  validateCantidad(event: any) {
-    let input = event.target.value;
-    input = input.replace(/[^0-9.]/g, '');
-    const decimalCount = (input.match(/\./g) || []).length;
-    if (decimalCount > 1) {
-      input = input.slice(0, input.lastIndexOf('.'));
-    }
-    event.target.value = input;
-    const value = parseFloat(input);
-    if (isNaN(value) || value < 0) {
-      event.target.value = '0';
-      this.nuevoProducto.cantidad_total = 0;
-    }
   }
 
   validatePrecio(event: any) {
@@ -334,15 +306,6 @@ export class AgregarProductoCatalogoComponent {
     if (isNaN(value) || value < 0) {
       event.target.value = '0';
       this.nuevoProducto.id_producto = 0;
-    }
-  }
-
-  checkCantidad() {
-    if (
-      this.nuevoProducto.cantidad_total === null ||
-      this.nuevoProducto.cantidad_total === undefined
-    ) {
-      this.nuevoProducto.cantidad_total = 0;
     }
   }
 

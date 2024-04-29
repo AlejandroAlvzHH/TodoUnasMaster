@@ -32,7 +32,6 @@ export class CatalogoGeneralService {
       return null;
     }
   }
-  
 
   async addCatalogueProduct(
     product: General_Catalogue
@@ -53,20 +52,25 @@ export class CatalogoGeneralService {
   }
 
   async updateCatalogueProduct(
-    product: General_Catalogue
-  ): Promise<General_Catalogue> {
+    product: General_Catalogue,
+    id: number
+  ): Promise<General_Catalogue | null> {
+    console.log(`Esta es la url: ${this.url}/${id}`);
     try {
-      const response = await fetch(`${this.url}/${product.id_producto}`, {
+      const response = await fetch(`${this.url}/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(product),
       });
+      if (response.status === 204) {
+        return null;
+      }
       return await response.json();
-    } catch (e) {
-      alert('Error updating product: ' + e);
-      throw e;
+    } catch (error) {
+      console.error('Error updating product:', error);
+      throw error;
     }
   }
 }

@@ -158,8 +158,7 @@ export class ModalDetallesSincronizacionComponent {
         } catch (error) {
           console.error('Error durante la sincronización:', error);
           Swal.fire({
-            title: 'Error durante la sincronización, intente de nuevo más tarde',
-            text: `${error}`,
+            title: 'Error durante la sincronización, intente de nuevo más tarde por favor.',
             icon: 'error',
             confirmButtonColor: '#5c5c5c',
             confirmButtonText: 'Aceptar',
@@ -168,6 +167,7 @@ export class ModalDetallesSincronizacionComponent {
               this.loading = false;
             }
           });
+          return;
         }
       }
     }

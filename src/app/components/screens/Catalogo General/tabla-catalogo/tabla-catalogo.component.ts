@@ -8,7 +8,11 @@ import { EditarProductoCatalogoComponent } from '../editar-producto-catalogo/edi
 @Component({
   selector: 'app-tabla-catalogo',
   standalone: true,
-  imports: [CommonModule, ModalDetallesSincronizacionComponent, EditarProductoCatalogoComponent],
+  imports: [
+    CommonModule,
+    ModalDetallesSincronizacionComponent,
+    EditarProductoCatalogoComponent,
+  ],
   template: `
     <app-modal-detalles-sincronizacion
       *ngIf="mostrarModalDetalles"
