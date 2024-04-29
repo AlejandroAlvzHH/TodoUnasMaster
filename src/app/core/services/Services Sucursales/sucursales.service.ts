@@ -52,4 +52,28 @@ export class ApiService {
       )
     );
   }
+
+  getAllBranchesUrlsConStatus1URL(): Observable<{ idSucursal: number; nombre: string; url: string }[]> {
+    return this.getAllSucursales().pipe(
+      map((sucursales) =>
+        sucursales.filter((sucursal) => sucursal.status === 1)
+      ),
+      map((filteredSucursales) =>
+        filteredSucursales.map((sucursal) => ({
+          idSucursal: sucursal.idSucursal,
+          nombre: sucursal.nombre,
+          url: sucursal.url,
+        }))
+      )
+    );
+  }
+
+  /* EN ESTE NO IMPORTA EL STATUS 1*/
+  getAllUrls(): Observable<string[]> {
+    return this.getAllSucursales().pipe(
+      map((sucursales) =>
+        sucursales.map((sucursal) => sucursal.url)
+      )
+    );
+  }
 }

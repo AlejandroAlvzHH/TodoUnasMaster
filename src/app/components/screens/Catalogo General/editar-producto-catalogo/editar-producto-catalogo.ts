@@ -6,6 +6,8 @@ import { CatalogoGeneralService } from '../../../../core/services/Services Catal
 import Swal from 'sweetalert2';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { Users } from '../../../../Models/Master/users';
+import { CatalogoSucursalService } from '../../../../core/services/Services Catalogo General/catalogo-sucursal.service';
+import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
 
 @Component({
   selector: 'app-editar-producto-catalogo',
@@ -45,12 +47,14 @@ export class EditarProductoCatalogoComponent {
   loading: boolean = false;
   @Output() cancelar = new EventEmitter<void>();
   currentUser?: Users | null;
+  urls: any[] = [];
 
+  //EStos se modifican
   clave: string = '';
   nombre: string = '';
   descripcion: string = '';
   precio: number = 0;
-
+  //estos son solo para que los podamos mandar
   cantidad_total: number = 0;
   usuario_creador: number = 0;
   fecha_creado: Date = new Date();
@@ -61,10 +65,16 @@ export class EditarProductoCatalogoComponent {
 
   constructor(
     private catalogoGeneralService: CatalogoGeneralService,
-    private authService: AuthService
+    private authService: AuthService,
+    private catalogoSucursalService: CatalogoSucursalService,
+    private apiService: ApiService
   ) {}
 
   async ngOnInit() {
+    await this.apiService.getAllBranchesUrlsConStatus1().subscribe((urls) => {
+      this.urls = urls;
+    });
+
     this.authService.currentUser.subscribe((user) => {
       this.currentUser = user;
     });
@@ -103,7 +113,7 @@ export class EditarProductoCatalogoComponent {
     this.cancelar.emit();
   }
 
-  modificarProducto() {
+  async modificarProducto() {
     Swal.fire({
       title: 'Confirmar Modificación',
       text: `¿Estás seguro de modificar el producto ${this.nombre}?`,
@@ -114,31 +124,103 @@ export class EditarProductoCatalogoComponent {
       confirmButtonText: 'Sí, confirmar modificación',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
-      if (result.isConfirmed) {
-        if (this.id_producto && this.currentUser) {
-          const productoModificado = {
-            id_producto: this.id_producto,
-            clave: this.clave,
-            nombre: this.nombre,
-            descripcion: this.descripcion,
-            precio: this.precio,
-            cantidad_total: this.cantidad_total,
-            usuario_creador: this.usuario_creador,
-            fecha_creado: this.fecha_creado,
-            usuario_modificador: this.currentUser?.id_usuario,
-            fecha_modificado: new Date(),
-            usuario_eliminador: this.usuario_eliminador,
-            fecha_eliminado: this.fecha_eliminado,
-          };
-          console.log(
-            'JSON a enviar al modificar el producto:',
-            productoModificado
-          );
-          this.catalogoGeneralService.updateCatalogueProduct(
-            productoModificado,
-            this.id_producto
-          );
+      this.loading = true;
+      try {
+        if (result.isConfirmed) {
+          if (this.id_producto && this.currentUser) {
+            const productoModificadoMaster = {
+              id_producto: this.id_producto,
+              clave: this.clave,
+              nombre: this.nombre,
+              descripcion: this.descripcion,
+              precio: this.precio,
+              cantidad_total: this.cantidad_total,
+              usuario_creador: this.usuario_creador,
+              fecha_creado: this.fecha_creado,
+              usuario_modificador: this.currentUser?.id_usuario,
+              fecha_modificado: new Date(),
+              usuario_eliminador: this.usuario_eliminador,
+              fecha_eliminado: this.fecha_eliminado,
+            };
+            const productoModificadoSucursal = {
+              idArticulo: this.id_producto,
+              clave: this.clave,
+              nombre: this.nombre,
+              precioVenta: this.precio,
+              precioCompra: 0,
+              unidadVenta: '',
+              unidadCompra: '',
+              relacion: 0,
+              idImp1: 0,
+              idImp2: 0,
+              idRet1: 0,
+              idRet2: 0,
+              observaciones: this.descripcion,
+              neto: 0,
+              netoC: 0,
+              inventariable: 0,
+              costo: 0,
+              lotes: 0,
+              series: 0,
+              precioSug: 0,
+              oferta: '',
+              promocion: '',
+              impCig: 0,
+              color: 0,
+              precioLista: 0,
+              condiciones: '',
+              utilidad: 0,
+              alterna: '',
+              kit: 0,
+              dpc: 0,
+              dpv: 0,
+              reorden: 0,
+              maximo: 0,
+              kitSuelto: 0,
+              idClaseMultiple: 0,
+              prcFix: 0,
+              localiza: '',
+            };
+            this.urls.forEach((sucursal) => {
+              console.log(sucursal.url);
+              /*this.catalogoSucursalService.updateProductoSucursal(sucursal.url, this.id_producto, productoModificadoSucursal);*/
+            });
+            console.log(
+              'JSON a enviar al modificar el producto:',
+              productoModificadoMaster
+            );
+            this.catalogoGeneralService.updateCatalogueProduct(
+              productoModificadoMaster,
+              this.id_producto
+            );
+          }
+          Swal.fire({
+            title: 'Modificación Exitosa.',
+            icon: 'success',
+            confirmButtonColor: '#5c5c5c',
+            confirmButtonText: 'Aceptar',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.loading = false;
+              this.cerrarModal();
+              window.location.reload();
+            }
+          });
+          return;
         }
+      } catch (error) {
+        Swal.fire({
+          title:
+            'Error durante la modificación, intente de nuevo más tarde por favor.',
+          icon: 'error',
+          confirmButtonColor: '#5c5c5c',
+          confirmButtonText: 'Aceptar',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.loading = false;
+          }
+        });
+        return;
       }
     });
   }

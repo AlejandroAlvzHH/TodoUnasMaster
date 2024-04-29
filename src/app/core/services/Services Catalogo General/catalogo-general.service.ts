@@ -55,7 +55,6 @@ export class CatalogoGeneralService {
     product: General_Catalogue,
     id: number
   ): Promise<General_Catalogue | null> {
-    console.log(`Esta es la url: ${this.url}/${id}`);
     try {
       const response = await fetch(`${this.url}/${id}`, {
         method: 'PUT',
