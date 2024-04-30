@@ -218,7 +218,6 @@ export class AgregarProductoCatalogoComponent {
         mensaje_error: mensaje,
       };
     }
-
     this.sincronizacionPendienteService
       .registrarFalloSincronizacion(body)
       .subscribe(

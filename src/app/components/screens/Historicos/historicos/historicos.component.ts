@@ -295,7 +295,6 @@ export class HistoricosComponent {
         (_, i) => i
       );
       this.cdr.detectChanges();
-      console.log(this.movementsList)
     } catch (error) {
       console.error('Error al obtener los movimientos:', error);
     }

@@ -27,8 +27,6 @@ export class CatalogoSucursalService {
     product: Products
   ): Observable<Products> {
     const url = `${baseUrl}/api/ProductApi`;
-    console.log(url)
-    console.log(product)
     return this.http.post<Products>(url, product).pipe(
       catchError((error) => {
         return throwError(error);
@@ -41,8 +39,8 @@ export class CatalogoSucursalService {
     productId: number,
     updatedProduct: Products
   ): Promise<void> {
+    const url = `${baseUrl}/api/ProductApi/${productId}`;
     try {
-      const url = `${baseUrl}/api/ProductApi/${productId}`;
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -54,7 +52,22 @@ export class CatalogoSucursalService {
         throw new Error('Fallo al actualizar el producto.');
       }
     } catch (error) {
-      alert('Error: ' + error);
+      console.error(error);
+      throw error; 
+    }
+  }
+
+
+  async getProductById(baseUrl: string, productId: number): Promise<Products | null> {
+    try {
+      const url = `${baseUrl}/api/ProductApi/${productId}`;
+      const data = await fetch(url, { method: 'GET' });
+      if (data.ok) {
+        return await data.json();
+      } else {
+        return null;
+      }
+    } catch (error) {
       throw error;
     }
   }

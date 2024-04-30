@@ -49,7 +49,7 @@ export class ModifysucursalmodalComponent {
     this.cancelar.emit();
   }
 
-  modificarSucursal() {
+  async modificarSucursal() {
     if (this.sucursal) {
       const sucursalModificada: Branches = {
         ...this.sucursal,
@@ -59,6 +59,8 @@ export class ModifysucursalmodalComponent {
         url_imagen: this.url_imagen,
       };
       this.modificar.emit(sucursalModificada);
+      this.cerrarModal();
+      window.location.reload();
     }
   }
 }
