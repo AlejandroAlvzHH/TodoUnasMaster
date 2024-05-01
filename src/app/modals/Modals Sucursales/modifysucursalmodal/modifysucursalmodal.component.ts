@@ -20,7 +20,7 @@ import { Branches } from '../../../Models/Master/branches';
       <input type="text" [(ngModel)]="url_imagen" />
       <div class="botonera">
         <button class="btn" (click)="modificarSucursal()">Modificar</button>
-        <button class="btn" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn-cerrar"  (click)="cerrarModal()">Cancelar</button>
       </div>
     </div>
   </div> `,
