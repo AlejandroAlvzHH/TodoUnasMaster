@@ -17,7 +17,9 @@ import { SidebaropeningService } from '../../../../core/services/sidebaropening.
         *ngIf="isSidebarOpen"
         (click)="toggleSidebar()"
       ></div>
-      <h1>AJUSTES</h1>
+      <div class="title-container">
+        <h1>AJUSTES</h1>
+      </div>
       <div class="menu-container">
         <div class="menu">
           <a href="#" class="opcion">Contraseñas</a>

@@ -19,44 +19,46 @@ import { CarritoComunicationService } from '../../../core/services/Services Sucu
   template: `
     <div>
       <button class="btn" (click)="cerrarModal()">Cerrar</button>
-      <table border="2">
-        <thead>
-          <tr>
-            <th scope="col">Id_Artículo</th>
-            <th scope="col">Clave</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">Cantidad</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of items; let i = index">
-            <td>{{ item.idArticulo }}</td>
-            <td>{{ item.clave }}</td>
-            <td>{{ item.nombre }}</td>
-            <td>
-              <input
-                type="number"
-                [min]="1"
-                [max]="item.existencia"
-                [(ngModel)]="item.cantidad"
-                (input)="validarCantidad($event, item)"
-              />
-              <button class="btn" (click)="eliminarItem(i)">Eliminar</button>
-            </td>
-            <td *ngIf="isSalida">
-              <select [(ngModel)]="item.motivoSalida">
-                <option value="" disabled selected>-- Seleccione --</option>
-                <option
-                  *ngFor="let motivo of catalogoSalidas"
-                  [value]="motivo.id_tipo_salida"
-                >
-                  {{ motivo.tipo }}
-                </option>
-              </select>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-container">
+        <table border="2">
+          <thead>
+            <tr>
+              <th scope="col">Id_Artículo</th>
+              <th scope="col">Clave</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items; let i = index">
+              <td>{{ item.idArticulo }}</td>
+              <td>{{ item.clave }}</td>
+              <td>{{ item.nombre }}</td>
+              <td>
+                <input
+                  type="number"
+                  [min]="1"
+                  [max]="item.existencia"
+                  [(ngModel)]="item.cantidad"
+                  (input)="validarCantidad($event, item)"
+                />
+                <button class="btn" (click)="eliminarItem(i)">Eliminar</button>
+              </td>
+              <td *ngIf="isSalida">
+                <select [(ngModel)]="item.motivoSalida">
+                  <option value="" disabled selected>-- Seleccione --</option>
+                  <option
+                    *ngFor="let motivo of catalogoSalidas"
+                    [value]="motivo.id_tipo_salida"
+                  >
+                    {{ motivo.tipo }}
+                  </option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   `,
   styleUrl: './carrito-clinica.component.css',
@@ -72,7 +74,7 @@ export class CarritoClinicaComponent {
   constructor(
     private carritoService: CarritoServiceService,
     private catalogoSalidasService: CatalogoSalidasService,
-    private carritoCommunicationService: CarritoComunicationService,
+    private carritoCommunicationService: CarritoComunicationService
   ) {
     this.carritoService.items$.subscribe((items) => {
       this.items = items;

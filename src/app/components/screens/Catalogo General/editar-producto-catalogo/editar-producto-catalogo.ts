@@ -36,7 +36,7 @@ import { SincronizacionPendienteService } from '../../../../core/services/Servic
           <button class="btn" (click)="modificarProducto()">
             Modificar Producto
           </button>
-          <button class="btn" (click)="cerrarModal()">Cerrar</button>
+          <button class="btn-cerrar" (click)="cerrarModal()">Cerrar</button>
         </div>
       </div>
     </div>

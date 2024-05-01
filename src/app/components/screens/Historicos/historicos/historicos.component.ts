@@ -24,7 +24,9 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
         *ngIf="isSidebarOpen"
         (click)="toggleSidebar()"
       ></div>
-      <h1>HISTÓRICOS</h1>
+      <div class="title-container">
+        <h1>HISTÓRICOS</h1>
+      </div>
       <div>
         <form class="search-form">
           <div class="search-input">
@@ -100,153 +102,157 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
           [fecha]="movimientoSeleccionado!.fecha"
           (cancelar)="cerrarModal()"
         ></app-historicos-detalle>
-        <table border="2">
-          <thead>
-            <tr>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('id_movimiento')"
-                [class.interactive]="columnaOrdenada === 'id_movimiento'"
-              >
-                ID Movimiento
-                <i
-                  *ngIf="columnaOrdenada === 'id_movimiento'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('nombre_usuario')"
-                [class.interactive]="columnaOrdenada === 'nombre_usuario'"
-              >
-                Usuario
-                <i
-                  *ngIf="columnaOrdenada === 'nombre_usuario'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('tipo_movimiento')"
-                [class.interactive]="columnaOrdenada === 'tipo_movimiento'"
-              >
-                Tipo
-                <i
-                  *ngIf="columnaOrdenada === 'tipo_movimiento'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('sucursal_salida')"
-                [class.interactive]="columnaOrdenada === 'sucursal_salida'"
-              >
-                Sucursal de Salida
-                <i
-                  *ngIf="columnaOrdenada === 'sucursal_salida'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('sucursal_destino')"
-                [class.interactive]="columnaOrdenada === 'sucursal_destino'"
-              >
-                Sucursal Destino
-                <i
-                  *ngIf="columnaOrdenada === 'sucursal_destino'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('tipo_salida')"
-                [class.interactive]="columnaOrdenada === 'tipo_salida'"
-              >
-                Motivo de Salida
-                <i
-                  *ngIf="columnaOrdenada === 'tipo_salida'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('nombre_clinica')"
-                [class.interactive]="columnaOrdenada === 'nombre_clinica'"
-              >
-                Clínica
-                <i
-                  *ngIf="columnaOrdenada === 'nombre_clinica'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('fecha')"
-                [class.interactive]="columnaOrdenada === 'fecha'"
-              >
-                Fecha
-                <i
-                  *ngIf="columnaOrdenada === 'fecha'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('precio_total')"
-                [class.interactive]="columnaOrdenada === 'precio_total'"
-              >
-                Precio Total
-                <i
-                  *ngIf="columnaOrdenada === 'precio_total'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th scope="col">Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let index of filteredIndices">
-              <td>{{ filteredMovementsList[index].id_movimiento }}</td>
-              <td>{{ filteredMovementsList[index].nombre_usuario }}</td>
-              <td>{{ filteredMovementsList[index].tipo_movimiento }}</td>
-              <td>{{ filteredMovementsList[index].sucursal_salida }}</td>
-              <td>{{ filteredMovementsList[index].sucursal_destino }}</td>
-              <td>{{ filteredMovementsList[index].tipo_salida }}</td>
-              <td>{{ filteredMovementsList[index].nombre_clinica }}</td>
-              <td>{{ filteredMovementsList[index].fecha | date : 'short' }}</td>
-              <td>
-                {{ filteredMovementsList[index].precio_total }}
-              </td>
-              <td>
-                <button
-                  class="btn"
-                  (click)="abrirModal(filteredMovementsList[index])"
+        <div class="table-container">
+          <table border="2">
+            <thead>
+              <tr>
+                <th
+                  scope="col"
+                  (click)="ordenarPorColumna('id_movimiento')"
+                  [class.interactive]="columnaOrdenada === 'id_movimiento'"
                 >
-                  Ver Detalle
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                  ID Movimiento
+                  <i
+                    *ngIf="columnaOrdenada === 'id_movimiento'"
+                    class="arrow-icon"
+                    [class.asc]="ordenAscendente"
+                    [class.desc]="!ordenAscendente"
+                  ></i>
+                </th>
+                <th
+                  scope="col"
+                  (click)="ordenarPorColumna('nombre_usuario')"
+                  [class.interactive]="columnaOrdenada === 'nombre_usuario'"
+                >
+                  Usuario
+                  <i
+                    *ngIf="columnaOrdenada === 'nombre_usuario'"
+                    class="arrow-icon"
+                    [class.asc]="ordenAscendente"
+                    [class.desc]="!ordenAscendente"
+                  ></i>
+                </th>
+                <th
+                  scope="col"
+                  (click)="ordenarPorColumna('tipo_movimiento')"
+                  [class.interactive]="columnaOrdenada === 'tipo_movimiento'"
+                >
+                  Tipo
+                  <i
+                    *ngIf="columnaOrdenada === 'tipo_movimiento'"
+                    class="arrow-icon"
+                    [class.asc]="ordenAscendente"
+                    [class.desc]="!ordenAscendente"
+                  ></i>
+                </th>
+                <th
+                  scope="col"
+                  (click)="ordenarPorColumna('sucursal_salida')"
+                  [class.interactive]="columnaOrdenada === 'sucursal_salida'"
+                >
+                  Sucursal de Salida
+                  <i
+                    *ngIf="columnaOrdenada === 'sucursal_salida'"
+                    class="arrow-icon"
+                    [class.asc]="ordenAscendente"
+                    [class.desc]="!ordenAscendente"
+                  ></i>
+                </th>
+                <th
+                  scope="col"
+                  (click)="ordenarPorColumna('sucursal_destino')"
+                  [class.interactive]="columnaOrdenada === 'sucursal_destino'"
+                >
+                  Sucursal Destino
+                  <i
+                    *ngIf="columnaOrdenada === 'sucursal_destino'"
+                    class="arrow-icon"
+                    [class.asc]="ordenAscendente"
+                    [class.desc]="!ordenAscendente"
+                  ></i>
+                </th>
+                <th
+                  scope="col"
+                  (click)="ordenarPorColumna('tipo_salida')"
+                  [class.interactive]="columnaOrdenada === 'tipo_salida'"
+                >
+                  Motivo de Salida
+                  <i
+                    *ngIf="columnaOrdenada === 'tipo_salida'"
+                    class="arrow-icon"
+                    [class.asc]="ordenAscendente"
+                    [class.desc]="!ordenAscendente"
+                  ></i>
+                </th>
+                <th
+                  scope="col"
+                  (click)="ordenarPorColumna('nombre_clinica')"
+                  [class.interactive]="columnaOrdenada === 'nombre_clinica'"
+                >
+                  Clínica
+                  <i
+                    *ngIf="columnaOrdenada === 'nombre_clinica'"
+                    class="arrow-icon"
+                    [class.asc]="ordenAscendente"
+                    [class.desc]="!ordenAscendente"
+                  ></i>
+                </th>
+                <th
+                  scope="col"
+                  (click)="ordenarPorColumna('fecha')"
+                  [class.interactive]="columnaOrdenada === 'fecha'"
+                >
+                  Fecha
+                  <i
+                    *ngIf="columnaOrdenada === 'fecha'"
+                    class="arrow-icon"
+                    [class.asc]="ordenAscendente"
+                    [class.desc]="!ordenAscendente"
+                  ></i>
+                </th>
+                <th
+                  scope="col"
+                  (click)="ordenarPorColumna('precio_total')"
+                  [class.interactive]="columnaOrdenada === 'precio_total'"
+                >
+                  Precio Total
+                  <i
+                    *ngIf="columnaOrdenada === 'precio_total'"
+                    class="arrow-icon"
+                    [class.asc]="ordenAscendente"
+                    [class.desc]="!ordenAscendente"
+                  ></i>
+                </th>
+                <th scope="col">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let index of filteredIndices">
+                <td>{{ filteredMovementsList[index].id_movimiento }}</td>
+                <td>{{ filteredMovementsList[index].nombre_usuario }}</td>
+                <td>{{ filteredMovementsList[index].tipo_movimiento }}</td>
+                <td>{{ filteredMovementsList[index].sucursal_salida }}</td>
+                <td>{{ filteredMovementsList[index].sucursal_destino }}</td>
+                <td>{{ filteredMovementsList[index].tipo_salida }}</td>
+                <td>{{ filteredMovementsList[index].nombre_clinica }}</td>
+                <td>
+                  {{ filteredMovementsList[index].fecha | date : 'short' }}
+                </td>
+                <td>
+                  {{ filteredMovementsList[index].precio_total }}
+                </td>
+                <td>
+                  <button
+                    class="btn"
+                    (click)="abrirModal(filteredMovementsList[index])"
+                  >
+                    Ver Detalle
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </main>`,
   styleUrl: './historicos.component.css',

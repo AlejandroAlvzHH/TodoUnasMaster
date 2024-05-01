@@ -13,27 +13,27 @@ input[type="text"] {
   height: 0;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  transition: transform 0.3s ease; 
+  transition: transform 0.3s ease;
 }
 
 .asc {
-  border-top: 6px solid black; 
-  transform: rotate(180deg); 
+  border-top: 6px solid black;
+  transform: rotate(180deg);
 }
 
 .desc {
-  border-bottom: 6px solid black; 
-  transform: rotate(180deg); 
+  border-bottom: 6px solid black;
+  transform: rotate(180deg);
 }
 
 .interactive:hover {
-  text-decoration: underline; 
+  text-decoration: underline;
 }
 
 .search-form {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px; 
+  margin-bottom: 10px;
 }
 
 .search-input {
@@ -45,13 +45,13 @@ input[type="text"] {
   margin-right: 0;
 }
 
-.btn[disabled] {
-  background-color: #ccc; 
-  color: #888;
-  cursor: not-allowed; 
-}
-
-h1{
+h1 {
   margin-top: 1%;
   font-family: "Montserrat", sans-serif;
+}
+
+.table-container {
+  margin: 0 auto;
+  width: 90%;
+  max-width: 100%;
 }

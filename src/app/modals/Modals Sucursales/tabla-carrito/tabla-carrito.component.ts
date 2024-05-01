@@ -14,7 +14,7 @@ import { CarritoComunicationService } from '../../../core/services/Services Sucu
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div>
+    <div class="table-container">
       <button class="btn" (click)="cerrarModal()">Cerrar</button>
       <table border="2">
         <thead>

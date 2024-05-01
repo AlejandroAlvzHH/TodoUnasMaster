@@ -30,7 +30,9 @@ import { SidebaropeningService } from '../../../../core/services/sidebaropening.
         (addSucursal)="agregarSucursal($event)"
         (cancelar)="cerrarModal()"
       ></app-sucursalesmodal>
-      <h1>SUCURSALES</h1>
+      <div class="title-container">
+        <h1>SUCURSALES</h1>
+      </div>
       <div class="botonera">
         <button class="btn" (click)="abrirModal()">Agregar Sucursal</button>
       </div>
@@ -42,7 +44,7 @@ import { SidebaropeningService } from '../../../../core/services/sidebaropening.
             <p>{{ sucursal.estado }}</p>
             <h4>Última fecha de actualización:</h4>
             <p>
-              {{ sucursal.fechaActualizacion | date : "short" }}
+              {{ sucursal.fechaActualizacion | date : 'short' }}
             </p>
             <a href="/sucursalselected/{{ sucursal.idSucursal }}" class="btn"
               >Seleccionar</a
@@ -71,7 +73,6 @@ export class HomeComponent {
   }
 
   ngOnInit(): void {
-    
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });

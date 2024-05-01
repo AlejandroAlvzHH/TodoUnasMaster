@@ -62,16 +62,6 @@
   font-size: 14px;
 }
 
-.btn {
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin: 0 10px;
-}
-
 h1, h2{
   margin-top: 1%;
   font-family: "Montserrat", sans-serif;

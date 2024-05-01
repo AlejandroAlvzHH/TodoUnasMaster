@@ -42,8 +42,14 @@ import { Users } from '../../../../Models/Master/users';
         *ngIf="isSidebarOpen"
         (click)="toggleSidebar()"
       ></div>
-      <h1>TRASPASOS A CLÍNICA</h1>
-      <h2>Desde {{ sucursal?.nombre }} -> hacia:</h2>
+      <div class="title-container">
+        <h1>TRASPASOS A CLÍNICA</h1>
+      </div>
+      <br />
+      <div class="subtitle-container">
+        <h2>Desde {{ sucursal?.nombre }} -> hacia:</h2>
+      </div>
+      <br />
       <select [(ngModel)]="selectedClinica">
         <option *ngFor="let clinica of clinicas" [value]="clinica.id_clinica">
           {{ clinica.nombre }}

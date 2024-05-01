@@ -30,7 +30,7 @@ import { PdfServiceService } from '../../../../core/services/pdf-service.service
         </tbody>
       </table>
       <button class="btn" (click)="generarPdf()">Generar PDF</button>
-      <button class="btn" (click)="cerrarModal()">Cerrar</button>
+      <button class="btn-cerrar"  (click)="cerrarModal()">Cerrar</button>
     </div>
   </div>`,
   styleUrls: ['./historicos-detalle.component.css'],

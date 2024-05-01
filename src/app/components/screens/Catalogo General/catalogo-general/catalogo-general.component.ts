@@ -32,7 +32,9 @@ import { CatalogoGeneralService } from '../../../../core/services/Services Catal
         (addProducto)="agregarProducto($event)"
         (cancelar)="cerrarModal()"
       ></app-agregar-producto-catalogo>
-      <h1>CATÁLOGO GENERAL</h1>
+      <div class="title-container">
+        <h1>CATÁLOGO GENERAL</h1>
+      </div>
       <div class="botonera">
         <button class="btn" (click)="abrirModal()">Agregar Producto</button>
       </div>

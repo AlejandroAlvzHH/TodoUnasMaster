@@ -4,6 +4,7 @@ import { SidebaropeningService } from '../../core/services/sidebaropening.servic
 import { AuthService } from '../../core/services/auth/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { Users } from '../../Models/Master/users';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,7 +18,15 @@ import Swal from 'sweetalert2';
         <li><a href="/catalogogeneral">Catálogo General</a></li>
         <li><a href="/historicos">Históricos</a></li>
         <li><a href="/configuracion">Ajustes</a></li>
-        <li><a (click)="logout()">Cerrar Sesión</a></li>
+        <li><a class="red" (click)="logout()">Cerrar Sesión</a></li>
+        <div class="user-info">
+          <img src="../../assets/User Icon.png" />
+          <h3>
+            {{ this.currentUser?.nombre }}
+            {{ this.currentUser?.apellido_paterno || '' }}
+            {{ this.currentUser?.apellido_materno || '' }}
+          </h3>
+        </div>
       </ul>
     </aside>
   `,
@@ -25,6 +34,7 @@ import Swal from 'sweetalert2';
 })
 export class SidebarComponent implements OnInit {
   isOpen = false;
+  currentUser?: Users | null;
 
   constructor(
     private SidebaropeningService: SidebaropeningService,
@@ -34,6 +44,9 @@ export class SidebarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.authService.currentUser.subscribe((user) => {
+      this.currentUser = user;
+    });
     this.SidebaropeningService.isOpen$.subscribe((isOpen) => {
       this.isOpen = isOpen;
     });
@@ -48,7 +61,7 @@ export class SidebarComponent implements OnInit {
       title: '¿Desea cerrar la sesión?',
       showCancelButton: true,
       confirmButtonColor: '#5c5c5c',
-      cancelButtonColor: '#5c5c5c',
+      cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Cerrar sesión',
       cancelButtonText: 'Cancelar',
     }).then((result) => {

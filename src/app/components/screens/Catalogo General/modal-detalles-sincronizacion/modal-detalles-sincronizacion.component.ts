@@ -40,7 +40,7 @@ import Swal from 'sweetalert2';
         <button class="btn" (click)="reintentarSincronizacion()">
           Reintentar Sincronización
         </button>
-        <button class="btn" (click)="cerrarModal()">Cerrar</button>
+        <button class="btn-cerrar" (click)="cerrarModal()">Cerrar</button>
       </div>
     </div>
   `,

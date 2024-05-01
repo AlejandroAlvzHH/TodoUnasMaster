@@ -42,7 +42,9 @@ import { Users } from '../../../../Models/Master/users';
         *ngIf="isSidebarOpen"
         (click)="toggleSidebar()"
       ></div>
-      <h1>ENTRADAS Y SALIDAS</h1>
+      <div class="title-container">
+        <h1>ENTRADAS Y SALIDAS</h1>
+      </div>
       <div class="switch-container">
         <button
           class="switch-btn"
@@ -82,7 +84,10 @@ import { Users } from '../../../../Models/Master/users';
         (cerrar)="cerrarModal()"
       ></app-tabla-carrito>
       <div class="table">
-        <h2>Inventario en {{ sucursal?.nombre }}</h2>
+        <br />
+        <div class="subtitle-container-especial">
+          <h2>Inventario en {{ sucursal?.nombre }}</h2>
+        </div>
         <app-tabla-productos
           [baseUrl]="sucursal?.url"
           #tablaProductos
@@ -121,7 +126,8 @@ export class EntradasysalidasComponent implements OnInit {
 
   onMotivoSalidaChange(event: any) {
     this.motivoSalidaSeleccionado = event.target.value;
-    this.nombreMotivoSalidaSeleccionado = event.target.options[event.target.selectedIndex].text;
+    this.nombreMotivoSalidaSeleccionado =
+      event.target.options[event.target.selectedIndex].text;
   }
 
   confirmAction(): void {
@@ -272,13 +278,13 @@ export class EntradasysalidasComponent implements OnInit {
               console.error('Error al insertar el movimiento.');
             }
           });
-          const usuario = (
-            (this.currentUser?.nombre ?? '') +
-            ' ' +
-            (this.currentUser?.apellido_paterno ?? '') +
-            ' ' +
-            (this.currentUser?.apellido_materno ?? '')
-          ).trim();
+        const usuario = (
+          (this.currentUser?.nombre ?? '') +
+          ' ' +
+          (this.currentUser?.apellido_paterno ?? '') +
+          ' ' +
+          (this.currentUser?.apellido_materno ?? '')
+        ).trim();
         const data = {
           Usuario: usuario,
           Tipo: 'Entrada',
@@ -290,7 +296,7 @@ export class EntradasysalidasComponent implements OnInit {
           PrecioTotal: valor_total_movimiento,
           Detalles: detallesProductos,
         };
-        console.log("la data para el pdf es:", data)
+        console.log('la data para el pdf es:', data);
         this.pdfService.generarReporte(data).subscribe(
           (blob: Blob) => {
             const url = window.URL.createObjectURL(blob);
@@ -448,13 +454,13 @@ export class EntradasysalidasComponent implements OnInit {
               console.error('Error al insertar el movimiento.');
             }
           });
-          const usuario = (
-            (this.currentUser?.nombre ?? '') +
-            ' ' +
-            (this.currentUser?.apellido_paterno ?? '') +
-            ' ' +
-            (this.currentUser?.apellido_materno ?? '')
-          ).trim();
+        const usuario = (
+          (this.currentUser?.nombre ?? '') +
+          ' ' +
+          (this.currentUser?.apellido_paterno ?? '') +
+          ' ' +
+          (this.currentUser?.apellido_materno ?? '')
+        ).trim();
         const data = {
           Usuario: usuario,
           Tipo: 'Salida',

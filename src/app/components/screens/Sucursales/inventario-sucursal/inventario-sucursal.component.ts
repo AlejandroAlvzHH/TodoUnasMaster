@@ -11,7 +11,12 @@ import { TablaProductosComponent } from '../../../tabla-productos/tabla-producto
 @Component({
   selector: 'app-inventario-sucursal',
   standalone: true,
-  imports: [HeaderComponent, SidebarComponent, CommonModule, TablaProductosComponent],
+  imports: [
+    HeaderComponent,
+    SidebarComponent,
+    CommonModule,
+    TablaProductosComponent,
+  ],
   template: `
     <app-header></app-header>
     <app-sidebar></app-sidebar>
@@ -21,7 +26,9 @@ import { TablaProductosComponent } from '../../../tabla-productos/tabla-producto
         *ngIf="isSidebarOpen"
         (click)="toggleSidebar()"
       ></div>
-      <h1 class="mayusculas">INVENTARIO DE {{ sucursal?.nombre }}</h1>
+      <div class="title-container">
+        <h1 class="mayusculas">INVENTARIO DE {{ sucursal?.nombre }}</h1>
+      </div>
       <app-tabla-productos [baseUrl]="sucursal?.url"></app-tabla-productos>
     </main>
   `,

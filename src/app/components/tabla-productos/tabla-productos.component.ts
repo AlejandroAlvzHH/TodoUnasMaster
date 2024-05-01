@@ -12,6 +12,7 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
   imports: [CommonModule],
   template: `
     <div>
+      <br />
       <form class="search-form">
         <div class="search-input">
           <input
@@ -35,7 +36,7 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
           />
         </div>
       </form>
-      <div>
+      <div class="table-container">
         <table border="2">
           <thead>
             <tr>
@@ -146,7 +147,9 @@ export class TablaProductosComponent implements OnInit {
 
   private async initialize() {
     try {
-      this.productsList = await this.catalogoSucursalService.getAllProducts(this.baseUrl!);
+      this.productsList = await this.catalogoSucursalService.getAllProducts(
+        this.baseUrl!
+      );
       this.carritoCommunicationService.itemRemoved$.subscribe((idArticulo) => {
         const indexInFilteredProductsList = this.filteredProductsList.findIndex(
           (product) => product.idArticulo === idArticulo

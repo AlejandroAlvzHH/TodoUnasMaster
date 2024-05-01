@@ -39,8 +39,14 @@ import { Users } from '../../../../Models/Master/users';
         *ngIf="isSidebarOpen"
         (click)="toggleSidebar()"
       ></div>
-      <h1>TRASPASOS A SUCURSAL</h1>
-      <h2>Desde {{ sucursal?.nombre }} -> hacia:</h2>
+      <div class="title-container">
+        <h1>TRASPASOS A SUCURSAL</h1>
+      </div>
+      <br />
+      <div class="subtitle-container">
+        <h2>Desde {{ sucursal?.nombre }} -> hacia:</h2>
+      </div>
+      <br />
       <select [(ngModel)]="selectedSucursalDestino">
         <option
           *ngFor="let sucursal of sucursalDestino"

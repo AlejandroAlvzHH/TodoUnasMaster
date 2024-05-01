@@ -29,6 +29,7 @@
   text-decoration: none;
   transition: background-color 0.3s ease;
   font-family: "Montserrat", sans-serif;
+  font-size: 15px; 
 }
 
 .sidebar ul h2 {
@@ -36,18 +37,36 @@
   color: #fff;
   text-align: center;
   font-family: "Montserrat", sans-serif;
+  font-size: 28px; 
 }
+
 
 .sidebar ul li a:hover {
   background-color: #555;
 }
 
-.sidebar ul li:last-child a {
+.sidebar ul li a.red {
+  color: #d53f4e; 
+  cursor: pointer;
+}
+
+.sidebar ul li a.red:hover {
   color: #ea5060; 
   cursor: pointer;
 }
 
-.sidebar ul li:last-child a:hover {
-  color: #d53f4e; 
-  cursor: pointer;
+.sidebar .user-info {
+  position: absolute;
+  bottom: 10%; 
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #fff;
+}
+
+.sidebar .user-info img {
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%; 
+  margin-bottom: 10px;
 }

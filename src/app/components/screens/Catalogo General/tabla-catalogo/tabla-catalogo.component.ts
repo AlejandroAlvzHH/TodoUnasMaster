@@ -56,7 +56,7 @@ import { EditarProductoCatalogoComponent } from '../editar-producto-catalogo/edi
         </div>
       </form>
     </div>
-    <div>
+    <div class="table-container">
       <table border="2">
         <thead>
           <tr>
