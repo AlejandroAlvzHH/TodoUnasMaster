@@ -41,7 +41,7 @@ import { SincronizacionPendienteService } from '../../../../core/services/Servic
         />
         <div class="botonera">
           <button class="btn" (click)="agregarProducto()">Añadir</button>
-          <button class="btn" (click)="cerrarModal()">Cancelar</button>
+          <button class="btn-cerrar" (click)="cerrarModal()">Cancelar</button>
         </div>
       </div>
     </div>

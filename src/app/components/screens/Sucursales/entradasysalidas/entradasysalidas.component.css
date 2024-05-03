@@ -35,9 +35,9 @@ select option {
 }
 
 select option:hover {
-  background: #5c5c5c;
-  background-color: #5c5c5c;
-  color: #5c5c5c;
+  background: #333;
+  background-color: #333;
+  color: #333;
   color: white;
 }
 
@@ -48,9 +48,8 @@ select option:hover {
 }
 
 .switch-container button {
-  border: none;
-  background-color: white;
-  color: rgb(111, 111, 111);
+  background-color: rgb(228, 228, 228);
+  color: rgb(151, 151, 151);
   cursor: pointer;
   padding: 10px 20px;
   font-size: 16px;
@@ -58,8 +57,9 @@ select option:hover {
 }
 
 .switch-container button.active {
-  background-color: #5c5c5c;
+  background-color: #333;
   color: white;
+  cursor: default;
 }
 
 .table {

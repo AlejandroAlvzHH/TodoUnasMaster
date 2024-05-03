@@ -3,12 +3,12 @@ import { Component } from '@angular/core';
 import { Output } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 import { Input } from '@angular/core';
-import { VistaSucursalesaConSincronizacionPendiente } from '../../../../Models/Master/vista-sucursales-con-sincronizacion-pendiente';
 import { SucursalesConSincronizacionPendienteService } from '../../../../core/services/Services Catalogo General/sucursales-con-sincronizacion-pendiente.service';
 import { CatalogoGeneralService } from '../../../../core/services/Services Catalogo General/catalogo-general.service';
 import { CatalogoSucursalService } from '../../../../core/services/Services Catalogo General/catalogo-sucursal.service';
 import { SincronizacionPendienteService } from '../../../../core/services/Services Catalogo General/sincronizacion-pendiente.service';
 import Swal from 'sweetalert2';
+import { VistaSincronizacionPendienteReciente } from '../../../../Models/Master/vista-sincronizacion-pendiente-reciente';
 
 @Component({
   selector: 'app-modal-detalles-sincronizacion',
@@ -49,7 +49,7 @@ import Swal from 'sweetalert2';
 export class ModalDetallesSincronizacionComponent {
   @Output() cancelar = new EventEmitter<void>();
   @Input() id_producto: number | null = null;
-  detallesProducto: VistaSucursalesaConSincronizacionPendiente[] = [];
+  detallesProducto: VistaSincronizacionPendienteReciente[] = [];
   loading: boolean = false;
 
   constructor(
@@ -77,12 +77,13 @@ export class ModalDetallesSincronizacionComponent {
   cerrarModal() {
     this.cancelar.emit();
   }
-  
+
   async reintentarSincronizacion() {
     this.loading = true;
     let algunoPendiente = false;
     for (const producto of this.detallesProducto) {
       if (producto.estado === 'PENDIENTE') {
+        console.log('HAY PENDIENTES');
         algunoPendiente = true;
         try {
           const productByID =
@@ -136,18 +137,34 @@ export class ModalDetallesSincronizacionComponent {
             const fechaActual = new Date();
             fechaActual.setHours(fechaActual.getHours() - 6);
             const JSON1 = {
-              id_sync: registroFallo.id_sync,
               id_producto: registroFallo.id_producto,
               id_sucursal: registroFallo.id_sucursal,
               fecha_registro: fechaActual,
               estado: 'SINCRONIZADO',
               mensaje_error: '',
             };
-            await this.catalogoSucursalService
-              .agregarProductoSucursal(producto.url, JSON)
-              .toPromise();
+            try {
+              const product = await this.catalogoSucursalService.getProductById(
+                producto.url,
+                producto.id_producto
+              );
+              if (product) {
+                await this.catalogoSucursalService.updateProductoSucursal(
+                  producto.url,
+                  producto.id_producto,
+                  JSON
+                );
+                console.log('Producto encontrado:', producto);
+              } else {
+                await this.catalogoSucursalService
+                  .agregarProductoSucursal(producto.url, JSON)
+                  .toPromise();
+              }
+            } catch (error) {
+              console.error('Error al obtener el producto:', error);
+            }
             await this.sincronizacionPendienteService
-              .actualizarFalloSincronizacion(producto.id_sync, JSON1)
+              .registrarFalloSincronizacion(JSON1)
               .toPromise();
           } else {
             console.log(
@@ -158,15 +175,13 @@ export class ModalDetallesSincronizacionComponent {
         } catch (error) {
           console.error('Error durante la sincronización:', error);
           Swal.fire({
-            title: 'Error durante la sincronización, intente de nuevo más tarde por favor.',
+            title:
+              'Error durante la sincronización, intente de nuevo más tarde por favor.',
             icon: 'error',
             confirmButtonColor: '#5c5c5c',
             confirmButtonText: 'Aceptar',
-          }).then((result) => {
-            if (result.isConfirmed) {
-              this.loading = false;
-            }
           });
+          this.loading = false;
           return;
         }
       }

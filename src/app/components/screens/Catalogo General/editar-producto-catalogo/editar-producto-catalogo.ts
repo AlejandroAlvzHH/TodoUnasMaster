@@ -36,7 +36,7 @@ import { SincronizacionPendienteService } from '../../../../core/services/Servic
           <button class="btn" (click)="modificarProducto()">
             Modificar Producto
           </button>
-          <button class="btn-cerrar" (click)="cerrarModal()">Cerrar</button>
+          <button class="btn-cerrar" (click)="cerrarModal()">Cancelar</button>
         </div>
       </div>
     </div>
@@ -128,9 +128,9 @@ export class EditarProductoCatalogoComponent {
       confirmButtonText: 'Sí, confirmar modificación',
       cancelButtonText: 'Cancelar',
     }).then(async (result) => {
-      this.loading = true;
       try {
         if (result.isConfirmed) {
+          this.loading = true;
           if (this.id_producto && this.currentUser) {
             const fechaActual = new Date();
             fechaActual.setHours(fechaActual.getHours() - 6);
@@ -210,6 +210,31 @@ export class EditarProductoCatalogoComponent {
                             'Se logró insertar en: ',
                             sucursal.idSucursal
                           );
+                          //AQUÍ REGISTRAR SINCRONIZACIÓN
+                          const fechaActual = new Date();
+                          fechaActual.setHours(fechaActual.getHours() - 6);
+                          const body = {
+                            id_producto: this.id_producto,
+                            id_sucursal: sucursal.idSucursal,
+                            fecha_registro: fechaActual,
+                            estado: 'SINCRONIZADO',
+                            mensaje_error: '',
+                          };
+                          this.sincronizacionPendienteService
+                            .registrarFalloSincronizacion(body)
+                            .subscribe(
+                              () => {
+                                console.log(
+                                  'Acierto registrado en la tabla de sincronización pendiente.'
+                                );
+                              },
+                              (error: any) => {
+                                console.error(
+                                  'Error al registrar fallo en la tabla de sincronización pendiente',
+                                  error
+                                );
+                              }
+                            );
                         })
                         .catch((error) => {
                           console.log(
@@ -225,9 +250,7 @@ export class EditarProductoCatalogoComponent {
                     console.error('Error al obtener el producto:', error);
                     sucursalesFallidas.push(sucursal.nombre);
                     console.log(sucursalesFallidas);
-                    console.log(sucursal.idSucursal,
-                      this.id_producto,
-                      '')
+                    console.log(sucursal.idSucursal, this.id_producto, '');
                     this.registrarFalloSincronizacion(
                       sucursal.idSucursal,
                       this.id_producto,

@@ -306,7 +306,7 @@ export class TraspasosComponent {
       this.isSidebarOpen = isOpen;
     });
     this.obtenerDetalleSucursal();
-    this.apiService.getAllSucursales().subscribe(
+    this.apiService.getAllBranchesConStatus1().subscribe(
       (sucursales) => {
         this.sucursalDestino = sucursales.filter(
           (sucursal) => sucursal.idSucursal !== this.sucursal?.idSucursal

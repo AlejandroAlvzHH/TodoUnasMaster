@@ -68,6 +68,12 @@ export class ApiService {
     );
   }
 
+  getAllBranchesConStatus1(): Observable<Branches[]> {
+    return this.http.get<Branches[]>(this.url).pipe(
+      map((sucursales) => sucursales.filter((sucursal) => sucursal.status === 1))
+    );
+  }
+
   /* EN ESTE NO IMPORTA EL STATUS 1*/
   getAllUrls(): Observable<string[]> {
     return this.getAllSucursales().pipe(

@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
 import { ActivatedRoute } from '@angular/router';
 import { Branches } from '../../../../Models/Master/branches';
-import { TablaProductosComponent } from '../../../tabla-productos/tabla-productos.component';
+import { TablaProductosSucursalComponent } from './tabla-productos-sucursal.component';
 
 @Component({
   selector: 'app-inventario-sucursal',
@@ -15,7 +15,7 @@ import { TablaProductosComponent } from '../../../tabla-productos/tabla-producto
     HeaderComponent,
     SidebarComponent,
     CommonModule,
-    TablaProductosComponent,
+    TablaProductosSucursalComponent,
   ],
   template: `
     <app-header></app-header>
@@ -29,7 +29,7 @@ import { TablaProductosComponent } from '../../../tabla-productos/tabla-producto
       <div class="title-container">
         <h1 class="mayusculas">INVENTARIO DE {{ sucursal?.nombre }}</h1>
       </div>
-      <app-tabla-productos [baseUrl]="sucursal?.url"></app-tabla-productos>
+      <app-tabla-productos-sucursal [baseUrl]="sucursal?.url"></app-tabla-productos-sucursal>
     </main>
   `,
   styleUrl: './inventario-sucursal.component.css',
