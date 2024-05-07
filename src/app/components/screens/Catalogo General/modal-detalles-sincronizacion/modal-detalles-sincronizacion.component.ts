@@ -67,7 +67,7 @@ export class ModalDetallesSincronizacionComponent {
 
   getDetallesProducto(): void {
     this.sucursalesConSincronizacionPendienteService
-      .getDetalleSincronizacionProducto(this.id_producto!)
+      .getDetalleSincronizacionProductoReciente(this.id_producto!)
       .subscribe((detalles) => {
         this.detallesProducto = detalles;
         console.log(this.detallesProducto);
@@ -132,7 +132,7 @@ export class ModalDetallesSincronizacionComponent {
               localiza: '',
             };
             const registroFallo = await this.sincronizacionPendienteService
-              .obtenerFalloSincronizacionPorId(producto.id_sync)
+              .obtenerFalloSincronizacionPorId(producto.id_producto)
               .toPromise();
             const fechaActual = new Date();
             fechaActual.setHours(fechaActual.getHours() - 6);
@@ -144,20 +144,21 @@ export class ModalDetallesSincronizacionComponent {
               mensaje_error: '',
             };
             try {
+              const urlSucursal = '';
               const product = await this.catalogoSucursalService.getProductById(
-                producto.url,
+                urlSucursal,
                 producto.id_producto
               );
               if (product) {
                 await this.catalogoSucursalService.updateProductoSucursal(
-                  producto.url,
+                  urlSucursal,
                   producto.id_producto,
                   JSON
                 );
                 console.log('Producto encontrado:', producto);
               } else {
                 await this.catalogoSucursalService
-                  .agregarProductoSucursal(producto.url, JSON)
+                  .agregarProductoSucursal(urlSucursal, JSON)
                   .toPromise();
               }
             } catch (error) {

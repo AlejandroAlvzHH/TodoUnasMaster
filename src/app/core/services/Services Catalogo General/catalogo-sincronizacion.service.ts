@@ -15,7 +15,6 @@ export class CatalogoSincronizacionService {
   async getAllVistaCatalogoSincronizacion(): Promise<VistaCatalogoSincronizacion[]> {
     try {
       const url = `${this.apiUrl}`;
-      console.log(url);
       const data = await fetch(url, { method: 'GET' });
       return (await data.json()) ?? [];
     } catch (e) {

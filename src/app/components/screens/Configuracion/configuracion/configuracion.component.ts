@@ -22,10 +22,10 @@ import { SidebaropeningService } from '../../../../core/services/sidebaropening.
       </div>
       <div class="menu-container">
         <div class="menu">
-          <a href="#" class="opcion">Contraseñas</a>
-          <a href="#" class="opcion">Catálogo de Salidas</a>
-          <a href="#" class="opcion">Catálogo de Clínicas</a>
-          <a href="#" class="opcion">Roles y Usuarios</a>
+          <a href="/contrasenas" class="opcion">Contraseñas</a>
+          <a href="/catalogo-salidas" class="opcion">Catálogo de Salidas</a>
+          <a href="/catalogo-clinicas" class="opcion">Catálogo de Clínicas</a>
+          <a href="/roles-usuarios" class="opcion">Roles y Usuarios</a>
         </div>
       </div>
     </main>

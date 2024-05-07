@@ -10,6 +10,10 @@ import { TraspasosClinicaComponent } from './components/screens/Sucursales/trasp
 import { LoginComponent } from './components/screens/Login/login/login.component';
 import { AuthGuard } from './auth.guard';
 import { InventarioSucursalComponent } from './components/screens/Sucursales/inventario-sucursal/inventario-sucursal.component';
+import { CatalogoClinicasComponent } from './components/screens/Configuracion/configuracion/catalogo-clinicas/catalogo-clinicas.component';
+import { CatalogoSalidasComponent } from './components/screens/Configuracion/configuracion/catalogo-salidas/catalogo-salidas.component';
+import { ContrasenasComponent } from './components/screens/Configuracion/configuracion/contrasenas/contrasenas.component';
+import { RolesUsuariosComponent } from './components/screens/Configuracion/configuracion/roles-usuarios/roles-usuarios.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -21,6 +25,10 @@ export const routes: Routes = [
   { path: 'entradasysalidas/:id', component: EntradasysalidasComponent, canActivate: [AuthGuard] },
   { path: 'traspasos/:id', component: TraspasosComponent, canActivate: [AuthGuard] },
   { path: 'traspasosclinica/:id', component: TraspasosClinicaComponent, canActivate: [AuthGuard] },
-  { path: 'inventariosucursal/:id', component: InventarioSucursalComponent, canActivate: [AuthGuard] }
+  { path: 'inventariosucursal/:id', component: InventarioSucursalComponent, canActivate: [AuthGuard] },
+  { path: 'contrasenas', component: ContrasenasComponent, canActivate: [AuthGuard] },
+  { path: 'roles-usuarios', component: RolesUsuariosComponent, canActivate: [AuthGuard] },
+  { path: 'catalogo-salidas', component: CatalogoSalidasComponent, canActivate: [AuthGuard] },
+  { path: 'catalogo-clinicas', component: CatalogoClinicasComponent, canActivate: [AuthGuard] },
 ];
 
