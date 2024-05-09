@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { ChangeDetectorRef } from '@angular/core';
 import { RolesService } from '../../../../../core/services/Services Configuracion/roles.service';
 import { Roles } from '../../../../../Models/Master/roles';
+import { AjustarPrivilegiosComponent } from './ajustar-privilegios/ajustar-privilegios.component';
 
 @Component({
   selector: 'app-roles-usuarios',
@@ -19,6 +20,7 @@ import { Roles } from '../../../../../Models/Master/roles';
     CommonModule,
     AgregarRolComponent,
     EditarRolComponent,
+    AjustarPrivilegiosComponent,
   ],
   template: `<app-header></app-header>
     <app-sidebar></app-sidebar>
@@ -38,6 +40,10 @@ import { Roles } from '../../../../../Models/Master/roles';
         *ngIf="mostrarModal"
         (cancelar)="cerrarModal()"
       ></app-agregar-rol>
+      <app-ajustar-privilegios
+        *ngIf="mostrarModalPrivilegios"
+        (cancelar)="cerrarModalPrivilegios()"
+      ></app-ajustar-privilegios>
       <app-editar-rol
         *ngIf="mostrarModalEditar"
         [rol]="rolSeleccionado"
@@ -88,6 +94,12 @@ import { Roles } from '../../../../../Models/Master/roles';
                 >
                   Editar Nombre
                 </button>
+                <button
+                  class="btn"
+                  (click)="abrirModalPrivilegios(filteredRolesList[index])"
+                >
+                  Ajustar Privilegios
+                </button>
               </td>
             </tr>
           </tbody>
@@ -98,8 +110,8 @@ import { Roles } from '../../../../../Models/Master/roles';
 })
 export class RolesUsuariosComponent {
   isSidebarOpen: boolean = false;
-
   mostrarModal: boolean = false;
+  mostrarModalPrivilegios: boolean = false;
   rolesList: Roles[] = [];
   filteredRolesList: Roles[] = [];
   filteredIndices: number[] = [];
@@ -170,7 +182,7 @@ export class RolesUsuariosComponent {
   cerrarModal(): void {
     this.mostrarModal = false;
   }
-  
+
   abrirModalEditar(rol: Roles): void {
     this.rolSeleccionado = rol;
     this.mostrarModalEditar = true;
@@ -178,5 +190,14 @@ export class RolesUsuariosComponent {
 
   cerrarModalEditar(): void {
     this.mostrarModalEditar = false;
+  }
+
+  abrirModalPrivilegios(rol: Roles): void {
+    this.rolSeleccionado = rol;
+    this.mostrarModalPrivilegios = true;
+  }
+
+  cerrarModalPrivilegios(): void {
+    this.mostrarModalPrivilegios = false;
   }
 }

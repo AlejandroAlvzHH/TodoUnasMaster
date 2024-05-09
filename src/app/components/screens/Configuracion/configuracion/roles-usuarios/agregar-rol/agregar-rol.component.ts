@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Roles } from '../../../../../../Models/Master/roles';
 import Swal from 'sweetalert2';
 import { RolesService } from '../../../../../../core/services/Services Configuracion/roles.service';
 import { FormsModule } from '@angular/forms';
