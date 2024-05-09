@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Clinics } from '../../../Models/Master/clinics';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,12 @@ export class ClinicasService {
 
   getClinicas(): Observable<Clinics[]> {
     return this.http.get<Clinics[]>(this.clinicasUrl);
+  }
+
+  getClinicasStatus1(): Observable<Clinics[]> {
+    return this.http.get<Clinics[]>(this.clinicasUrl).pipe(
+      map(clinicas => clinicas.filter(clinica => clinica.status === 1))
+    );
   }
 
   async getAllClinicas(): Promise<Clinics[]> {
@@ -50,6 +57,12 @@ export class ClinicasService {
       console.error('Error updating clinica:', error);
       throw error;
     }
+  }
+
+  updateStatusClinica(clinica: Clinics): Observable<Clinics> {
+    const updateUrl = `${this.clinicasUrl}/${clinica.id_clinica}`;
+    console.log(updateUrl)
+    return this.http.put<Clinics>(updateUrl, clinica);
   }
 
   async deleteClinica(id_clinica: number): Promise<void> {

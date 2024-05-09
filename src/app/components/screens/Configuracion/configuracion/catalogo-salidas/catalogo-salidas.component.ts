@@ -76,6 +76,19 @@ import Swal from 'sweetalert2';
                   [class.desc]="!ordenAscendente"
                 ></i>
               </th>
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('status')"
+                [class.interactive]="columnaOrdenada === 'status'"
+              >
+                Status
+                <i
+                  *ngIf="columnaOrdenada === 'status'"
+                  class="arrow-icon"
+                  [class.asc]="ordenAscendente"
+                  [class.desc]="!ordenAscendente"
+                ></i>
+              </th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -84,6 +97,14 @@ import Swal from 'sweetalert2';
               <td>{{ filteredMotivosList[index].id_tipo_salida }}</td>
               <td>{{ filteredMotivosList[index].tipo }}</td>
               <td>
+                <span *ngIf="filteredMotivosList[index].status === 1"
+                  >Activo</span
+                >
+                <span *ngIf="filteredMotivosList[index].status === 0"
+                  >Inactivo</span
+                >
+              </td>
+              <td>
                 <button
                   class="btn"
                   (click)="abrirModalEditar(filteredMotivosList[index])"
@@ -91,10 +112,18 @@ import Swal from 'sweetalert2';
                   Editar
                 </button>
                 <button
+                  *ngIf="filteredMotivosList[index].status === 1"
                   class="btn"
                   (click)="eliminarMotivo(filteredMotivosList[index])"
                 >
                   Eliminar
+                </button>
+                <button
+                  *ngIf="filteredMotivosList[index].status === 0"
+                  class="btn"
+                  (click)="restaurarMotivo(filteredMotivosList[index])"
+                >
+                  Restaurar
                 </button>
               </td>
             </tr>
@@ -123,7 +152,6 @@ export class CatalogoSalidasComponent {
   ) {}
 
   toggleSidebar(): void {
-    console.log('Toggle');
     this.sidebarOpeningService.toggleSidebar();
   }
 
@@ -141,6 +169,7 @@ export class CatalogoSalidasComponent {
       this.filteredMotivosList = this.motivosList.map((motivo) => ({
         id_tipo_salida: motivo.id_tipo_salida,
         tipo: motivo.tipo,
+        status: motivo.status
       }));
       this.filteredIndices = Array.from(
         { length: this.filteredMotivosList.length },
@@ -203,9 +232,11 @@ export class CatalogoSalidasComponent {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await this.catalogoSalidasService.deleteMotivoSalida(
-            motivo.id_tipo_salida
-          );
+          const motivoModificado = { ...motivo };
+          motivoModificado.status = 0;
+          await this.catalogoSalidasService
+            .updateStatusMotivo(motivoModificado)
+            .subscribe();
           Swal.fire({
             title: 'Eliminación Realizada',
             text: `Se eliminó el motivo: ${motivo.tipo}`,
@@ -223,7 +254,48 @@ export class CatalogoSalidasComponent {
             icon: 'error',
             confirmButtonColor: '#5c5c5c',
             confirmButtonText: 'Aceptar',
-          })
+          });
+        }
+      }
+    });
+  }
+
+  restaurarMotivo(motivo: CatalogoSalidas) {
+    Swal.fire({
+      title: 'Confirmar Restauración',
+      text: `¿Estás seguro de restaurar el motivo ${motivo.tipo}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#5c5c5c',
+      cancelButtonColor: '#bcbcbs',
+      confirmButtonText: 'Sí, confirmar restauración',
+      cancelButtonText: 'Cancelar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const motivoModificado = { ...motivo };
+          motivoModificado.status = 1;
+          await this.catalogoSalidasService
+            .updateStatusMotivo(motivoModificado)
+            .subscribe();
+          Swal.fire({
+            title: 'Restauración Realizada',
+            text: `Se restauró el motivo: ${motivo.tipo}`,
+            icon: 'success',
+            confirmButtonColor: '#5c5c5c',
+            confirmButtonText: 'Aceptar',
+          }).then(async (result) => {
+            this.cerrarModal();
+            window.location.reload();
+          });
+        } catch (error) {
+          Swal.fire({
+            title: 'Restauración No Realizada',
+            text: `No se logró restaurar el motivo: ${motivo.tipo}`,
+            icon: 'error',
+            confirmButtonColor: '#5c5c5c',
+            confirmButtonText: 'Aceptar',
+          });
         }
       }
     });

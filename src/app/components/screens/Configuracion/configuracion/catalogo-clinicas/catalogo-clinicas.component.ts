@@ -76,6 +76,19 @@ import { ClinicasService } from '../../../../../core/services/Services Sucursale
                   [class.desc]="!ordenAscendente"
                 ></i>
               </th>
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('status')"
+                [class.interactive]="columnaOrdenada === 'status'"
+              >
+                Status
+                <i
+                  *ngIf="columnaOrdenada === 'nombre'"
+                  class="arrow-icon"
+                  [class.asc]="ordenAscendente"
+                  [class.desc]="!ordenAscendente"
+                ></i>
+              </th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -84,6 +97,14 @@ import { ClinicasService } from '../../../../../core/services/Services Sucursale
               <td>{{ filteredClinicasList[index].id_clinica }}</td>
               <td>{{ filteredClinicasList[index].nombre }}</td>
               <td>
+                <span *ngIf="filteredClinicasList[index].status === 1"
+                  >Activo</span
+                >
+                <span *ngIf="filteredClinicasList[index].status === 0"
+                  >Inactivo</span
+                >
+              </td>
+              <td>
                 <button
                   class="btn"
                   (click)="abrirModalEditar(filteredClinicasList[index])"
@@ -91,10 +112,18 @@ import { ClinicasService } from '../../../../../core/services/Services Sucursale
                   Editar
                 </button>
                 <button
+                  *ngIf="filteredClinicasList[index].status === 1"
                   class="btn"
                   (click)="eliminarClinica(filteredClinicasList[index])"
                 >
                   Eliminar
+                </button>
+                <button
+                  *ngIf="filteredClinicasList[index].status === 0"
+                  class="btn"
+                  (click)="restaurarClinica(filteredClinicasList[index])"
+                >
+                  Restaurar
                 </button>
               </td>
             </tr>
@@ -141,6 +170,7 @@ export class CatalogoClinicasComponent {
         id_clinica: clinica.id_clinica,
         nombre: clinica.nombre,
         direccion: clinica.direccion,
+        status: clinica.status,
       }));
       this.filteredIndices = Array.from(
         { length: this.filteredClinicasList.length },
@@ -176,43 +206,6 @@ export class CatalogoClinicasComponent {
     });
   }
 
-  eliminarClinica(clinica: Clinics) {
-    Swal.fire({
-      title: 'Confirmar Eliminación',
-      text: `¿Estás seguro de eliminar la clínica ${clinica.nombre}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#5c5c5c',
-      cancelButtonColor: '#bcbcbs',
-      confirmButtonText: 'Sí, confirmar eliminación',
-      cancelButtonText: 'Cancelar',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await this.clinicasService.deleteClinica(clinica.id_clinica);
-          Swal.fire({
-            title: 'Eliminación Realizada',
-            text: `Se eliminó la clínica: ${clinica.nombre}`,
-            icon: 'success',
-            confirmButtonColor: '#5c5c5c',
-            confirmButtonText: 'Aceptar',
-          }).then(async (result) => {
-            this.cerrarModal();
-            window.location.reload();
-          });
-        } catch (error) {
-          Swal.fire({
-            title: 'Eliminación No Realizada',
-            text: `No se logró eliminar la clinica: ${clinica.nombre}`,
-            icon: 'error',
-            confirmButtonColor: '#5c5c5c',
-            confirmButtonText: 'Aceptar',
-          });
-        }
-      }
-    });
-  }
-
   abrirModal(): void {
     this.mostrarModal = true;
   }
@@ -228,5 +221,87 @@ export class CatalogoClinicasComponent {
 
   cerrarModalEditar(): void {
     this.mostrarModalEditar = false;
+  }
+
+  eliminarClinica(clinica: Clinics) {
+    Swal.fire({
+      title: 'Confirmar Eliminación',
+      text: `¿Estás seguro de eliminar la clínica ${clinica.nombre}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#5c5c5c',
+      cancelButtonColor: '#bcbcbs',
+      confirmButtonText: 'Sí, confirmar eliminación',
+      cancelButtonText: 'Cancelar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const clinicaModificada = { ...clinica };
+          clinicaModificada.status = 0;
+          await this.clinicasService
+            .updateStatusClinica(clinicaModificada)
+            .subscribe();
+          Swal.fire({
+            title: 'Eliminación Realizada',
+            text: `Se eliminó la clínica: ${clinica.nombre}`,
+            icon: 'success',
+            confirmButtonColor: '#5c5c5c',
+            confirmButtonText: 'Aceptar',
+          }).then(async (result) => {
+            this.cerrarModal();
+            window.location.reload();
+          });
+        } catch (error) {
+          Swal.fire({
+            title: 'Eliminación No Realizada',
+            text: `No se logró eliminar la clínica: ${clinica.nombre}`,
+            icon: 'error',
+            confirmButtonColor: '#5c5c5c',
+            confirmButtonText: 'Aceptar',
+          });
+        }
+      }
+    });
+  }
+
+  restaurarClinica(clinica: Clinics) {
+    Swal.fire({
+      title: 'Confirmar Restauración',
+      text: `¿Estás seguro de restaurar la clínica ${clinica.nombre}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#5c5c5c',
+      cancelButtonColor: '#bcbcbs',
+      confirmButtonText: 'Sí, confirmar restauración',
+      cancelButtonText: 'Cancelar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const clinicaModificada = { ...clinica };
+          clinicaModificada.status = 1;
+          await this.clinicasService
+            .updateStatusClinica(clinicaModificada)
+            .subscribe();
+          Swal.fire({
+            title: 'Restauración Realizada',
+            text: `Se restauró la clínica: ${clinica.nombre}`,
+            icon: 'success',
+            confirmButtonColor: '#5c5c5c',
+            confirmButtonText: 'Aceptar',
+          }).then(async (result) => {
+            this.cerrarModal();
+            window.location.reload();
+          });
+        } catch (error) {
+          Swal.fire({
+            title: 'Restauración No Realizada',
+            text: `No se logró restaurar la clínica: ${clinica.nombre}`,
+            icon: 'error',
+            confirmButtonColor: '#5c5c5c',
+            confirmButtonText: 'Aceptar',
+          });
+        }
+      }
+    });
   }
 }

@@ -42,7 +42,6 @@ label {
   display: block;
 }
 
-input[type="password"],
 input[type="text"],
 input[type="number"] {
   width: calc(100% - 22px);
@@ -62,10 +61,4 @@ input[type="number"] {
 h1 {
   margin-top: 1%;
   font-family: "Montserrat", sans-serif;
-}
-
-select {
-  padding: 8px;
-  font-size: 16px;
-  border-radius: 5px;
 }

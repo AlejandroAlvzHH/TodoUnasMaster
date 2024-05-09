@@ -317,7 +317,7 @@ export class TraspasosClinicaComponent {
       this.isSidebarOpen = isOpen;
     });
     this.obtenerDetalleSucursal();
-    this.clinicasService.getClinicas().subscribe(
+    this.clinicasService.getClinicasStatus1().subscribe(
       (clinicas) => {
         this.clinicas = clinicas;
         if (this.clinicas.length > 0) {

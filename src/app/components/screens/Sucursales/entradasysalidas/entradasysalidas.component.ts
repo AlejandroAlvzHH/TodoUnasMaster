@@ -531,7 +531,7 @@ export class EntradasysalidasComponent implements OnInit {
     this.catalogoSalidas = [];
     try {
       const catalogoSalidas = await this.catalogoSalidasService
-        .getCatalogoSalidas()
+        .getCatalogoSalidasStatus1()
         .toPromise();
       if (catalogoSalidas) {
         this.catalogoSalidas = catalogoSalidas;

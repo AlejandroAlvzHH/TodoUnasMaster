@@ -60,13 +60,13 @@ export class EditarMotivoComponent {
     }
     Swal.fire({
       title: 'Confirmar Edición',
-      text: `¿Estás seguro de registrar el nuevo motivo ${this.nuevoMotivo.tipo}?`,
+      text: `¿Estás seguro de registrar la edición para el motivo ${this.nuevoMotivo.tipo}?`,
       icon: 'question',
       showCancelButton: true,
       showConfirmButton: true,
       confirmButtonColor: '#5c5c5c',
       cancelButtonColor: '#bcbcbs',
-      confirmButtonText: 'Sí, confirmar registro',
+      confirmButtonText: 'Sí, confirmar edición',
       cancelButtonText: 'Cancelar',
     }).then(async (result) => {
       if (result.isConfirmed) {

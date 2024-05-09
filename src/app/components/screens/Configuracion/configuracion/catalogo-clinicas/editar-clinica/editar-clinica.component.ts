@@ -16,9 +16,9 @@ import { FormsModule } from '@angular/forms';
         <div class="loading-spinner"></div>
       </div>
       <label>Nombre:</label>
-    <input type="text" [(ngModel)]="nuevaClinica.nombre" />
-    <label>Direccion:</label>
-    <input type="text" [(ngModel)]="nuevaClinica.direccion" />
+      <input type="text" [(ngModel)]="nuevaClinica.nombre" />
+      <label>Direccion:</label>
+      <input type="text" [(ngModel)]="nuevaClinica.direccion" />
       <div class="botonera">
         <button class="btn" (click)="editarClinica()">Editar</button>
         <button class="btn-cerrar" (click)="cerrarModalEditar()">
@@ -63,13 +63,13 @@ export class EditarClinicaComponent {
     }
     Swal.fire({
       title: 'Confirmar Edición',
-      text: `¿Estás seguro de registrar la nueva clínica ${this.nuevaClinica.nombre}?`,
+      text: `¿Estás seguro de registrar la edición para la clínica ${this.nuevaClinica.nombre}?`,
       icon: 'question',
       showCancelButton: true,
       showConfirmButton: true,
       confirmButtonColor: '#5c5c5c',
       cancelButtonColor: '#bcbcbs',
-      confirmButtonText: 'Sí, confirmar registro',
+      confirmButtonText: 'Sí, confirmar edición',
       cancelButtonText: 'Cancelar',
     }).then(async (result) => {
       if (result.isConfirmed) {

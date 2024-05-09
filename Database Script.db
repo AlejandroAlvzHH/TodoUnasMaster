@@ -1,35 +1,39 @@
 CREATE DATABASE todo_unas_master;
 \c todo_unas_master;
 
+CREATE TABLE usuario (
+    id_usuario SERIAL PRIMARY KEY,
+    nombre VARCHAR(50),
+    apellido_paterno VARCHAR(50),
+    apellido_materno VARCHAR(50),
+    contrasena VARCHAR(100),
+    correo VARCHAR(100),
+    status INT
+);
+
+CREATE TABLE roles (
+    id_rol SERIAL PRIMARY KEY,
+    nombre VARCHAR(50)
+);
+
 CREATE TABLE privilegios (
     id_privilegio SERIAL PRIMARY KEY,
     nombre VARCHAR(50)
 );
 
-CREATE TABLE roles (
-    id_rol SERIAL PRIMARY KEY,
-    nombre VARCHAR(50),
-    id_privilegio INT,
-    FOREIGN KEY (id_privilegio) REFERENCES privilegios(id_privilegio)
-);
-
 CREATE TABLE roles_privilegios (
-    id_rol_privilegio SERIAL PRIMARY KEY,
+    id_roles_privilegios SERIAL PRIMARY KEY,
     id_rol INT,
     id_privilegio INT,
     FOREIGN KEY (id_rol) REFERENCES roles(id_rol),
     FOREIGN KEY (id_privilegio) REFERENCES privilegios(id_privilegio)
 );
 
-CREATE TABLE usuario (
-    id_usuario SERIAL PRIMARY KEY,
-    nombre VARCHAR(50),
-    apellido_paterno VARCHAR(50),
-    apellido_materno VARCHAR(50),
-    contraseña VARCHAR(100),
-    correo VARCHAR(100),
+CREATE TABLE usuario_rol (
+    id_usuario_rol SERIAL PRIMARY KEY,
+    id_usuario INT,
     id_rol INT,
-    status INT
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario),
     FOREIGN KEY (id_rol) REFERENCES roles(id_rol)
 );
 
@@ -279,6 +283,41 @@ SELECT
 FROM
     catalogo_general cg;
 
+--> vista_usuarios_desglose PARA VER EL USER Y SU ROL
+CREATE VIEW vista_usuarios_desglose AS
+SELECT 
+    u.id_usuario,
+    CONCAT(u.nombre, ' ', u.apellido_paterno, ' ', u.apellido_materno) AS nombre_completo,
+    r.nombre AS nombre_rol
+FROM 
+    usuario u
+JOIN 
+    usuario_rol ur ON u.id_usuario = ur.id_usuario
+JOIN 
+    roles r ON ur.id_rol = r.id_rol
+GROUP BY 
+    u.id_usuario, u.nombre, u.apellido_paterno, u.apellido_materno, r.nombre;
+
+--> vista_usuarios_privilegios PARA VER EL USER Y SU ROL CON PRIVILEGIOS
+CREATE VIEW vista_usuarios_privilegios AS
+SELECT 
+    u.id_usuario,
+    CONCAT(u.nombre, ' ', u.apellido_paterno, ' ', u.apellido_materno) AS nombre_completo,
+    r.nombre AS nombre_rol,
+    STRING_AGG(p.nombre, ', ') AS privilegios
+FROM 
+    usuario u
+JOIN 
+    usuario_rol ur ON u.id_usuario = ur.id_usuario
+JOIN 
+    roles r ON ur.id_rol = r.id_rol
+LEFT JOIN 
+    roles_privilegios rp ON r.id_rol = rp.id_rol
+LEFT JOIN 
+    privilegios p ON rp.id_privilegio = p.id_privilegio
+GROUP BY 
+    u.id_usuario, u.nombre, u.apellido_paterno, u.apellido_materno, r.nombre;
+
 --> MUESTRA TODAS LAS TABLAS DEL SISTEMA
 SELECT table_name
 FROM information_schema.tables
@@ -305,8 +344,8 @@ FROM pg_views
 WHERE viewname = 'vista_catalogo_sincronizacion_definitiva';
 
 -->AGREGAR COLUMNA
-ALTER TABLE vista_sucursales_con_sincronizacion_pendiente
-ADD COLUMN fecha_registro VARCHAR;
+ALTER TABLE catalogo_salidas
+ADD COLUMN status INT;
 
 -->COMANDOS NGROK
 ngrok http 10395 --host-header="localhost:10395"
@@ -321,3 +360,7 @@ ALTER TABLE catalogo_general
    ALTER COLUMN fecha_creado SET DATA TYPE TIMESTAMP,
    ALTER COLUMN fecha_modificado SET DATA TYPE TIMESTAMP,
    ALTER COLUMN fecha_eliminado SET DATA TYPE TIMESTAMP;
+
+--> PARA CAMBIAR NOMBRE DE COLUMNA
+ALTER TABLE usuario
+RENAME COLUMN contraseña TO contrasena;

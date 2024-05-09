@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CatalogoSalidas } from '../../../../Models/Master/catalogo_salidas';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,12 @@ export class CatalogoSalidasService {
     return this.http.get<CatalogoSalidas[]>(this.catalogoSalidasUrl);
   }
   
+  getCatalogoSalidasStatus1(): Observable<CatalogoSalidas[]> {
+    return this.http.get<CatalogoSalidas[]>(this.catalogoSalidasUrl).pipe(
+      map(catalogoSalidas => catalogoSalidas.filter(item => item.status === 1))
+    );
+  }
+
   async getAllCatalogoSalidas(): Promise<CatalogoSalidas[]> {
     try {
       const url = `${this.catalogoSalidasUrl}`;
@@ -33,6 +40,12 @@ export class CatalogoSalidasService {
       this.catalogoSalidasUrl,
       catalogoSalida
     );
+  }
+
+  updateStatusMotivo(motivo: CatalogoSalidas): Observable<CatalogoSalidas> {
+    const updateUrl = `${this.catalogoSalidasUrl}/${motivo.id_tipo_salida}`;
+    console.log(updateUrl)
+    return this.http.put<CatalogoSalidas>(updateUrl, motivo);
   }
 
   async updateMotivoSalida(
