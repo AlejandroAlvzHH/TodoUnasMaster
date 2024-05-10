@@ -156,7 +156,6 @@ export class ContrasenasComponent {
   ) {}
 
   toggleSidebar(): void {
-    console.log('Toggle');
     this.sidebarOpeningService.toggleSidebar();
   }
 
@@ -217,7 +216,7 @@ export class ContrasenasComponent {
       text: `¿Estás seguro de eliminar el usuario ${contrasena.nombre}?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar eliminación',
       cancelButtonText: 'Cancelar',
@@ -233,7 +232,7 @@ export class ContrasenasComponent {
             title: 'Eliminación Realizada',
             text: `Se eliminó el usuario: ${contrasena.nombre}`,
             icon: 'success',
-            confirmButtonColor: '#5c5c5c',
+            confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
           }).then(async (result) => {
             this.cerrarModal();
@@ -244,7 +243,7 @@ export class ContrasenasComponent {
             title: 'Eliminación No Realizada',
             text: `No se logró eliminar el usuario: ${contrasena.nombre}`,
             icon: 'error',
-            confirmButtonColor: '#5c5c5c',
+            confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
           });
         }
@@ -258,7 +257,7 @@ export class ContrasenasComponent {
       text: `¿Estás seguro de restaurar el usuario ${contrasena.nombre}?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar restauración',
       cancelButtonText: 'Cancelar',
@@ -274,7 +273,7 @@ export class ContrasenasComponent {
             title: 'Restauración Realizada',
             text: `Se restauró el usuario: ${contrasena.nombre}`,
             icon: 'success',
-            confirmButtonColor: '#5c5c5c',
+            confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
           }).then(async (result) => {
             this.cerrarModal();
@@ -285,7 +284,7 @@ export class ContrasenasComponent {
             title: 'Restauración No Realizada',
             text: `No se logró restaurar el usuario: ${contrasena.nombre}`,
             icon: 'error',
-            confirmButtonColor: '#5c5c5c',
+            confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
           });
         }

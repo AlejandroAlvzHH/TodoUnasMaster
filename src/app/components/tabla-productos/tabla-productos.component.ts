@@ -104,7 +104,11 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
                   {{ filteredProductsList[index].existencia }}
                   <button
                     class="btn"
-                    [disabled]="filteredProductsList[index].botonDesactivado"
+                    [ngClass]="{
+                      added: filteredProductsList[index].enCarrito,
+                      disabled: filteredProductsList[index].enCarrito
+                    }"
+                    [disabled]="filteredProductsList[index].enCarrito"
                     (click)="agregarAlCarrito(filteredProductsList[index])"
                   >
                     {{

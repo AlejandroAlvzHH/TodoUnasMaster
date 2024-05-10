@@ -53,7 +53,7 @@ export class EditarMotivoComponent {
         title: 'Campo Vacío',
         text: 'Por favor ingrese un nuevo valor para modificar el motivo.',
         icon: 'warning',
-        confirmButtonColor: '#5c5c5c',
+        confirmButtonColor:'#333333',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -64,7 +64,7 @@ export class EditarMotivoComponent {
       icon: 'question',
       showCancelButton: true,
       showConfirmButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar edición',
       cancelButtonText: 'Cancelar',
@@ -82,7 +82,7 @@ export class EditarMotivoComponent {
                   title: 'Éxito',
                   text: 'El motivo editado se ha registrado correctamente.',
                   icon: 'success',
-                  confirmButtonColor: '#5c5c5c',
+                  confirmButtonColor: '#333333',
                   confirmButtonText: 'Aceptar',
                 }).then(() => {
                   this.loading = false;
@@ -95,7 +95,7 @@ export class EditarMotivoComponent {
                   title: 'Error',
                   text: 'Ha ocurrido un error al registrar la edición del motivo.',
                   icon: 'error',
-                  confirmButtonColor: '#5c5c5c',
+                  confirmButtonColor:'#333333',
                   confirmButtonText: 'Aceptar',
                 }).then(() => {
                   this.loading = false;

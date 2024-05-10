@@ -47,7 +47,7 @@ export class AgregarClinicaComponent {
         title: 'Campos Vacíos',
         text: 'Por favor rellene los campos vacíos para poder agregar una nueva clínica.',
         icon: 'warning',
-        confirmButtonColor: '#5c5c5c',
+        confirmButtonColor: '#333333',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -58,7 +58,7 @@ export class AgregarClinicaComponent {
       icon: 'question',
       showCancelButton: true,
       showConfirmButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar registro',
       cancelButtonText: 'Cancelar',
@@ -72,7 +72,7 @@ export class AgregarClinicaComponent {
               title: 'Éxito',
               text: 'La nueva clínica se ha registrado correctamente.',
               icon: 'success',
-              confirmButtonColor: '#5c5c5c',
+              confirmButtonColor: '#333333',
               confirmButtonText: 'Aceptar',
             }).then(() => {
               this.loading = false;
@@ -85,7 +85,7 @@ export class AgregarClinicaComponent {
               title: 'Error',
               text: 'Ha ocurrido un error al registrar la nueva clínica.',
               icon: 'error',
-              confirmButtonColor: '#5c5c5c',
+              confirmButtonColor: '#333333',
               confirmButtonText: 'Aceptar',
             }).then(() => {
               this.loading = false;

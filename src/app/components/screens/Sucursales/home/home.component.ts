@@ -6,6 +6,11 @@ import { SucursalesmodalComponent } from '../../../../modals/Modals Sucursales/s
 import { SidebarComponent } from '../../../sidebar/sidebar.component';
 import { HeaderComponent } from '../../../header/header.component';
 import { SidebaropeningService } from '../../../../core/services/sidebaropening.service';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { Users } from '../../../../Models/Master/users';
+import { VistaRolesPrivilegios } from '../../../../Models/Master/vista-roles-privilegios';
+import { VistaRolesPrivilegiosService } from '../../../../core/services/Services Configuracion/vista-roles-privilegios.service';
+import { PermisosService } from '../../../../core/services/Services Configuracion/permisos.service';
 
 @Component({
   selector: 'app-home',
@@ -33,7 +38,7 @@ import { SidebaropeningService } from '../../../../core/services/sidebaropening.
       <div class="title-container">
         <h1>SUCURSALES</h1>
       </div>
-      <div class="botonera">
+      <div class="botonera" *ngIf="mostrarBotonAgregar">
         <button class="btn" (click)="abrirModal()">Agregar Sucursal</button>
       </div>
       <div class="card-container">
@@ -61,18 +66,46 @@ export class HomeComponent {
   filteredSucursalesList: Branches[] = [];
   mostrarModal: boolean = false;
   isSidebarOpen: boolean = false;
+  currentUser?: Users | null;
+  privilegiosDisponibles?: VistaRolesPrivilegios[] | null;
+
+  //PRIVILEGIOS
+  mostrarBotonAgregar: boolean = false;
 
   constructor(
     private apiService: ApiService,
-    private sidebarOpeningService: SidebaropeningService
+    private sidebarOpeningService: SidebaropeningService,
+    private authService: AuthService,
+    private vistaRolesPrivilegiosService: VistaRolesPrivilegiosService,
+    private permisosService: PermisosService
   ) {}
 
   toggleSidebar(): void {
-    console.log('Toggle');
     this.sidebarOpeningService.toggleSidebar();
   }
 
+  async getAllRolesPrivilegios(): Promise<void> {
+    try {
+      const id = this.currentUser?.id_rol;
+      if (id) {
+        this.privilegiosDisponibles =
+          await this.vistaRolesPrivilegiosService.getAllRolesPrivilegios(id);
+        console.log('Privilegios disponibles:', this.privilegiosDisponibles);
+        this.mostrarBotonAgregar = this.privilegiosDisponibles.some(
+          (privilegio) => privilegio.id_privilegio === 3
+        );
+      }
+    } catch (error) {
+      console.error('Error al obtener los roles y privilegios:', error);
+    }
+  }
+
   ngOnInit(): void {
+    const canAddBranch = this.permisosService.canAddBranch();
+    this.authService.currentUser.subscribe((user) => {
+      this.currentUser = user;
+    });
+    this.getAllRolesPrivilegios();
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });

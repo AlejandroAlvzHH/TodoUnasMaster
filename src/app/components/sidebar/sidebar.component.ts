@@ -46,6 +46,7 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
     this.authService.currentUser.subscribe((user) => {
       this.currentUser = user;
+      console.log(this.currentUser);
     });
     this.SidebaropeningService.isOpen$.subscribe((isOpen) => {
       this.isOpen = isOpen;
@@ -60,7 +61,7 @@ export class SidebarComponent implements OnInit {
     Swal.fire({
       title: '¿Desea cerrar la sesión?',
       showCancelButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Cerrar sesión',
       cancelButtonText: 'Cancelar',

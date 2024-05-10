@@ -46,7 +46,7 @@ export class AgregarRolComponent {
         title: 'Campo Vacío',
         text: 'Por favor ingrese un nuevo rol para agregarlo.',
         icon: 'warning',
-        confirmButtonColor: '#5c5c5c',
+        confirmButtonColor: '#333333',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -57,7 +57,7 @@ export class AgregarRolComponent {
       icon: 'question',
       showCancelButton: true,
       showConfirmButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar registro',
       cancelButtonText: 'Cancelar',
@@ -71,7 +71,7 @@ export class AgregarRolComponent {
               title: 'Éxito',
               text: 'El nuevo rol se ha registrado correctamente.',
               icon: 'success',
-              confirmButtonColor: '#5c5c5c',
+              confirmButtonColor: '#333333',
               confirmButtonText: 'Aceptar',
             }).then(() => {
               this.loading = false;
@@ -84,7 +84,7 @@ export class AgregarRolComponent {
               title: 'Error',
               text: 'Ha ocurrido un error al registrar el nuevo rol.',
               icon: 'error',
-              confirmButtonColor: '#5c5c5c',
+              confirmButtonColor: '#333333',
               confirmButtonText: 'Aceptar',
             }).then(() => {
               this.loading = false;

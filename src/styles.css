@@ -88,8 +88,18 @@ button:hover {
   font-family: "Montserrat", sans-serif;
 }
 
-.btn:hover {
+.btn:not([disabled]):hover {
   background-color: #4e4e4e;
+  cursor: pointer;
+}
+
+.btn[disabled] {
+  opacity: 0.5; 
+}
+
+.btn[disabled]:hover {
+  background-color: #333; 
+  cursor: not-allowed; 
 }
 
 .btn-cerrar {
@@ -315,4 +325,9 @@ table {
 
 .interactive:hover {
   text-decoration: underline;
+}
+
+.custom-confirm-button {
+  border: 1px solid black !important;
+  color: #3498db;
 }

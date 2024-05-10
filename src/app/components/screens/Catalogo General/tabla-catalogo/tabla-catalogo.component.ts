@@ -15,9 +15,11 @@ import { EditarProductoCatalogoComponent } from '../editar-producto-catalogo/edi
   ],
   template: `
     <app-modal-detalles-sincronizacion
-      *ngIf="mostrarModalDetalles"
+      *ngIf="mostrarModalDetalles && productoSeleccionado"
       (cancelar)="cerrarModalDetalles()"
-      [id_producto]="productoSeleccionado!.id_producto"
+      [id_producto]="
+        productoSeleccionado ? productoSeleccionado.id_producto : null
+      "
     ></app-modal-detalles-sincronizacion>
     <app-editar-producto-catalogo
       *ngIf="mostrarModalEditar"
@@ -233,43 +235,54 @@ export class TablaCatalogoComponent {
     const text = (event.target as HTMLInputElement).value;
     if (!text) {
       this.filteredProductsList = this.productsList;
-      return;
+    } else {
+      this.filteredProductsList = this.productsList.filter((product) =>
+        product.nombre.toLowerCase().includes(text.toLowerCase())
+      );
     }
-    this.filteredProductsList = this.productsList.filter((product) =>
-      product.nombre.toLowerCase().includes(text.toLowerCase())
-    );
+    this.updateFilteredIndices();
   }
 
   filterByClave(event: Event) {
     const text = (event.target as HTMLInputElement).value.trim();
     if (!text) {
       this.filteredProductsList = this.productsList;
-      return;
+    } else {
+      this.filteredProductsList = this.productsList.filter((product) =>
+        product.clave.toLowerCase().includes(text.toLowerCase())
+      );
     }
-    this.filteredProductsList = this.productsList.filter((product) =>
-      product.clave.toLowerCase().includes(text.toLowerCase())
-    );
+    this.updateFilteredIndices();
   }
 
   filterById(event: Event) {
     const text = (event.target as HTMLInputElement).value.trim();
     if (!text) {
       this.filteredProductsList = this.productsList;
-      return;
+    } else {
+      this.filteredProductsList = this.productsList.filter((product) =>
+        product.id_producto.toString().startsWith(text)
+      );
     }
-    this.filteredProductsList = this.productsList.filter((product) =>
-      product.id_producto.toString().startsWith(text)
-    );
+    this.updateFilteredIndices();
   }
 
   filterByPrecio(event: Event) {
     const text = (event.target as HTMLInputElement).value.trim();
     if (!text) {
       this.filteredProductsList = this.productsList;
-      return;
+    } else {
+      this.filteredProductsList = this.productsList.filter((product) =>
+        product.precio.toString().startsWith(text)
+      );
     }
-    this.filteredProductsList = this.productsList.filter((product) =>
-      product.precio.toString().startsWith(text)
+    this.updateFilteredIndices();
+  }
+
+  private updateFilteredIndices() {
+    this.filteredIndices = Array.from(
+      { length: this.filteredProductsList.length },
+      (_, i) => i
     );
   }
 

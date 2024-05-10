@@ -113,7 +113,7 @@ export class TraspasosClinicaComponent {
         title: 'Carrito Vacío',
         text: 'El carrito está vacío. Por favor, agrega productos antes de confirmar el traspaso.',
         icon: 'warning',
-        confirmButtonColor: '#5c5c5c',
+        confirmButtonColor: '#333333',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -136,7 +136,7 @@ export class TraspasosClinicaComponent {
         text: `¿Estás seguro de traspasar los productos a ${selectedClinica?.nombre}?`,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#5c5c5c',
+        confirmButtonColor: '#333333',
         cancelButtonColor: '#bcbcbs',
         confirmButtonText: 'Sí, confirmar traspaso',
         cancelButtonText: 'Cancelar',
@@ -296,7 +296,7 @@ export class TraspasosClinicaComponent {
             title: 'Traspaso Confirmado',
             text: `Los productos han sido traspasados a ${selectedClinica?.nombre}.`,
             icon: 'success',
-            confirmButtonColor: '#5c5c5c',
+            confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
           }).then(() => {
             window.location.reload();
@@ -304,7 +304,13 @@ export class TraspasosClinicaComponent {
         }
       });
     } else {
-      console.error('selectedClinica es null o undefined.');
+      Swal.fire({
+        title: 'No hay Clínicas Registradas',
+        text: `Los productos no se pueden traspasar porque no hay clínicas registradas en el sistema.`,
+        icon: 'error',
+        confirmButtonColor: '#333333',
+        confirmButtonText: 'Aceptar',
+      });
       return;
     }
   }

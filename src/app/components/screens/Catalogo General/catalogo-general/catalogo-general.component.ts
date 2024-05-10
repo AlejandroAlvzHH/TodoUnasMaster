@@ -55,7 +55,6 @@ export class CatalogoGeneralComponent {
   ) {}
 
   toggleSidebar(): void {
-    console.log('Toggle');
     this.sidebarOpeningService.toggleSidebar();
   }
 

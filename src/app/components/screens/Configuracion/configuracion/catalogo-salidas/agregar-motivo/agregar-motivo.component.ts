@@ -44,7 +44,7 @@ export class AgregarMotivoComponent {
         title: 'Campo Vacío',
         text: 'Por favor ingrese un nuevo motivo para agregarlo.',
         icon: 'warning',
-        confirmButtonColor: '#5c5c5c',
+        confirmButtonColor: '#333333',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -55,7 +55,7 @@ export class AgregarMotivoComponent {
       icon: 'question',
       showCancelButton: true,
       showConfirmButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar registro',
       cancelButtonText: 'Cancelar',
@@ -69,7 +69,7 @@ export class AgregarMotivoComponent {
               title: 'Éxito',
               text: 'El nuevo motivo se ha registrado correctamente.',
               icon: 'success',
-              confirmButtonColor: '#5c5c5c',
+              confirmButtonColor: '#333333',
               confirmButtonText: 'Aceptar',
             }).then(() => {
               this.loading = false;
@@ -82,7 +82,7 @@ export class AgregarMotivoComponent {
               title: 'Error',
               text: 'Ha ocurrido un error al registrar el nuevo motivo.',
               icon: 'error',
-              confirmButtonColor: '#5c5c5c',
+              confirmButtonColor: '#333333',
               confirmButtonText: 'Aceptar',
             }).then(() => {
               this.loading = false;

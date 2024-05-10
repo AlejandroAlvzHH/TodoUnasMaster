@@ -93,7 +93,7 @@ export class EditarContrasenasComponent {
         title: 'Campos Vacíos',
         text: 'Por favor ingrese valores válidos para modificar el usuario.',
         icon: 'warning',
-        confirmButtonColor: '#5c5c5c',
+        confirmButtonColor: '#333333',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -104,7 +104,7 @@ export class EditarContrasenasComponent {
       icon: 'question',
       showCancelButton: true,
       showConfirmButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar registro',
       cancelButtonText: 'Cancelar',
@@ -120,7 +120,7 @@ export class EditarContrasenasComponent {
                   title: 'Éxito',
                   text: 'El usuario editado se ha registrado correctamente.',
                   icon: 'success',
-                  confirmButtonColor: '#5c5c5c',
+                  confirmButtonColor: '#333333',
                   confirmButtonText: 'Aceptar',
                 }).then(() => {
                   this.loading = false;
@@ -133,7 +133,7 @@ export class EditarContrasenasComponent {
                   title: 'Error',
                   text: 'Ha ocurrido un error al registrar la edición del usuario.',
                   icon: 'error',
-                  confirmButtonColor: '#5c5c5c',
+                  confirmButtonColor: '#333333',
                   confirmButtonText: 'Aceptar',
                 }).then(() => {
                   this.loading = false;

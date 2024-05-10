@@ -11,6 +11,11 @@ import { SidebaropeningService } from '../../../../core/services/sidebaropening.
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { VistaRolesPrivilegiosService } from '../../../../core/services/Services Configuracion/vista-roles-privilegios.service';
+import { VistaRolesPrivilegios } from '../../../../Models/Master/vista-roles-privilegios';
+import { Users } from '../../../../Models/Master/users';
+import { PermisosService } from '../../../../core/services/Services Configuracion/permisos.service';
+import { AuthService } from '../../../../core/services/auth/auth.service';
 
 type TipoDeError = HttpErrorResponse;
 @Component({
@@ -56,10 +61,10 @@ type TipoDeError = HttpErrorResponse;
           <a href="/traspasos/{{ sucursal?.idSucursal }}" class="opcion"
             >Traspaso a Sucursal</a
           >
-          <button class="opcion" (click)="eliminarSucursal()">
+          <button class="opcion" (click)="eliminarSucursal()" *ngIf="mostrarBotonEliminarSucursal">
             Eliminar Sucursal
           </button>
-          <button class="opcion" (click)="abrirModal()">
+          <button class="opcion" (click)="abrirModal()" *ngIf="mostrarBotonModificarSucursal">
             Modificar Sucursal
           </button>
           <a href="/traspasosclinica/{{ sucursal?.idSucursal }}" class="opcion"
@@ -74,26 +79,56 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
   sucursal: Branches | null = null;
   mostrarModal: boolean = false;
   isSidebarOpen: boolean = false;
-
   private isOpenSubscription!: Subscription;
+
+  currentUser?: Users | null;
+  privilegiosDisponibles?: VistaRolesPrivilegios[] | null;
+  mostrarBotonEliminarSucursal: boolean = false;
+  mostrarBotonModificarSucursal: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
     private sidebarOpeningService: SidebaropeningService,
-    private router: Router
+    private router: Router,
+    private permisosService: PermisosService,
+    private authService: AuthService,
+    private vistaRolesPrivilegiosService: VistaRolesPrivilegiosService,
   ) {}
 
   toggleSidebar(): void {
-    console.log('Toggle');
     this.sidebarOpeningService.toggleSidebar();
   }
 
   ngOnInit(): void {
+    const canDeleteBranch = this.permisosService.canDeleteBranch();
+    this.authService.currentUser.subscribe((user) => {
+      this.currentUser = user;
+    });
+    this.getAllRolesPrivilegios();
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });
     this.obtenerDetalleSucursal();
+  }
+
+  async getAllRolesPrivilegios(): Promise<void> {
+    try {
+      const id = this.currentUser?.id_rol;
+      if (id) {
+        this.privilegiosDisponibles =
+          await this.vistaRolesPrivilegiosService.getAllRolesPrivilegios(id);
+        console.log('Privilegios disponibles:', this.privilegiosDisponibles);
+        this.mostrarBotonEliminarSucursal = this.privilegiosDisponibles.some(
+          (privilegio) => privilegio.id_privilegio === 1
+        );
+        this.mostrarBotonModificarSucursal = this.privilegiosDisponibles.some(
+          (privilegio) => privilegio.id_privilegio === 2
+        );
+      }
+    } catch (error) {
+      console.error('Error al obtener los roles y privilegios:', error);
+    }
   }
 
   ngOnDestroy(): void {
@@ -141,10 +176,14 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
       text: `¿Estás seguro de eliminar ${this.sucursal?.nombre}?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar eliminación',
       cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'custom-confirm-button',
+        cancelButton: 'custom-cancel-button' 
+      }
     });
     if (result.isConfirmed) {
       if (this.sucursal) {
@@ -156,7 +195,7 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
           title: 'Sucursal Eliminada',
           text: 'Los registros permanecerán en la base de datos.',
           icon: 'success',
-          confirmButtonColor: '#5c5c5c',
+          confirmButtonColor: '#333333',
           confirmButtonText: 'Aceptar',
         });
         this.obtenerDetalleSucursal();

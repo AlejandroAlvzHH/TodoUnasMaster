@@ -152,7 +152,6 @@ export class CatalogoClinicasComponent {
   ) {}
 
   toggleSidebar(): void {
-    console.log('Toggle');
     this.sidebarOpeningService.toggleSidebar();
   }
 
@@ -229,7 +228,7 @@ export class CatalogoClinicasComponent {
       text: `¿Estás seguro de eliminar la clínica ${clinica.nombre}?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar eliminación',
       cancelButtonText: 'Cancelar',
@@ -245,7 +244,7 @@ export class CatalogoClinicasComponent {
             title: 'Eliminación Realizada',
             text: `Se eliminó la clínica: ${clinica.nombre}`,
             icon: 'success',
-            confirmButtonColor: '#5c5c5c',
+            confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
           }).then(async (result) => {
             this.cerrarModal();
@@ -256,7 +255,7 @@ export class CatalogoClinicasComponent {
             title: 'Eliminación No Realizada',
             text: `No se logró eliminar la clínica: ${clinica.nombre}`,
             icon: 'error',
-            confirmButtonColor: '#5c5c5c',
+            confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
           });
         }
@@ -270,7 +269,7 @@ export class CatalogoClinicasComponent {
       text: `¿Estás seguro de restaurar la clínica ${clinica.nombre}?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar restauración',
       cancelButtonText: 'Cancelar',
@@ -286,7 +285,7 @@ export class CatalogoClinicasComponent {
             title: 'Restauración Realizada',
             text: `Se restauró la clínica: ${clinica.nombre}`,
             icon: 'success',
-            confirmButtonColor: '#5c5c5c',
+            confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
           }).then(async (result) => {
             this.cerrarModal();
@@ -297,7 +296,7 @@ export class CatalogoClinicasComponent {
             title: 'Restauración No Realizada',
             text: `No se logró restaurar la clínica: ${clinica.nombre}`,
             icon: 'error',
-            confirmButtonColor: '#5c5c5c',
+            confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
           });
         }

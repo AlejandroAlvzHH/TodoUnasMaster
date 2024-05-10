@@ -225,7 +225,7 @@ export class CatalogoSalidasComponent {
       text: `¿Estás seguro de eliminar el motivo ${motivo.tipo}?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar eliminación',
       cancelButtonText: 'Cancelar',
@@ -241,7 +241,7 @@ export class CatalogoSalidasComponent {
             title: 'Eliminación Realizada',
             text: `Se eliminó el motivo: ${motivo.tipo}`,
             icon: 'success',
-            confirmButtonColor: '#5c5c5c',
+            confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
           }).then(async (result) => {
             this.cerrarModal();
@@ -252,7 +252,7 @@ export class CatalogoSalidasComponent {
             title: 'Eliminación No Realizada',
             text: `No se logró eliminar el motivo: ${motivo.tipo}`,
             icon: 'error',
-            confirmButtonColor: '#5c5c5c',
+            confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
           });
         }
@@ -266,7 +266,7 @@ export class CatalogoSalidasComponent {
       text: `¿Estás seguro de restaurar el motivo ${motivo.tipo}?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar restauración',
       cancelButtonText: 'Cancelar',
@@ -282,7 +282,7 @@ export class CatalogoSalidasComponent {
             title: 'Restauración Realizada',
             text: `Se restauró el motivo: ${motivo.tipo}`,
             icon: 'success',
-            confirmButtonColor: '#5c5c5c',
+            confirmButtonColor:'#333333',
             confirmButtonText: 'Aceptar',
           }).then(async (result) => {
             this.cerrarModal();
@@ -293,7 +293,7 @@ export class CatalogoSalidasComponent {
             title: 'Restauración No Realizada',
             text: `No se logró restaurar el motivo: ${motivo.tipo}`,
             icon: 'error',
-            confirmButtonColor: '#5c5c5c',
+            confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
           });
         }

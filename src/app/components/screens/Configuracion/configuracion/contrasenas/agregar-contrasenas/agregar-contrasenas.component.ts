@@ -89,7 +89,7 @@ export class AgregarContrasenasComponent {
         title: 'Campos Vacíos',
         text: 'Por favor rellene los campos vacíos para poder agregar un nuevo usuario.',
         icon: 'warning',
-        confirmButtonColor: '#5c5c5c',
+        confirmButtonColor: '#333333',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -100,7 +100,7 @@ export class AgregarContrasenasComponent {
       icon: 'question',
       showCancelButton: true,
       showConfirmButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar registro',
       cancelButtonText: 'Cancelar',
@@ -112,9 +112,9 @@ export class AgregarContrasenasComponent {
           (response) => {
             Swal.fire({
               title: 'Éxito',
-              text: 'La nueva clínica se ha registrado correctamente.',
+              text: 'El nuevo usuario se ha registrado correctamente.',
               icon: 'success',
-              confirmButtonColor: '#5c5c5c',
+              confirmButtonColor: '#333333',
               confirmButtonText: 'Aceptar',
             }).then(() => {
               this.loading = false;
@@ -125,9 +125,9 @@ export class AgregarContrasenasComponent {
           (error) => {
             Swal.fire({
               title: 'Error',
-              text: 'Ha ocurrido un error al registrar la nueva clínica.',
+              text: 'Ha ocurrido un error al registrar el nuevo usuario.',
               icon: 'error',
-              confirmButtonColor: '#5c5c5c',
+              confirmButtonColor: '#333333',
               confirmButtonText: 'Aceptar',
             }).then(() => {
               this.loading = false;

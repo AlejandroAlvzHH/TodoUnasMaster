@@ -37,7 +37,6 @@ export class ConfiguracionComponent {
   constructor(private sidebarOpeningService: SidebaropeningService) {}
 
   toggleSidebar(): void {
-    console.log('Toggle');
     this.sidebarOpeningService.toggleSidebar();
   }
 

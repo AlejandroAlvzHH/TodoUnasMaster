@@ -53,7 +53,6 @@ export class LoginComponent {
     this.error = null;
     try {
       const user = await this.authService.login(this.username, this.password);
-      console.log('Inicio de sesión exitoso:', user);
       this.router.navigate(['/']);
     } catch (error: any) {
       if (error.message === 'Credenciales incorrectas') {
@@ -61,7 +60,7 @@ export class LoginComponent {
           title: 'Credenciales Incorrectas',
           text: 'Usuario o contraseña incorrectos, por favor intente de nuevo.',
           icon: 'warning',
-          confirmButtonColor: '#007bff',
+          confirmButtonColor: '#333333',
           confirmButtonText: 'Aceptar',
         });
       } else {
@@ -69,7 +68,7 @@ export class LoginComponent {
           title: 'Error de conexión',
           text: 'Hubo un problema al conectar con el servidor, por favor intente nuevamente más tarde.',
           icon: 'error',
-          confirmButtonColor: '#007bff',
+          confirmButtonColor: '#333333',
           confirmButtonText: 'Aceptar',
         });
       }

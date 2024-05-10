@@ -56,7 +56,7 @@ export class EditarClinicaComponent {
         title: 'Campos Vacíos',
         text: 'Por favor ingrese valores para modificar la clínica.',
         icon: 'warning',
-        confirmButtonColor: '#5c5c5c',
+        confirmButtonColor: '#333333',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -67,7 +67,7 @@ export class EditarClinicaComponent {
       icon: 'question',
       showCancelButton: true,
       showConfirmButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar edición',
       cancelButtonText: 'Cancelar',
@@ -85,7 +85,7 @@ export class EditarClinicaComponent {
                   title: 'Éxito',
                   text: 'La clínica editada se ha registrado correctamente.',
                   icon: 'success',
-                  confirmButtonColor: '#5c5c5c',
+                  confirmButtonColor: '#333333',
                   confirmButtonText: 'Aceptar',
                 }).then(() => {
                   this.loading = false;
@@ -98,7 +98,7 @@ export class EditarClinicaComponent {
                   title: 'Error',
                   text: 'Ha ocurrido un error al registrar la edición de la clínica.',
                   icon: 'error',
-                  confirmButtonColor: '#5c5c5c',
+                  confirmButtonColor: '#333333',
                   confirmButtonText: 'Aceptar',
                 }).then(() => {
                   this.loading = false;

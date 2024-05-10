@@ -487,7 +487,6 @@ export class HistoricosComponent {
   }
 
   toggleSidebar(): void {
-    console.log('Toggle');
     this.sidebarOpeningService.toggleSidebar();
   }
 }

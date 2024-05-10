@@ -55,7 +55,7 @@ export class EditarRolComponent {
         title: 'Campo Vacío',
         text: 'Por favor ingrese un nuevo valor para modificar el rol.',
         icon: 'warning',
-        confirmButtonColor: '#5c5c5c',
+        confirmButtonColor: '#333333',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -66,7 +66,7 @@ export class EditarRolComponent {
       icon: 'question',
       showCancelButton: true,
       showConfirmButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar edición',
       cancelButtonText: 'Cancelar',
@@ -82,7 +82,7 @@ export class EditarRolComponent {
                   title: 'Éxito',
                   text: 'El rol editado se ha registrado correctamente.',
                   icon: 'success',
-                  confirmButtonColor: '#5c5c5c',
+                  confirmButtonColor:'#333333',
                   confirmButtonText: 'Aceptar',
                 }).then(() => {
                   this.loading = false;
@@ -95,7 +95,7 @@ export class EditarRolComponent {
                   title: 'Error',
                   text: 'Ha ocurrido un error al registrar la edición del rol.',
                   icon: 'error',
-                  confirmButtonColor: '#5c5c5c',
+                  confirmButtonColor: '#333333',
                   confirmButtonText: 'Aceptar',
                 }).then(() => {
                   this.loading = false;
