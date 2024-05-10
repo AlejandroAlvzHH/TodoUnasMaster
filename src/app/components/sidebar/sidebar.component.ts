@@ -46,7 +46,6 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
     this.authService.currentUser.subscribe((user) => {
       this.currentUser = user;
-      console.log(this.currentUser);
     });
     this.SidebaropeningService.isOpen$.subscribe((isOpen) => {
       this.isOpen = isOpen;

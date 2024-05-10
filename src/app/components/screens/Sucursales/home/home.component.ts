@@ -101,11 +101,12 @@ export class HomeComponent {
   }
 
   ngOnInit(): void {
-    const canAddBranch = this.permisosService.canAddBranch();
     this.authService.currentUser.subscribe((user) => {
       this.currentUser = user;
     });
     this.getAllRolesPrivilegios();
+    const canAddBranch = this.permisosService.canAddBranch();
+    console.log("Valor de canAddBranch: ",canAddBranch)
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });
