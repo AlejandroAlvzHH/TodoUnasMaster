@@ -32,7 +32,6 @@ export class VistaRolesPrivilegiosService {
       const response = await this.http.get<any[]>(url).toPromise();
       return response ?? [];
     } catch (e) {
-      alert('Error: ' + e);
       return [];
     }
   }
