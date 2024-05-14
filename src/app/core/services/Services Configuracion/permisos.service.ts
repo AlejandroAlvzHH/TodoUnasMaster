@@ -12,23 +12,34 @@ export class PermisosService {
   constructor(
     private authService: AuthService,
     private vistaRolesPrivilegiosService: VistaRolesPrivilegiosService
-  ) {
+  ) {}
+
+  async getAllRolesPrivilegios(id_buscar: number): Promise<boolean> {
     this.authService.currentUser.subscribe((user) => {
       this.currentUser = user;
-      this.getAllRolesPrivilegios();
     });
-  }
-
-  async getAllRolesPrivilegios(): Promise<void> {
     try {
       const id = this.currentUser?.id_rol;
       if (id) {
         this.privilegiosDisponibles =
           await this.vistaRolesPrivilegiosService.getAllRolesPrivilegios(id);
+        console.log(this.privilegiosDisponibles);
+        const privilegioEncontrado = this.privilegiosDisponibles.find(
+          (privilegio) => privilegio.id_privilegio === id_buscar
+        );
+        if (privilegioEncontrado) {
+          console.log('Privilegio encontrado:', privilegioEncontrado);
+          return true;
+        } else {
+          console.log('Privilegio no encontrado');
+          return false;
+        }
       }
     } catch (error) {
       console.error('Error al obtener los roles y privilegios:', error);
+      return false;
     }
+    return false;
   }
 
   permissions = {
@@ -57,8 +68,8 @@ export class PermisosService {
     return this.checkPermission(this.permissions.EDIT_BRANCH);
   }
 
-  canAddBranch(): boolean {
-    return this.checkPermission(this.permissions.ADD_BRANCH);
+  canAddBranch(): Promise<boolean> {
+    return this.getAllRolesPrivilegios(3).then((result) => result); 
   }
 
   canViewEntriesAndExits(): boolean {

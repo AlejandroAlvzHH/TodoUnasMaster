@@ -90,7 +90,7 @@ export class HomeComponent {
       if (id) {
         this.privilegiosDisponibles =
           await this.vistaRolesPrivilegiosService.getAllRolesPrivilegios(id);
-        console.log('Privilegios disponibles:', this.privilegiosDisponibles);
+       // console.log('Privilegios disponibles:', this.privilegiosDisponibles);
         this.mostrarBotonAgregar = this.privilegiosDisponibles.some(
           (privilegio) => privilegio.id_privilegio === 3
         );

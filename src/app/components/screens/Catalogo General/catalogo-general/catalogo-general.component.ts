@@ -8,6 +8,11 @@ import { General_Catalogue } from '../../../../Models/Master/general_catalogue';
 import { AgregarProductoCatalogoComponent } from '../agregar-producto-catalogo/agregar-producto-catalogo.component';
 import { CatalogoGeneralService } from '../../../../core/services/Services Catalogo General/catalogo-general.service';
 
+import { Users } from '../../../../Models/Master/users';
+import { VistaRolesPrivilegios } from '../../../../Models/Master/vista-roles-privilegios';
+import { VistaRolesPrivilegiosService } from '../../../../core/services/Services Configuracion/vista-roles-privilegios.service';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+
 @Component({
   selector: 'app-catalogo-general',
   standalone: true,
@@ -36,7 +41,7 @@ import { CatalogoGeneralService } from '../../../../core/services/Services Catal
         <h1>CATÁLOGO GENERAL</h1>
       </div>
       <div class="botonera">
-        <button class="btn" (click)="abrirModal()">Agregar Producto</button>
+        <button class="btn" (click)="abrirModal()"  *ngIf="mostrarBotonAgregar">Agregar Producto</button>
       </div>
       <app-tabla-catalogo></app-tabla-catalogo>
     </main>
@@ -49,16 +54,45 @@ export class CatalogoGeneralComponent {
   isSidebarOpen: boolean = false;
   mostrarModal: boolean = false;
 
+   //PARA PRIVILEGIOS
+   mostrarBotonAgregar: boolean = false;
+   mostrarBotonReintentar: boolean = false;
+   currentUser?: Users | null;
+   privilegiosDisponibles?: VistaRolesPrivilegios[] | null;
+ 
   constructor(
     private sidebarOpeningService: SidebaropeningService,
-    private catalogoGeneralService: CatalogoGeneralService
+    private catalogoGeneralService: CatalogoGeneralService,
+    private vistaRolesPrivilegiosService: VistaRolesPrivilegiosService,
+    private authService: AuthService,
   ) {}
 
   toggleSidebar(): void {
     this.sidebarOpeningService.toggleSidebar();
   }
+  
+  async getAllRolesPrivilegios(): Promise<void> {
+    try {
+      const id = this.currentUser?.id_rol;
+      if (id) {
+        this.privilegiosDisponibles =
+          await this.vistaRolesPrivilegiosService.getAllRolesPrivilegios(id);
+        // console.log('Privilegios disponibles:', this.privilegiosDisponibles);
+        this.mostrarBotonAgregar = this.privilegiosDisponibles.some(
+          (privilegio) => privilegio.id_privilegio === 8
+        );
+      }
+    } catch (error) {
+      console.error('Error al obtener los roles y privilegios:', error);
+    }
+  }
+
 
   ngOnInit(): void {
+    this.authService.currentUser.subscribe((user) => {
+      this.currentUser = user;
+    });
+    this.getAllRolesPrivilegios();
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });

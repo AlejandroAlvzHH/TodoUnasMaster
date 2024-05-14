@@ -42,6 +42,7 @@ import { AjustarPrivilegiosComponent } from './ajustar-privilegios/ajustar-privi
       ></app-agregar-rol>
       <app-ajustar-privilegios
         *ngIf="mostrarModalPrivilegios"
+        [rolSeleccionado]="rolSeleccionado"
         (cancelar)="cerrarModalPrivilegios()"
       ></app-ajustar-privilegios>
       <app-editar-rol

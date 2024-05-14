@@ -54,21 +54,6 @@ input[type="password"]:focus {
   border-color: #5c5c5c;
 }
 
-button[type="submit"] {
-  width: 100%;
-  padding: 15px;
-  background-color: #5c5c5c;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button[type="submit"]:hover {
-  background-color: #4e4e4e;
-}
-
 .error {
   color: red;
   margin-top: 15px;

@@ -10,6 +10,9 @@ import { CatalogoSucursalService } from '../../../../core/services/Services Cata
 import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
 import { SincronizacionPendienteService } from '../../../../core/services/Services Catalogo General/sincronizacion-pendiente.service';
 
+import { VistaRolesPrivilegios } from '../../../../Models/Master/vista-roles-privilegios';
+import { VistaRolesPrivilegiosService } from '../../../../core/services/Services Configuracion/vista-roles-privilegios.service';
+
 @Component({
   selector: 'app-editar-producto-catalogo',
   standalone: true,
@@ -65,13 +68,33 @@ export class EditarProductoCatalogoComponent {
   usuario_eliminador: number = 0;
   fecha_eliminado: Date = new Date();
 
+  mostrarBotonReintentar: boolean = false;
+  privilegiosDisponibles?: VistaRolesPrivilegios[] | null;
+
   constructor(
     private catalogoGeneralService: CatalogoGeneralService,
     private authService: AuthService,
     private catalogoSucursalService: CatalogoSucursalService,
     private apiService: ApiService,
-    private sincronizacionPendienteService: SincronizacionPendienteService
+    private sincronizacionPendienteService: SincronizacionPendienteService,
+    private vistaRolesPrivilegiosService: VistaRolesPrivilegiosService
   ) {}
+
+  async getAllRolesPrivilegios(): Promise<void> {
+    try {
+      const id = this.currentUser?.id_rol;
+      if (id) {
+        this.privilegiosDisponibles =
+          await this.vistaRolesPrivilegiosService.getAllRolesPrivilegios(id);
+        // console.log('Privilegios disponibles:', this.privilegiosDisponibles);
+        this.mostrarBotonReintentar = this.privilegiosDisponibles.some(
+          (privilegio) => privilegio.id_privilegio === 9
+        );
+      }
+    } catch (error) {
+      console.error('Error al obtener los roles y privilegios:', error);
+    }
+  }
 
   async ngOnInit() {
     await this.apiService.getAllBranchesUrlsConStatus1().subscribe((urls) => {
@@ -80,6 +103,7 @@ export class EditarProductoCatalogoComponent {
     this.authService.currentUser.subscribe((user) => {
       this.currentUser = user;
     });
+    this.getAllRolesPrivilegios();
     console.log('El ID del usuario es: ', this.currentUser?.id_usuario);
     if (this.id_producto !== null) {
       try {

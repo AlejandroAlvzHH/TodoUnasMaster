@@ -10,6 +10,12 @@ import { SincronizacionPendienteService } from '../../../../core/services/Servic
 import Swal from 'sweetalert2';
 import { VistaSincronizacionPendienteReciente } from '../../../../Models/Master/vista-sincronizacion-pendiente-reciente';
 
+
+import { VistaRolesPrivilegios } from '../../../../Models/Master/vista-roles-privilegios';
+import { VistaRolesPrivilegiosService } from '../../../../core/services/Services Configuracion/vista-roles-privilegios.service';
+import { Users } from '../../../../Models/Master/users';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+
 @Component({
   selector: 'app-modal-detalles-sincronizacion',
   standalone: true,
@@ -37,7 +43,7 @@ import { VistaSincronizacionPendienteReciente } from '../../../../Models/Master/
             </tr>
           </tbody>
         </table>
-        <button class="btn" (click)="reintentarSincronizacion()">
+        <button *ngIf="mostrarBotonReintentar" class="btn" (click)="reintentarSincronizacion()">
           Reintentar Sincronización
         </button>
         <button class="btn-cerrar" (click)="cerrarModal()">Cerrar</button>
@@ -52,14 +58,42 @@ export class ModalDetallesSincronizacionComponent {
   detallesProducto: VistaSincronizacionPendienteReciente[] = [];
   loading: boolean = false;
 
+  currentUser?: Users | null;
+  mostrarBotonReintentar: boolean = false;
+  privilegiosDisponibles?: VistaRolesPrivilegios[] | null;
+
   constructor(
     private sucursalesConSincronizacionPendienteService: SucursalesConSincronizacionPendienteService,
     private catalogoGeneralService: CatalogoGeneralService,
     private catalogoSucursalService: CatalogoSucursalService,
-    private sincronizacionPendienteService: SincronizacionPendienteService
+    private sincronizacionPendienteService: SincronizacionPendienteService,
+    private vistaRolesPrivilegiosService: VistaRolesPrivilegiosService,
+    private authService: AuthService,
   ) {}
 
+  
+  async getAllRolesPrivilegios(): Promise<void> {
+    try {
+      const id = this.currentUser?.id_rol;
+      if (id) {
+        this.privilegiosDisponibles =
+          await this.vistaRolesPrivilegiosService.getAllRolesPrivilegios(id);
+        // console.log('Privilegios disponibles:', this.privilegiosDisponibles);
+        this.mostrarBotonReintentar = this.privilegiosDisponibles.some(
+          (privilegio) => privilegio.id_privilegio === 9
+        );
+      }
+    } catch (error) {
+      console.error('Error al obtener los roles y privilegios:', error);
+    }
+  }
+
+
   ngOnInit(): void {
+    this.authService.currentUser.subscribe((user) => {
+      this.currentUser = user;
+    });
+    this.getAllRolesPrivilegios();
     if (this.id_producto !== null) {
       this.getDetallesProducto();
     }

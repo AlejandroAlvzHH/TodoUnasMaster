@@ -30,6 +30,7 @@ export class AgregarMotivoComponent {
 
   nuevoMotivo: any = {
     tipo: '',
+    status: 1,
   };
 
   constructor(private catalogoSalidasService: CatalogoSalidasService) {}

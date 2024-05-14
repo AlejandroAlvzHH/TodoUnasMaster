@@ -101,7 +101,7 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    //const canDeleteBranch = this.permisosService.canDeleteBranch();
+    const canDeleteBranch = this.permisosService.canDeleteBranch();
     this.authService.currentUser.subscribe((user) => {
       this.currentUser = user;
     });

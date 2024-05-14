@@ -5,6 +5,10 @@ import { VistaCatalogoSincronizacion } from '../../../../Models/Master/vista-cat
 import { ModalDetallesSincronizacionComponent } from '../modal-detalles-sincronizacion/modal-detalles-sincronizacion.component';
 import { EditarProductoCatalogoComponent } from '../editar-producto-catalogo/editar-producto-catalogo';
 
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { VistaRolesPrivilegios } from '../../../../Models/Master/vista-roles-privilegios';
+import { VistaRolesPrivilegiosService } from '../../../../core/services/Services Configuracion/vista-roles-privilegios.service';
+import { Users } from '../../../../Models/Master/users';
 @Component({
   selector: 'app-tabla-catalogo',
   standalone: true,
@@ -156,13 +160,21 @@ import { EditarProductoCatalogoComponent } from '../editar-producto-catalogo/edi
                 class="btn"
                 (click)="abrirModalDetalles(filteredProductsList[index])"
               >
-                Detalles
+                Sincronización
               </button>
               <button
                 class="btn"
                 (click)="abrirModalEditar(filteredProductsList[index])"
+                *ngIf="mostrarBotonEditar"
               >
                 Editar
+              </button>
+              <button
+                class="btn"
+                (click)="abrirModalEditar(filteredProductsList[index])"
+                *ngIf="mostrarBotonEliminar"
+              >
+                Eliminar
               </button>
             </td>
           </tr>
@@ -182,12 +194,42 @@ export class TablaCatalogoComponent {
   mostrarModalEditar: boolean = false;
   productoSeleccionado: VistaCatalogoSincronizacion | null = null;
 
+  mostrarBotonEliminar: boolean = false;
+  mostrarBotonEditar: boolean = false;
+  privilegiosDisponibles?: VistaRolesPrivilegios[] | null;
+  currentUser?: Users | null;
+
   constructor(
     private cdr: ChangeDetectorRef,
-    private catalogoSincronizacionService: CatalogoSincronizacionService
+    private catalogoSincronizacionService: CatalogoSincronizacionService,
+    private authService: AuthService,
+    private vistaRolesPrivilegiosService: VistaRolesPrivilegiosService
   ) {}
 
+  async getAllRolesPrivilegios(): Promise<void> {
+    try {
+      const id = this.currentUser?.id_rol;
+      if (id) {
+        this.privilegiosDisponibles =
+          await this.vistaRolesPrivilegiosService.getAllRolesPrivilegios(id);
+        // console.log('Privilegios disponibles:', this.privilegiosDisponibles);
+        this.mostrarBotonEditar = this.privilegiosDisponibles.some(
+          (privilegio) => privilegio.id_privilegio === 10
+        );
+        this.mostrarBotonEliminar = this.privilegiosDisponibles.some(
+          (privilegio) => privilegio.id_privilegio === 16
+        );
+      }
+    } catch (error) {
+      console.error('Error al obtener los roles y privilegios:', error);
+    }
+  }
+
   ngOnInit(): void {
+    this.authService.currentUser.subscribe((user) => {
+      this.currentUser = user;
+    });
+    this.getAllRolesPrivilegios();
     this.initialize();
   }
 

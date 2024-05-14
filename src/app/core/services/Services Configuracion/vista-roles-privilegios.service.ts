@@ -25,4 +25,15 @@ export class VistaRolesPrivilegiosService {
       return [];
     }
   }
+
+  async getAllRolesPrivilegiosXD(id: number): Promise<any[]> {
+    try {
+      const url = `${this.url}/${id}`;
+      const response = await this.http.get<any[]>(url).toPromise();
+      return response ?? [];
+    } catch (e) {
+      alert('Error: ' + e);
+      return [];
+    }
+  }
 }

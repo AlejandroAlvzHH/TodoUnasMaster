@@ -35,7 +35,7 @@ import Swal from 'sweetalert2';
             required
           />
         </div>
-        <button type="submit">Iniciar Sesión</button>
+        <button>Iniciar Sesión</button>
         <div *ngIf="error" class="error">{{ error }}</div>
       </form>
     </div>

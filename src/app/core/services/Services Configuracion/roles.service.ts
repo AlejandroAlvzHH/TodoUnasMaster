@@ -27,7 +27,7 @@ export class RolesService {
   }
 
   addRol(rol: Roles): Observable<Roles> {
-    console.log(rol)
+    console.log(rol);
     return this.http.post<Roles>(this.rolesUrl, rol);
   }
 
@@ -46,6 +46,17 @@ export class RolesService {
       return await response.json();
     } catch (error) {
       console.error('Error updating rol:', error);
+      throw error;
+    }
+  }
+
+  async getNombrePorId(id_rol: number): Promise<string | null> {
+    try {
+      const roles = await this.getAllRoles();
+      const role = roles.find((r) => r.id_rol === id_rol);
+      return role ? role.nombre : null;
+    } catch (error) {
+      console.error('Error obteniendo nombre del rol:', error);
       throw error;
     }
   }
