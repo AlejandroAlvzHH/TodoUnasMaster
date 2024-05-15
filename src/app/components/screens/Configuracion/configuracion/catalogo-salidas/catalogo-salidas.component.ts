@@ -40,7 +40,7 @@ import Swal from 'sweetalert2';
         *ngIf="mostrarModal"
         (cancelar)="cerrarModal()"
       ></app-agregar-motivo>
-      <app-editar-motivo 
+      <app-editar-motivo
         *ngIf="mostrarModalEditar"
         [motivo]="motivoSeleccionado"
         (cancelar)="cerrarModalEditar()"
@@ -112,7 +112,10 @@ import Swal from 'sweetalert2';
                   Editar
                 </button>
                 <button
-                  *ngIf="filteredMotivosList[index].status === 1"
+                  *ngIf="
+                    filteredMotivosList[index].status === 1 &&
+                    filteredMotivosList[index].id_tipo_salida !== 1
+                  "
                   class="btn"
                   (click)="eliminarMotivo(filteredMotivosList[index])"
                 >
@@ -169,7 +172,7 @@ export class CatalogoSalidasComponent {
       this.filteredMotivosList = this.motivosList.map((motivo) => ({
         id_tipo_salida: motivo.id_tipo_salida,
         tipo: motivo.tipo,
-        status: motivo.status
+        status: motivo.status,
       }));
       this.filteredIndices = Array.from(
         { length: this.filteredMotivosList.length },
@@ -209,7 +212,7 @@ export class CatalogoSalidasComponent {
   cerrarModal(): void {
     this.mostrarModal = false;
   }
-  
+
   abrirModalEditar(motivo: CatalogoSalidas): void {
     this.motivoSeleccionado = motivo;
     this.mostrarModalEditar = true;
@@ -282,7 +285,7 @@ export class CatalogoSalidasComponent {
             title: 'Restauración Realizada',
             text: `Se restauró el motivo: ${motivo.tipo}`,
             icon: 'success',
-            confirmButtonColor:'#333333',
+            confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
           }).then(async (result) => {
             this.cerrarModal();

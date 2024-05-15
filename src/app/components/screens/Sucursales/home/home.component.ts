@@ -90,7 +90,6 @@ export class HomeComponent {
       if (id) {
         this.privilegiosDisponibles =
           await this.vistaRolesPrivilegiosService.getAllRolesPrivilegios(id);
-       // console.log('Privilegios disponibles:', this.privilegiosDisponibles);
         this.mostrarBotonAgregar = this.privilegiosDisponibles.some(
           (privilegio) => privilegio.id_privilegio === 3
         );
@@ -106,7 +105,6 @@ export class HomeComponent {
     });
     this.getAllRolesPrivilegios();
     const canAddBranch = this.permisosService.canAddBranch();
-    console.log("Valor de canAddBranch: ",canAddBranch)
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });

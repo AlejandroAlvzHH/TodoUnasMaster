@@ -333,3 +333,13 @@ h3 {
   border: 1px solid black !important;
   color: #3498db;
 }
+
+/*PLACEHOLDER ERROR*/
+.input-container.invalid-email input[type="text"],
+.input-container.invalid-email input[type="text"]:focus {
+  border-color: red !important;
+}
+
+.error-message {
+  color: red;
+}

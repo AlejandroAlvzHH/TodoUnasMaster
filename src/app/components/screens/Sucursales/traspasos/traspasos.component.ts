@@ -294,6 +294,13 @@ export class TraspasosComponent {
         }
       });
     } else {
+      Swal.fire({
+        title: 'No hay Sucursales Registradas',
+        text: `Los productos no se pueden traspasar porque no hay más sucursales registradas en el sistema.`,
+        icon: 'error',
+        confirmButtonColor: '#333333',
+        confirmButtonText: 'Aceptar',
+      });
       return;
     }
   }

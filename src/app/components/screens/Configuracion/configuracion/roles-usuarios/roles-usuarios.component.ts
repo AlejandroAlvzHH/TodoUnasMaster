@@ -90,12 +90,16 @@ import { AjustarPrivilegiosComponent } from './ajustar-privilegios/ajustar-privi
               <td>{{ filteredRolesList[index].nombre }}</td>
               <td>
                 <button
+                
                   class="btn"
                   (click)="abrirModalEditar(filteredRolesList[index])"
                 >
                   Editar Nombre
                 </button>
                 <button
+                *ngIf="
+                    filteredRolesList[index].id_rol !== 1
+                  "
                   class="btn"
                   (click)="abrirModalPrivilegios(filteredRolesList[index])"
                 >

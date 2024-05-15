@@ -25,7 +25,10 @@ import { Roles } from '../../../../../../Models/Master/roles';
       <label>Contraseña:</label>
       <input type="text" [(ngModel)]="nuevoUsuario.contrasena" />
       <label>Correo:</label>
-      <input type="text" [(ngModel)]="nuevoUsuario.correo" />
+      <div class="input-container" [ngClass]="{ 'invalid-email': showEmailError }">
+        <input type="text" [(ngModel)]="nuevoUsuario.correo" (input)="onEmailInput()" />
+        <div *ngIf="showEmailError" class="error-message">Por favor ingrese un correo válido.</div>
+      </div>
       <label>Rol:</label>
       <select [(ngModel)]="selectedRol">
         <option *ngFor="let rol of roles" [value]="rol.id_rol">
@@ -54,6 +57,8 @@ export class AgregarContrasenasComponent {
     id_rol: 1,
     status: 1,
   };
+  emailTimer: any;
+  showEmailError: boolean = false;
 
   constructor(
     private usuariosService: UsuariosService,
@@ -77,17 +82,33 @@ export class AgregarContrasenasComponent {
     this.cancelar.emit();
   }
 
+  onEmailInput(): void {
+    // Reiniciar el temporizador cada vez que el usuario escribe en el campo de correo
+    clearTimeout(this.emailTimer);
+    this.emailTimer = setTimeout(() => {
+      // Verificar si el correo es válido después de un cierto tiempo
+      this.showEmailError = !this.isValidEmail(this.nuevoUsuario.correo);
+    }, 500); // Tiempo de espera en milisegundos (por ejemplo, 500 ms)
+  }
+
+  isValidEmail(email: string): boolean {
+    // Expresión regular para validar el formato del correo electrónico
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
   agregarUsuario(): void {
     if (
       this.nuevoUsuario.nombre == '' ||
       this.nuevoUsuario.apellido_paterno == '' ||
       this.nuevoUsuario.apellido_materno == '' ||
       this.nuevoUsuario.contrasena == '' ||
-      this.nuevoUsuario.correo == ''
+      this.nuevoUsuario.correo == '' ||
+      !this.isValidEmail(this.nuevoUsuario.correo)
     ) {
       Swal.fire({
         title: 'Campos Vacíos',
-        text: 'Por favor rellene los campos vacíos para poder agregar un nuevo usuario.',
+        text: 'Por favor rellene los campos vacíos correctamente para poder agregar un nuevo usuario.',
         icon: 'warning',
         confirmButtonColor: '#333333',
         confirmButtonText: 'Aceptar',

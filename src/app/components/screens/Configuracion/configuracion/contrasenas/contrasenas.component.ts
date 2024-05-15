@@ -80,7 +80,7 @@ import { UsuariosService } from '../../../../../core/services/Services Configura
                 (click)="ordenarPorColumna('status')"
                 [class.interactive]="columnaOrdenada === 'status'"
               >
-              Status
+                Status
                 <i
                   *ngIf="columnaOrdenada === 'status'"
                   class="arrow-icon"
@@ -116,7 +116,10 @@ import { UsuariosService } from '../../../../../core/services/Services Configura
                   Editar
                 </button>
                 <button
-                  *ngIf="filteredContrasenasList[index].status === 1"
+                  *ngIf="
+                    filteredContrasenasList[index].status === 1 &&
+                    filteredContrasenasList[index].id_usuario !== 1
+                  "
                   class="btn"
                   (click)="eliminarContrasena(filteredContrasenasList[index])"
                 >

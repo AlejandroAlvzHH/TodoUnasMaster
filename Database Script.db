@@ -353,7 +353,7 @@ FROM pg_views
 WHERE viewname = 'vista_catalogo_sincronizacion_definitiva';
 
 -->AGREGAR COLUMNA
-ALTER TABLE catalogo_salidas
+ALTER TABLE roles
 ADD COLUMN status INT;
 
 -->COMANDOS NGROK
