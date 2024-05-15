@@ -9,6 +9,7 @@ import { TraspasosComponent } from './components/screens/Sucursales/traspasos/tr
 import { TraspasosClinicaComponent } from './components/screens/Sucursales/traspasos-clinica/traspasos-clinica.component';
 import { LoginComponent } from './components/screens/Login/login/login.component';
 import { AuthGuard } from './auth.guard';
+import { RoleGuard } from './role.guard';
 import { InventarioSucursalComponent } from './components/screens/Sucursales/inventario-sucursal/inventario-sucursal.component';
 import { CatalogoClinicasComponent } from './components/screens/Configuracion/configuracion/catalogo-clinicas/catalogo-clinicas.component';
 import { CatalogoSalidasComponent } from './components/screens/Configuracion/configuracion/catalogo-salidas/catalogo-salidas.component';
@@ -18,7 +19,7 @@ import { RolesUsuariosComponent } from './components/screens/Configuracion/confi
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'sucursalselected/:id', component: SucursalSelectedComponent, canActivate: [AuthGuard] },
-  { path: 'configuracion', component: ConfiguracionComponent, canActivate: [AuthGuard] },
+  { path: 'configuracion', component: ConfiguracionComponent, canActivate: [AuthGuard, RoleGuard], data: { requiredPrivilege: 'Ver Ajustes' } },
   { path: 'login', component: LoginComponent },
   { path: 'catalogogeneral', component: CatalogoGeneralComponent, canActivate: [AuthGuard] },
   { path: 'historicos', component: HistoricosComponent, canActivate: [AuthGuard] },
@@ -26,9 +27,8 @@ export const routes: Routes = [
   { path: 'traspasos/:id', component: TraspasosComponent, canActivate: [AuthGuard] },
   { path: 'traspasosclinica/:id', component: TraspasosClinicaComponent, canActivate: [AuthGuard] },
   { path: 'inventariosucursal/:id', component: InventarioSucursalComponent, canActivate: [AuthGuard] },
-  { path: 'contrasenas', component: ContrasenasComponent, canActivate: [AuthGuard] },
-  { path: 'roles-usuarios', component: RolesUsuariosComponent, canActivate: [AuthGuard] },
+  { path: 'contrasenas', component: ContrasenasComponent, canActivate: [AuthGuard, RoleGuard], data: { requiredPrivilege: 'Ver Contrasenas' } },
+  { path: 'roles-usuarios', component: RolesUsuariosComponent, canActivate: [AuthGuard, RoleGuard], data: { requiredPrivilege: 'Ver Roles y Usuarios' } },
   { path: 'catalogo-salidas', component: CatalogoSalidasComponent, canActivate: [AuthGuard] },
   { path: 'catalogo-clinicas', component: CatalogoClinicasComponent, canActivate: [AuthGuard] },
 ];
-

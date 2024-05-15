@@ -77,6 +77,7 @@ export class AjustarPrivilegiosComponent {
       .then((data) => {
         this.privilegiosDisponibles = data;
         this.backupPrivilegios = [...this.privilegiosDisponibles];
+        console.log(this.privilegiosDisponibles)
       })
       .catch((error) => {
         console.error('Error al obtener los roles y privilegios:', error);
@@ -134,8 +135,6 @@ export class AjustarPrivilegiosComponent {
     console.log('Privilegios a borrar:', privilegiosABorrar);
     console.log('Privilegios a agregar:', privilegiosAAgregar);
     console.log('Privilegios que permanecieron iguales:', privilegiosIguales);
-
-    // Confirmar acción
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'Esta acción modificará los privilegios',
@@ -174,7 +173,7 @@ export class AjustarPrivilegiosComponent {
             (response) => {
               console.log('Respuesta del servidor:', response);
               Swal.fire({
-                title: '¡Agregado!',
+                title: '¡Privilegios Actualizados!',
                 icon: 'success',
                 confirmButtonColor: '#333333',
                 confirmButtonText: 'Aceptar',
