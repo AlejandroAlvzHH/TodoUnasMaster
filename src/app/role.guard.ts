@@ -4,10 +4,9 @@ import { AuthService } from './core/services/auth/auth.service';
 import Swal from 'sweetalert2';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RoleGuard implements CanActivate {
-
   constructor(private authService: AuthService, private router: Router) {}
 
   async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
@@ -15,8 +14,8 @@ export class RoleGuard implements CanActivate {
     console.log('Required Privilege:', requiredPrivilege);
 
     if (!this.authService.isLoggedIn()) {
-      this.router.navigate(['/login']); 
-      return false; 
+      this.router.navigate(['/login']);
+      return false;
     }
 
     if (this.authService.userPrivileges.length === 0) {
@@ -27,17 +26,18 @@ export class RoleGuard implements CanActivate {
     }
 
     if (this.authService.hasPrivilege(requiredPrivilege)) {
-      return true; 
+      return true;
     } else {
       Swal.fire({
         icon: 'error',
         title: 'Acceso Denegado',
-        text: 'No tienes los permisos necesarios para acceder a esta ruta. Serás deslogeado. Si necesitas acceso, contacta al administrador.',
+        confirmButtonColor: '#333333',
+        text: 'No tienes los permisos necesarios para acceder a esta ruta. Serás desconectado. Si necesitas acceso, contacta al administrador.',
       }).then(() => {
         this.authService.logout();
         this.router.navigate(['/login']);
       });
-      return false; 
+      return false;
     }
   }
 }

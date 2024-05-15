@@ -29,6 +29,6 @@ export const routes: Routes = [
   { path: 'inventariosucursal/:id', component: InventarioSucursalComponent, canActivate: [AuthGuard] },
   { path: 'contrasenas', component: ContrasenasComponent, canActivate: [AuthGuard, RoleGuard], data: { requiredPrivilege: 'Ver Contrasenas' } },
   { path: 'roles-usuarios', component: RolesUsuariosComponent, canActivate: [AuthGuard, RoleGuard], data: { requiredPrivilege: 'Ver Roles y Usuarios' } },
-  { path: 'catalogo-salidas', component: CatalogoSalidasComponent, canActivate: [AuthGuard] },
-  { path: 'catalogo-clinicas', component: CatalogoClinicasComponent, canActivate: [AuthGuard] },
+  { path: 'catalogo-salidas', component: CatalogoSalidasComponent, canActivate: [AuthGuard, RoleGuard], data: { requiredPrivilege: 'Ver Catalogo de Salidas' } },
+  { path: 'catalogo-clinicas', component: CatalogoClinicasComponent, canActivate: [AuthGuard, RoleGuard], data: { requiredPrivilege: 'Ver Catalogo de Clinicas' } },
 ];
