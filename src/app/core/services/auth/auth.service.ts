@@ -66,7 +66,6 @@ export class AuthService {
     try {
       const response = await this.http.get<any[]>(`${this.rolesPrivilegiosUrl}/${userId}`).toPromise();
       this.userPrivileges = response || [];
-      console.log('User Privileges:', this.userPrivileges); // Agregar este log
     } catch (error) {
       console.error('Error loading privileges:', error);
       this.userPrivileges = [];
@@ -74,7 +73,6 @@ export class AuthService {
   }
 
   hasPrivilege(privilegeName: string): boolean {
-    console.log('Checking privilege:', privilegeName);
     const hasPrivilege = this.userPrivileges.some(p => p.nombre_privilegio === privilegeName);
     console.log('Has privilege:', hasPrivilege);
     return hasPrivilege;

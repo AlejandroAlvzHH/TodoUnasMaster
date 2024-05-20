@@ -26,6 +26,11 @@ export class UsuariosService {
     return this.http.post<Users>(this.url, usuario);
   }
 
+  getUserById(id: number): Observable<Users> {
+    const userUrl = `${this.url}/${id}`;
+    return this.http.get<Users>(userUrl);
+  }
+  
   updateStatusUsuario(usuario: Users): Observable<Users> {
     console.log('este es el usuario que recibo',usuario)
     const updateUrl = `${this.url}/${usuario.id_usuario}`;

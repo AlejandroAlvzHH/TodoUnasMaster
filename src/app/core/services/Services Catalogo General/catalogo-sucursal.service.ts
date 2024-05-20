@@ -12,7 +12,7 @@ export class CatalogoSucursalService {
 
   async getAllProducts(baseUrl: string): Promise<Products[]> {
     try {
-      const url = `${baseUrl}/api/ProductApi/instock`;
+      const url = `${baseUrl}/api/ProductApi`;
       console.log(url);
       const data = await fetch(url, { method: 'GET' });
       return (await data.json()) ?? [];

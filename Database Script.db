@@ -3,7 +3,8 @@ CREATE DATABASE todo_unas_master;
 
 CREATE TABLE roles (
     id_rol SERIAL PRIMARY KEY,
-    nombre VARCHAR(50)
+    nombre VARCHAR(50),
+    status INT
 );
 
 CREATE TABLE usuario (
@@ -326,6 +327,20 @@ SELECT r.id_rol, r.nombre AS nombre_rol, p.id_privilegio, p.nombre AS nombre_pri
 FROM roles r
 JOIN roles_privilegios rp ON r.id_rol = rp.id_rol
 JOIN privilegios p ON rp.id_privilegio = p.id_privilegio;
+
+-->vista_usuario_detalle PARA LA TABLA DE CONTRASENAS
+CREATE VIEW vista_usuario_detalle AS
+SELECT 
+    u.id_usuario,
+    CONCAT_WS(' ', u.nombre, u.apellido_paterno, u.apellido_materno) AS nombre,
+    u.correo,
+    r.nombre AS rol,
+    u.contrasena,
+    u.status
+FROM 
+    usuario u
+JOIN 
+    roles r ON u.id_rol = r.id_rol;
 
 --> MUESTRA TODAS LAS TABLAS DEL SISTEMA
 SELECT table_name

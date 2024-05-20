@@ -27,7 +27,6 @@ export class PrivilegiosService {
   }
 
   addRol(rol: Privileges): Observable<Privileges> {
-    console.log(rol);
     return this.http.post<Privileges>(this.privilegiosUrl, rol);
   }
 

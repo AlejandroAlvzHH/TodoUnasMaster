@@ -81,6 +81,19 @@ import { AjustarPrivilegiosComponent } from './ajustar-privilegios/ajustar-privi
                   [class.desc]="!ordenAscendente"
                 ></i>
               </th>
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('status')"
+                [class.interactive]="columnaOrdenada === 'status'"
+              >
+                Status
+                <i
+                  *ngIf="columnaOrdenada === 'status'"
+                  class="arrow-icon"
+                  [class.asc]="ordenAscendente"
+                  [class.desc]="!ordenAscendente"
+                ></i>
+              </th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -89,21 +102,46 @@ import { AjustarPrivilegiosComponent } from './ajustar-privilegios/ajustar-privi
               <td>{{ filteredRolesList[index].id_rol }}</td>
               <td>{{ filteredRolesList[index].nombre }}</td>
               <td>
+                <span *ngIf="filteredRolesList[index].status === 1"
+                  >Activo</span
+                >
+                <span *ngIf="filteredRolesList[index].status === 0"
+                  >Inactivo</span
+                >
+              </td>
+              <td>
                 <button
-                
                   class="btn"
                   (click)="abrirModalEditar(filteredRolesList[index])"
                 >
                   Editar Nombre
                 </button>
                 <button
-                *ngIf="
-                    filteredRolesList[index].id_rol !== 1
-                  "
+                  *ngIf="filteredRolesList[index].id_rol !== 1"
                   class="btn"
                   (click)="abrirModalPrivilegios(filteredRolesList[index])"
                 >
                   Ajustar Privilegios
+                </button>
+                <button
+                  *ngIf="
+                    filteredRolesList[index].status === 1 &&
+                    filteredRolesList[index].id_rol !== 1
+                  "
+                  class="btn"
+                  (click)="eliminarRol(filteredRolesList[index])"
+                >
+                  Eliminar
+                </button>
+                <button
+                  *ngIf="
+                    filteredRolesList[index].status === 0 &&
+                    filteredRolesList[index].id_rol !== 0
+                  "
+                  class="btn"
+                  (click)="restaurarRol(filteredRolesList[index])"
+                >
+                  Restaurar
                 </button>
               </td>
             </tr>
@@ -148,6 +186,7 @@ export class RolesUsuariosComponent {
       this.filteredRolesList = this.rolesList.map((rol) => ({
         id_rol: rol.id_rol,
         nombre: rol.nombre,
+        status: rol.status,
       }));
       this.filteredIndices = Array.from(
         { length: this.filteredRolesList.length },
@@ -204,5 +243,83 @@ export class RolesUsuariosComponent {
 
   cerrarModalPrivilegios(): void {
     this.mostrarModalPrivilegios = false;
+  }
+
+  eliminarRol(rol: Roles) {
+    Swal.fire({
+      title: 'Confirmar Eliminación',
+      text: `¿Estás seguro de eliminar el rol ${rol.nombre}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#333333',
+      cancelButtonColor: '#bcbcbs',
+      confirmButtonText: 'Sí, confirmar eliminación',
+      cancelButtonText: 'Cancelar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const rolModificado = { ...rol };
+          rolModificado.status = 0;
+          await this.rolesService.updateStatusRol(rolModificado).subscribe();
+          Swal.fire({
+            title: 'Eliminación Realizada',
+            text: `Se eliminó el rol: ${rol.nombre}`,
+            icon: 'success',
+            confirmButtonColor: '#333333',
+            confirmButtonText: 'Aceptar',
+          }).then(async (result) => {
+            this.cerrarModal();
+            window.location.reload();
+          });
+        } catch (error) {
+          Swal.fire({
+            title: 'Eliminación No Realizada',
+            text: `No se logró eliminar el rol: ${rol.nombre}`,
+            icon: 'error',
+            confirmButtonColor: '#333333',
+            confirmButtonText: 'Aceptar',
+          });
+        }
+      }
+    });
+  }
+
+  restaurarRol(rol: Roles) {
+    Swal.fire({
+      title: 'Confirmar Restauración',
+      text: `¿Estás seguro de restaurar el rol ${rol.nombre}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#333333',
+      cancelButtonColor: '#bcbcbs',
+      confirmButtonText: 'Sí, confirmar restauración',
+      cancelButtonText: 'Cancelar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const rolModificado = { ...rol };
+          rolModificado.status = 1;
+          await this.rolesService.updateStatusRol(rolModificado).subscribe();
+          Swal.fire({
+            title: 'Restauración Realizada',
+            text: `Se restauró el rol: ${rol.nombre}`,
+            icon: 'success',
+            confirmButtonColor: '#333333',
+            confirmButtonText: 'Aceptar',
+          }).then(async (result) => {
+            this.cerrarModal();
+            window.location.reload();
+          });
+        } catch (error) {
+          Swal.fire({
+            title: 'Restauración No Realizada',
+            text: `No se logró restaurar el rol: ${rol.nombre}`,
+            icon: 'error',
+            confirmButtonColor: '#333333',
+            confirmButtonText: 'Aceptar',
+          });
+        }
+      }
+    });
   }
 }

@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { General_Catalogue } from '../../../Models/Master/general_catalogue';
+import { HttpClient } from '@angular/common/http';
+import { catchError } from 'rxjs';
+import { Observable } from 'rxjs';
+import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CatalogoGeneralService {
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   url = `http://localhost:10395/api/CatalogoGeneralApi`;
 
@@ -31,6 +35,15 @@ export class CatalogoGeneralService {
       console.error('Error fetching product:', error);
       return null;
     }
+  }
+
+  getCatalogueProductObesrvableByID(id: number): Observable<General_Catalogue | null> {
+    return this.http.get<General_Catalogue>(`${this.url}/${id}`).pipe(
+      catchError(error => {
+        console.error('Error fetching product:', error);
+        return of(null);
+      })
+    );
   }
 
   async addCatalogueProduct(
@@ -72,4 +85,28 @@ export class CatalogoGeneralService {
       throw error;
     }
   }
+
+  updateCatalogueProductop(
+    product: General_Catalogue,
+    id: number
+  ): Promise<General_Catalogue | null> {
+    return fetch(`${this.url}/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(product),
+    })
+    .then(response => {
+      if (response.status === 204) {
+        return null;
+      }
+      return response.json();
+    })
+    .catch(error => {
+      console.error('Error updating product:', error);
+      throw error;
+    });
+  }
+  
 }

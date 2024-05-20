@@ -9,6 +9,8 @@ import { Users } from '../../../../../Models/Master/users';
 import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
 import { UsuariosService } from '../../../../../core/services/Services Configuracion/usuarios.service';
+import { VistaUsuarioDetalle } from '../../../../../Models/Master/vista-usuario-detalle';
+import { VistaUsuarioDetalleService } from '../../../../../core/services/Services Configuracion/vista-usuario-detalle.service';
 
 @Component({
   selector: 'app-contrasenas',
@@ -40,7 +42,7 @@ import { UsuariosService } from '../../../../../core/services/Services Configura
       ></app-agregar-contrasenas>
       <app-editar-contrasenas
         *ngIf="mostrarModalEditar"
-        [contrasena]="contrasenaSeleccionada"
+        [id_usuario]="usuarioSeleccionado"
         (cancelar)="cerrarModalEditar()"
       >
       </app-editar-contrasenas>
@@ -74,6 +76,32 @@ import { UsuariosService } from '../../../../../core/services/Services Configura
                   [class.desc]="!ordenAscendente"
                 ></i>
               </th>
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('correo')"
+                [class.interactive]="columnaOrdenada === 'correo'"
+              >
+                Correo
+                <i
+                  *ngIf="columnaOrdenada === 'correo'"
+                  class="arrow-icon"
+                  [class.asc]="ordenAscendente"
+                  [class.desc]="!ordenAscendente"
+                ></i>
+              </th>
+              <th
+                scope="col"
+                (click)="ordenarPorColumna('nombre')"
+                [class.interactive]="columnaOrdenada === 'nombre'"
+              >
+                Rol
+                <i
+                  *ngIf="columnaOrdenada === 'nombre'"
+                  class="arrow-icon"
+                  [class.asc]="ordenAscendente"
+                  [class.desc]="!ordenAscendente"
+                ></i>
+              </th>
               <th>Contraseña</th>
               <th
                 scope="col"
@@ -93,42 +121,55 @@ import { UsuariosService } from '../../../../../core/services/Services Configura
           </thead>
           <tbody>
             <tr *ngFor="let index of filteredIndices">
-              <td>{{ filteredContrasenasList[index].id_usuario }}</td>
+              <td>{{ filteredContrasenasListVista[index].id_usuario }}</td>
               <td>
-                {{ filteredContrasenasList[index].nombre }}
-                {{ filteredContrasenasList[index].apellido_paterno }}
-                {{ filteredContrasenasList[index].apellido_materno }}
+                {{ filteredContrasenasListVista[index].nombre }}
               </td>
-              <td type="password">••••••••••••</td>
+              <td>{{ filteredContrasenasListVista[index].correo }}</td>
+              <td>{{ filteredContrasenasListVista[index].rol }}</td>
+              <td type="password">
+                {{ filteredContrasenasListVista[index].contrasena }}
+              </td>
               <td>
-                <span *ngIf="filteredContrasenasList[index].status === 1"
+                <span *ngIf="filteredContrasenasListVista[index].status === 1"
                   >Activo</span
                 >
-                <span *ngIf="filteredContrasenasList[index].status === 0"
+                <span *ngIf="filteredContrasenasListVista[index].status === 0"
                   >Inactivo</span
                 >
               </td>
               <td>
                 <button
                   class="btn"
-                  (click)="abrirModalEditar(filteredContrasenasList[index])"
+                  (click)="
+                    abrirModalEditar(
+                      filteredContrasenasListVista[index].id_usuario
+                    )
+                  "
                 >
                   Editar
                 </button>
                 <button
                   *ngIf="
-                    filteredContrasenasList[index].status === 1 &&
-                    filteredContrasenasList[index].id_usuario !== 1
+                    filteredContrasenasListVista[index].status === 1 &&
+                    filteredContrasenasListVista[index].id_usuario !== 1
                   "
                   class="btn"
-                  (click)="eliminarContrasena(filteredContrasenasList[index])"
+                  (click)="
+                    deshabilitarContrasena(filteredContrasenasListVista[index])
+                  "
                 >
-                  Eliminar
+                  Deshabilitar
                 </button>
                 <button
-                  *ngIf="filteredContrasenasList[index].status === 0"
+                  *ngIf="
+                    filteredContrasenasListVista[index].status === 0 &&
+                    filteredContrasenasListVista[index].id_usuario !== 0
+                  "
                   class="btn"
-                  (click)="restaurarContrasena(filteredContrasenasList[index])"
+                  (click)="
+                    restaurarContrasena(filteredContrasenasListVista[index])
+                  "
                 >
                   Restaurar
                 </button>
@@ -144,18 +185,18 @@ export class ContrasenasComponent {
   isSidebarOpen: boolean = false;
   mostrarModal: boolean = false;
   mostrarModalEditar: boolean = false;
-
-  contrasenasList: Users[] = [];
-  filteredContrasenasList: Users[] = [];
+  contrasenasListVista: VistaUsuarioDetalle[] = [];
+  filteredContrasenasListVista: VistaUsuarioDetalle[] = [];
   filteredIndices: number[] = [];
-  columnaOrdenada: keyof Users | null = null;
+  columnaOrdenada: keyof VistaUsuarioDetalle | null = null;
   ordenAscendente: boolean = true;
-  contrasenaSeleccionada: Users | null = null;
+  usuarioSeleccionado: number | null = null;
 
   constructor(
     private sidebarOpeningService: SidebaropeningService,
     private cdr: ChangeDetectorRef,
-    private usuariosService: UsuariosService
+    private usuariosService: UsuariosService,
+    private vistaUsuarioDetalleService: VistaUsuarioDetalleService
   ) {}
 
   toggleSidebar(): void {
@@ -171,19 +212,20 @@ export class ContrasenasComponent {
 
   private async initialize() {
     try {
-      this.contrasenasList = await this.usuariosService.getAllUsers();
-      this.filteredContrasenasList = this.contrasenasList.map((contrasena) => ({
-        id_usuario: contrasena.id_usuario,
-        nombre: contrasena.nombre,
-        apellido_paterno: contrasena.apellido_paterno,
-        apellido_materno: contrasena.apellido_materno,
-        contrasena: contrasena.contrasena,
-        correo: contrasena.correo,
-        id_rol: contrasena.id_rol,
-        status: contrasena.status,
-      }));
+      this.contrasenasListVista =
+        await this.vistaUsuarioDetalleService.getAllDetalleUsers();
+      this.filteredContrasenasListVista = this.contrasenasListVista.map(
+        (contrasena) => ({
+          id_usuario: contrasena.id_usuario,
+          nombre: contrasena.nombre,
+          correo: contrasena.correo,
+          rol: contrasena.rol,
+          contrasena: contrasena.contrasena,
+          status: contrasena.status,
+        })
+      );
       this.filteredIndices = Array.from(
-        { length: this.filteredContrasenasList.length },
+        { length: this.filteredContrasenasListVista.length },
         (_, i) => i
       );
       this.cdr.detectChanges();
@@ -192,14 +234,14 @@ export class ContrasenasComponent {
     }
   }
 
-  ordenarPorColumna(columna: keyof Users) {
+  ordenarPorColumna(columna: keyof VistaUsuarioDetalle) {
     if (this.columnaOrdenada === columna) {
       this.ordenAscendente = !this.ordenAscendente;
     } else {
       this.columnaOrdenada = columna;
       this.ordenAscendente = true;
     }
-    this.filteredContrasenasList.sort((a, b) => {
+    this.filteredContrasenasListVista.sort((a, b) => {
       if (this.columnaOrdenada === null) {
         return 0;
       }
@@ -213,27 +255,31 @@ export class ContrasenasComponent {
     });
   }
 
-  eliminarContrasena(contrasena: Users) {
+  deshabilitarContrasena(contrasena: VistaUsuarioDetalle) {
     Swal.fire({
-      title: 'Confirmar Eliminación',
-      text: `¿Estás seguro de eliminar el usuario ${contrasena.nombre}?`,
+      title: 'Confirmar Deshabilitación',
+      text: `¿Estás seguro de deshabilitar el usuario ${contrasena.nombre}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
-      confirmButtonText: 'Sí, confirmar eliminación',
+      confirmButtonText: 'Sí, confirmar deshabilitación',
       cancelButtonText: 'Cancelar',
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const usuarioModificado = { ...contrasena };
-          usuarioModificado.status = 0;
-          await this.usuariosService
-            .updateStatusUsuario(usuarioModificado)
-            .subscribe();
+          const usuario = await this.usuariosService
+            .getUserById(contrasena.id_usuario)
+            .toPromise();
+          if (usuario) {
+            const usuarioModificado = { ...usuario, status: 0 };
+            await this.usuariosService
+              .updateStatusUsuario(usuarioModificado)
+              .toPromise();
+          }
           Swal.fire({
-            title: 'Eliminación Realizada',
-            text: `Se eliminó el usuario: ${contrasena.nombre}`,
+            title: 'Deshabilitación Realizada',
+            text: `Se deshabilitó el usuario: ${contrasena.nombre}`,
             icon: 'success',
             confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
@@ -243,8 +289,8 @@ export class ContrasenasComponent {
           });
         } catch (error) {
           Swal.fire({
-            title: 'Eliminación No Realizada',
-            text: `No se logró eliminar el usuario: ${contrasena.nombre}`,
+            title: 'Deshabilitación No Realizada',
+            text: `No se logró deshabilitar el usuario: ${contrasena.nombre}`,
             icon: 'error',
             confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
@@ -254,7 +300,7 @@ export class ContrasenasComponent {
     });
   }
 
-  restaurarContrasena(contrasena: Users) {
+  restaurarContrasena(contrasena: VistaUsuarioDetalle) {
     Swal.fire({
       title: 'Confirmar Restauración',
       text: `¿Estás seguro de restaurar el usuario ${contrasena.nombre}?`,
@@ -267,11 +313,15 @@ export class ContrasenasComponent {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const usuarioModificado = { ...contrasena };
-          usuarioModificado.status = 1;
-          await this.usuariosService
-            .updateStatusUsuario(usuarioModificado)
-            .subscribe();
+          const usuario = await this.usuariosService
+            .getUserById(contrasena.id_usuario)
+            .toPromise();
+          if (usuario) {
+            const usuarioModificado = { ...usuario, status: 1 };
+            await this.usuariosService
+              .updateStatusUsuario(usuarioModificado)
+              .toPromise();
+          }
           Swal.fire({
             title: 'Restauración Realizada',
             text: `Se restauró el usuario: ${contrasena.nombre}`,
@@ -303,8 +353,8 @@ export class ContrasenasComponent {
     this.mostrarModal = false;
   }
 
-  abrirModalEditar(contrasena: Users): void {
-    this.contrasenaSeleccionada = contrasena;
+  abrirModalEditar(id_usuario: number): void {
+    this.usuarioSeleccionado = id_usuario;
     this.mostrarModalEditar = true;
   }
 

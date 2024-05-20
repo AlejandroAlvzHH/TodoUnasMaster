@@ -114,9 +114,9 @@ import { ClinicasService } from '../../../../../core/services/Services Sucursale
                 <button
                   *ngIf="filteredClinicasList[index].status === 1"
                   class="btn"
-                  (click)="eliminarClinica(filteredClinicasList[index])"
+                  (click)="deshabilitarClinica(filteredClinicasList[index])"
                 >
-                  Eliminar
+                  Deshabilitar
                 </button>
                 <button
                   *ngIf="filteredClinicasList[index].status === 0"
@@ -222,15 +222,15 @@ export class CatalogoClinicasComponent {
     this.mostrarModalEditar = false;
   }
 
-  eliminarClinica(clinica: Clinics) {
+  deshabilitarClinica(clinica: Clinics) {
     Swal.fire({
-      title: 'Confirmar Eliminación',
-      text: `¿Estás seguro de eliminar la clínica ${clinica.nombre}?`,
+      title: 'Confirmar Deshabilitación',
+      text: `¿Estás seguro de deshabilitar la clínica ${clinica.nombre}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
-      confirmButtonText: 'Sí, confirmar eliminación',
+      confirmButtonText: 'Sí, confirmar deshabilitación',
       cancelButtonText: 'Cancelar',
     }).then(async (result) => {
       if (result.isConfirmed) {
@@ -241,8 +241,8 @@ export class CatalogoClinicasComponent {
             .updateStatusClinica(clinicaModificada)
             .subscribe();
           Swal.fire({
-            title: 'Eliminación Realizada',
-            text: `Se eliminó la clínica: ${clinica.nombre}`,
+            title: 'Deshabilitación Realizada',
+            text: `Se deshabilitó la clínica: ${clinica.nombre}`,
             icon: 'success',
             confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
@@ -252,8 +252,8 @@ export class CatalogoClinicasComponent {
           });
         } catch (error) {
           Swal.fire({
-            title: 'Eliminación No Realizada',
-            text: `No se logró eliminar la clínica: ${clinica.nombre}`,
+            title: 'Deshabilitación No Realizada',
+            text: `No se logró deshabilitar la clínica: ${clinica.nombre}`,
             icon: 'error',
             confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',

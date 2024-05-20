@@ -61,7 +61,6 @@ export class SidebarComponent implements OnInit {
       if (id) {
         this.privilegiosDisponibles =
           await this.vistaRolesPrivilegiosService.getAllRolesPrivilegios(id);
-        // console.log('Privilegios disponibles:', this.privilegiosDisponibles);
         this.mostrarBotonAjustes = this.privilegiosDisponibles.some(
           (privilegio) => privilegio.id_privilegio === 11
         );
@@ -79,7 +78,6 @@ export class SidebarComponent implements OnInit {
       .getNombrePorId(this.currentUser!.id_rol)
       .then((nombre) => {
         this.rol = nombre || '';
-        console.log(this.rol);
       })
       .catch((error) => {
         console.error('Error obteniendo nombre del rol:', error);

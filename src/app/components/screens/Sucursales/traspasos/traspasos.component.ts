@@ -19,6 +19,7 @@ import { Movements_Detail } from '../../../../Models/Master/movements_detail';
 import { PdfServiceService } from '../../../../core/services/pdf-service.service';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { Users } from '../../../../Models/Master/users';
+import { CatalogoGeneralService } from '../../../../core/services/Services Catalogo General/catalogo-general.service';
 
 @Component({
   selector: 'app-traspasos',
@@ -86,7 +87,8 @@ export class TraspasosComponent {
     private movimientosService: MovimientosService,
     private detalleMovimientosService: DetalleMovimientosService,
     private pdfService: PdfServiceService,
-    private authService: AuthService
+    private authService: AuthService,
+    private catalogoGeneralService: CatalogoGeneralService
   ) {}
 
   obtenerDetalleSucursal(): void {
@@ -153,7 +155,8 @@ export class TraspasosComponent {
               id_producto: item.idArticulo,
               cantidad: item.existencia - item.cantidad,
             };
-            const cambios = {
+            //const existenciaSucursalDestino = 
+            const cambiosSalida = {
               idArticulo: item.idArticulo,
               clave: item.clave,
               nombre: item.nombre,
@@ -167,6 +170,46 @@ export class TraspasosComponent {
               idRet1: item.idRet1,
               idRet2: item.idRet2,
               existencia: item.existencia - item.cantidad,
+              observaciones: item.observaciones,
+              neto: item.neto,
+              netoC: item.netoC,
+              inventariable: item.inventariable,
+              costo: item.costo,
+              lotes: item.lotes,
+              series: item.series,
+              precioSug: item.precioSug,
+              oferta: item.oferta,
+              promocion: item.promocion,
+              impCig: item.impCig,
+              color: item.color,
+              precioLista: item.precioLista,
+              condiciones: item.condiciones,
+              utilidad: item.utilidad,
+              alterna: item.alterna,
+              kit: item.kit,
+              dpc: item.dpc,
+              dpv: item.dpv,
+              reorden: item.reorden,
+              maximo: item.maximo,
+              kitSuelto: item.kitSuelto,
+              idClaseMultiple: item.idClaseMultiple,
+              prcFix: item.prcFix,
+              localiza: item.localiza,
+            };
+            const cambiosEntrada = {
+              idArticulo: item.idArticulo,
+              clave: item.clave,
+              nombre: item.nombre,
+              precioVenta: item.precioVenta,
+              precioCompra: item.precioCompra,
+              unidadVenta: item.unidadVenta,
+              unidadCompra: item.unidadCompra,
+              relacion: item.relacion,
+              idImp1: item.idImp1,
+              idImp2: item.idImp2,
+              idRet1: item.idRet1,
+              idRet2: item.idRet2,
+              existencia: item.existencia + item.cantidad,
               observaciones: item.observaciones,
               neto: item.neto,
               netoC: item.netoC,
@@ -208,7 +251,25 @@ export class TraspasosComponent {
                 }
               );
             this.inventarioService
-              .registrarSalida(item.idArticulo, cambios)
+              .registrarSalidaUniversal(
+                this.sucursal!.url,
+                item.idArticulo,
+                cambiosSalida
+              )
+              .subscribe(
+                () => {
+                  console.log('Traspaso registrado exitosamente.');
+                },
+                (error) => {
+                  console.error('Error al registrar traspaso:', error);
+                }
+              );
+            this.inventarioService
+              .registrarEntradaUniversal(
+                selectedSucursalDestino!.url,
+                item.idArticulo,
+                cambiosEntrada
+              )
               .subscribe(
                 () => {
                   console.log('Traspaso registrado exitosamente.');

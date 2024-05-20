@@ -17,4 +17,22 @@ export class InventarioService {
   registrarSalida(idArticulo: number, changes: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${idArticulo}`, changes);
   }
+
+  registrarEntradaUniversal(
+    urlServicios: string,
+    idArticulo: number,
+    changes: any
+  ): Observable<any> {
+    const apiUrl = `${urlServicios}/api/ProductApi/${idArticulo}`;
+    return this.http.put<any>(apiUrl, changes);
+  }
+
+  registrarSalidaUniversal(
+    urlServicios: string,
+    idArticulo: number,
+    changes: any
+  ): Observable<any> {
+    const apiUrl = `${urlServicios}/api/ProductApi/${idArticulo}`;
+    return this.http.put<any>(apiUrl, changes);
+  }
 }

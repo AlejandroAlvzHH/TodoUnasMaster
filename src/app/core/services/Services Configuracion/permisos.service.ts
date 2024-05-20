@@ -23,7 +23,6 @@ export class PermisosService {
       if (id) {
         this.privilegiosDisponibles =
           await this.vistaRolesPrivilegiosService.getAllRolesPrivilegios(id);
-        console.log(this.privilegiosDisponibles);
         const privilegioEncontrado = this.privilegiosDisponibles.find(
           (privilegio) => privilegio.id_privilegio === id_buscar
         );

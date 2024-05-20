@@ -27,8 +27,12 @@ export class RolesService {
   }
 
   addRol(rol: Roles): Observable<Roles> {
-    console.log(rol);
     return this.http.post<Roles>(this.rolesUrl, rol);
+  }
+
+  updateStatusRol(rol: Roles): Observable<Roles> {
+    const updateUrl = `${this.rolesUrl}/${rol.id_rol}`;
+    return this.http.put<Roles>(updateUrl, rol);
   }
 
   async updateRol(rol: Roles, id_rol: number): Promise<Roles | null> {

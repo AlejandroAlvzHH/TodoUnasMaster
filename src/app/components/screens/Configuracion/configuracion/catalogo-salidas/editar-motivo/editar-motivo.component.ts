@@ -40,6 +40,7 @@ export class EditarMotivoComponent {
     this.nuevoMotivo = {
       id_tipo_salida: this.motivo?.id_tipo_salida,
       tipo: this.motivo?.tipo || '',
+      status: 1
     };
   }
 

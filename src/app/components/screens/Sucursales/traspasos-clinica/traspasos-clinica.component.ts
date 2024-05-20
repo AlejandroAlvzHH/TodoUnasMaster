@@ -21,6 +21,7 @@ import Swal from 'sweetalert2';
 import { PdfServiceService } from '../../../../core/services/pdf-service.service';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { Users } from '../../../../Models/Master/users';
+import { CatalogoGeneralService } from '../../../../core/services/Services Catalogo General/catalogo-general.service';
 
 @Component({
   selector: 'app-traspasos-clinica',
@@ -88,7 +89,8 @@ export class TraspasosClinicaComponent {
     private movimientosService: MovimientosService,
     private detalleMovimientosService: DetalleMovimientosService,
     private pdfService: PdfServiceService,
-    private authService: AuthService
+    private authService: AuthService,
+    private catalogoGeneralService: CatalogoGeneralService
   ) {}
 
   obtenerDetalleSucursal(): void {
@@ -146,6 +148,30 @@ export class TraspasosClinicaComponent {
           let valor_total_movimiento = 0;
           const logDetalles: Movements_Detail[] = [];
           this.items.forEach((item) => {
+            const productGlobalObservable =
+              this.catalogoGeneralService.getCatalogueProductObesrvableByID(
+                item.idArticulo
+              );
+            productGlobalObservable.subscribe((productGlobal) => {
+              if (!productGlobal) {
+                console.error('Producto no encontrado');
+                return;
+              }
+              productGlobal.cantidad_total -= item.cantidad;
+              console.log('NUEVA CANTIDAD: ', productGlobal.cantidad_total);
+              this.catalogoGeneralService
+                .updateCatalogueProduct(productGlobal, item.idArticulo)
+                .then((updatedProduct) => {
+                  if (updatedProduct) {
+                    console.log('Producto actualizado:', updatedProduct);
+                  } else {
+                    console.log('Producto no encontrado o no actualizado.');
+                  }
+                })
+                .catch((error) => {
+                  console.error('Error al actualizar el producto:', error);
+                });
+            });
             valor_total_movimiento += item.precioVenta * item.cantidad;
             console.log(
               'Cantidad de traspaso para el artículo con id ',
@@ -215,7 +241,11 @@ export class TraspasosClinicaComponent {
                 }
               );
             this.inventarioService
-              .registrarSalida(item.idArticulo, cambios)
+              .registrarSalidaUniversal(
+                this.sucursal!.url,
+                item.idArticulo,
+                cambios
+              )
               .subscribe(
                 () => {
                   console.log('Traspaso registrado exitosamente.');

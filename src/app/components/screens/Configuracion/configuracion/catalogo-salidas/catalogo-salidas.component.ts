@@ -117,12 +117,15 @@ import Swal from 'sweetalert2';
                     filteredMotivosList[index].id_tipo_salida !== 1
                   "
                   class="btn"
-                  (click)="eliminarMotivo(filteredMotivosList[index])"
+                  (click)="deshabilitarMotivo(filteredMotivosList[index])"
                 >
-                  Eliminar
+                  Deshabilitar
                 </button>
                 <button
-                  *ngIf="filteredMotivosList[index].status === 0"
+                  *ngIf="
+                    filteredMotivosList[index].status === 0 &&
+                    filteredMotivosList[index].id_tipo_salida !== 1
+                  "
                   class="btn"
                   (click)="restaurarMotivo(filteredMotivosList[index])"
                 >
@@ -222,15 +225,15 @@ export class CatalogoSalidasComponent {
     this.mostrarModalEditar = false;
   }
 
-  eliminarMotivo(motivo: CatalogoSalidas) {
+  deshabilitarMotivo(motivo: CatalogoSalidas) {
     Swal.fire({
-      title: 'Confirmar Eliminación',
-      text: `¿Estás seguro de eliminar el motivo ${motivo.tipo}?`,
+      title: 'Confirmar Deshabilitación',
+      text: `¿Estás seguro de deshabilitar el motivo ${motivo.tipo}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
-      confirmButtonText: 'Sí, confirmar eliminación',
+      confirmButtonText: 'Sí, confirmar deshabilitación',
       cancelButtonText: 'Cancelar',
     }).then(async (result) => {
       if (result.isConfirmed) {
@@ -241,8 +244,8 @@ export class CatalogoSalidasComponent {
             .updateStatusMotivo(motivoModificado)
             .subscribe();
           Swal.fire({
-            title: 'Eliminación Realizada',
-            text: `Se eliminó el motivo: ${motivo.tipo}`,
+            title: 'Deshabilitación Realizada',
+            text: `Se deshabilitó el motivo: ${motivo.tipo}`,
             icon: 'success',
             confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
@@ -252,8 +255,8 @@ export class CatalogoSalidasComponent {
           });
         } catch (error) {
           Swal.fire({
-            title: 'Eliminación No Realizada',
-            text: `No se logró eliminar el motivo: ${motivo.tipo}`,
+            title: 'Deshabilitación No Realizada',
+            text: `No se logró deshabilitar el motivo: ${motivo.tipo}`,
             icon: 'error',
             confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
