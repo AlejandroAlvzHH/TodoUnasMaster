@@ -8,7 +8,7 @@ import { VistaSincronizacionPendienteReciente } from '../../../Models/Master/vis
 })
 export class SucursalesConSincronizacionPendienteService {
   private baseUrl =
-    'http://localhost:10395/api/VistaSucursalesConSincronizacionPendienteApi/ByProducto';
+    'http://localhost:10395/api/VistaSincronizacionPendienteReciente';
 
   constructor(private http: HttpClient) {}
 

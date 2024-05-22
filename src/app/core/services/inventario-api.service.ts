@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Inventory } from '../../Models/Master/inventory';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -31,16 +32,14 @@ export class InventarioApiService {
     );
   }
 
+  postInventory(inventory: Inventory): Observable<any> {
+    return this.http.post(`${this.apiUrl}`, inventory);
+  }
+
   insertOrUpdateInventory(inventory: Inventory): Observable<any> {
-    return this.http.get<any[]>(`${this.apiUrl}?id_sucursal=${inventory.id_sucursal}&id_producto=${inventory.id_producto}`).pipe(
-      map((existingInventory) => {
-        if (existingInventory.length > 0) {
-          const existingId = existingInventory[0].id; 
-          return this.http.put(`${this.apiUrl}/${existingId}`, inventory);
-        } else {
-          return this.http.post(this.apiUrl, inventory);
-        }
-      })
+    return this.http.put(
+      `${this.apiUrl}/${inventory.id_sucursal}/${inventory.id_producto}`,
+      inventory
     );
   }
 }

@@ -7,6 +7,8 @@ import { CatalogoSucursalService } from '../../../../core/services/Services Cata
 import { Products } from '../../../../Models/Factuprint/products';
 import { ApiService } from '../../../../core/services/Services Sucursales/sucursales.service';
 import { SincronizacionPendienteService } from '../../../../core/services/Services Catalogo General/sincronizacion-pendiente.service';
+import { InventarioApiService } from '../../../../core/services/inventario-api.service';
+import { CatalogoGeneralService } from '../../../../core/services/Services Catalogo General/catalogo-general.service';
 
 @Component({
   selector: 'app-agregar-producto-catalogo',
@@ -49,7 +51,6 @@ import { SincronizacionPendienteService } from '../../../../core/services/Servic
   styleUrl: './agregar-producto-catalogo.component.css',
 })
 export class AgregarProductoCatalogoComponent {
-  @Output() addProducto = new EventEmitter<General_Catalogue>();
   @Output() cancelar = new EventEmitter<void>();
   sucursales: any[] = [];
   loading: boolean = false;
@@ -67,7 +68,9 @@ export class AgregarProductoCatalogoComponent {
   constructor(
     private catalogoSucursalService: CatalogoSucursalService,
     private apiService: ApiService,
-    private sincronizacionPendienteService: SincronizacionPendienteService
+    private sincronizacionPendienteService: SincronizacionPendienteService,
+    private inventarioApiService: InventarioApiService,
+    private catalogoGeneralService: CatalogoGeneralService
   ) {}
 
   nuevoProducto: General_Catalogue = {
@@ -126,13 +129,28 @@ export class AgregarProductoCatalogoComponent {
     }).then((result) => {
       if (result.isConfirmed) {
         this.loading = true;
-        this.addProducto.emit(this.nuevoProducto);
+        //this.addProducto.emit(this.nuevoProducto);
+        this.catalogoGeneralService
+          .addCatalogueProduct(this.nuevoProducto)
+          .then((success) => {
+            console.log('Éxito al agregar el producto:', success);
+          })
+          .catch((error) => {
+            console.error('Error al agregar el producto:', error);
+          });
         const requests = this.sucursales.map((sucursal) => {
           const productoSucursal = this.mapToProductsModel(this.nuevoProducto);
           return this.catalogoSucursalService
             .agregarProductoSucursal(sucursal.url, productoSucursal)
             .toPromise()
             .then(() => {
+              const inventory = {
+                id_sucursal: sucursal.idSucursal,
+                id_producto: this.nuevoProducto.id_producto,
+                cantidad: 0,
+              };
+              console.log(inventory);
+              this.inventarioApiService.postInventory(inventory).subscribe();
               this.registrarFalloSincronizacion(
                 sucursal.idSucursal,
                 productoSucursal.idArticulo,

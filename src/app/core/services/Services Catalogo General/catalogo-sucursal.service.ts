@@ -17,7 +17,6 @@ export class CatalogoSucursalService {
       const data = await fetch(url, { method: 'GET' });
       return (await data.json()) ?? [];
     } catch (e) {
-      alert('Error: ' + e);
       return [];
     }
   }

@@ -18,7 +18,6 @@ export class CatalogoGeneralService {
       const data = await fetch(this.url, { method: 'GET' });
       return (await data.json()) ?? [];
     } catch (e) {
-      alert('Error: ' + e);
       return [];
     }
   }
@@ -59,7 +58,6 @@ export class CatalogoGeneralService {
       });
       return await response.json();
     } catch (e) {
-      alert('Error adding product: ' + e);
       throw e;
     }
   }

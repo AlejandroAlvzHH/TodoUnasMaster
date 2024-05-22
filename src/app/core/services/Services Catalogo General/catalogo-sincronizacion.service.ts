@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError } from 'rxjs';
-import { Observable, throwError } from 'rxjs';
 import { VistaCatalogoSincronizacion } from '../../../Models/Master/vista-catalogo-sincronizacion';
 
 @Injectable({

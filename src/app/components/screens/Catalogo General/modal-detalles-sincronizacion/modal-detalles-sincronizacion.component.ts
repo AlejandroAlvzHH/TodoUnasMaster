@@ -9,8 +9,6 @@ import { CatalogoSucursalService } from '../../../../core/services/Services Cata
 import { SincronizacionPendienteService } from '../../../../core/services/Services Catalogo General/sincronizacion-pendiente.service';
 import Swal from 'sweetalert2';
 import { VistaSincronizacionPendienteReciente } from '../../../../Models/Master/vista-sincronizacion-pendiente-reciente';
-
-
 import { VistaRolesPrivilegios } from '../../../../Models/Master/vista-roles-privilegios';
 import { VistaRolesPrivilegiosService } from '../../../../core/services/Services Configuracion/vista-roles-privilegios.service';
 import { Users } from '../../../../Models/Master/users';
@@ -38,12 +36,16 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
           <tbody>
             <tr *ngFor="let detalle of detallesProducto; let i = index">
               <td>{{ i + 1 }}</td>
-              <td>{{ detalle.nombre }}</td>
+              <td>{{ detalle.nombre_sucursal }}</td>
               <td>{{ detalle.estado }}</td>
             </tr>
           </tbody>
         </table>
-        <button *ngIf="mostrarBotonReintentar" class="btn" (click)="reintentarSincronizacion()">
+        <button
+          *ngIf="mostrarBotonReintentar"
+          class="btn"
+          (click)="reintentarSincronizacion()"
+        >
           Reintentar Sincronización
         </button>
         <button class="btn-cerrar" (click)="cerrarModal()">Cerrar</button>
@@ -68,17 +70,15 @@ export class ModalDetallesSincronizacionComponent {
     private catalogoSucursalService: CatalogoSucursalService,
     private sincronizacionPendienteService: SincronizacionPendienteService,
     private vistaRolesPrivilegiosService: VistaRolesPrivilegiosService,
-    private authService: AuthService,
+    private authService: AuthService
   ) {}
 
-  
   async getAllRolesPrivilegios(): Promise<void> {
     try {
       const id = this.currentUser?.id_rol;
       if (id) {
         this.privilegiosDisponibles =
           await this.vistaRolesPrivilegiosService.getAllRolesPrivilegios(id);
-        // console.log('Privilegios disponibles:', this.privilegiosDisponibles);
         this.mostrarBotonReintentar = this.privilegiosDisponibles.some(
           (privilegio) => privilegio.id_privilegio === 9
         );
@@ -87,7 +87,6 @@ export class ModalDetallesSincronizacionComponent {
       console.error('Error al obtener los roles y privilegios:', error);
     }
   }
-
 
   ngOnInit(): void {
     this.authService.currentUser.subscribe((user) => {
@@ -222,7 +221,6 @@ export class ModalDetallesSincronizacionComponent {
       }
     }
     if (!algunoPendiente) {
-      console.log('No hay productos con estado PENDIENTE.');
       Swal.fire({
         title: 'Todos los productos ya están sincronizados',
         text: 'Los productos se encuentran sincronizados en todas las sucursales, no es necesaria ninguna acción.',

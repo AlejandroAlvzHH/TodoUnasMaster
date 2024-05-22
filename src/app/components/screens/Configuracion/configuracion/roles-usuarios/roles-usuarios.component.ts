@@ -131,7 +131,7 @@ import { AjustarPrivilegiosComponent } from './ajustar-privilegios/ajustar-privi
                   class="btn"
                   (click)="eliminarRol(filteredRolesList[index])"
                 >
-                  Eliminar
+                  Deshabilitar
                 </button>
                 <button
                   *ngIf="
