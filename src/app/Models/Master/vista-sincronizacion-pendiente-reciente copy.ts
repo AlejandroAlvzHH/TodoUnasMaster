@@ -4,4 +4,6 @@ export interface VistaSincronizacionPendienteReciente {
   nombre_sucursal: string;
   fecha_registro: Date;
   estado: string;
+  cantidad_existencia: number
+  url_sucursal: string
 }

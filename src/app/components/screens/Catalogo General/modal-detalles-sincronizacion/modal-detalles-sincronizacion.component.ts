@@ -8,7 +8,7 @@ import { CatalogoGeneralService } from '../../../../core/services/Services Catal
 import { CatalogoSucursalService } from '../../../../core/services/Services Catalogo General/catalogo-sucursal.service';
 import { SincronizacionPendienteService } from '../../../../core/services/Services Catalogo General/sincronizacion-pendiente.service';
 import Swal from 'sweetalert2';
-import { VistaSincronizacionPendienteReciente } from '../../../../Models/Master/vista-sincronizacion-pendiente-reciente';
+import { VistaSincronizacionPendienteReciente } from '../../../../Models/Master/vista-sincronizacion-pendiente-reciente copy';
 import { VistaRolesPrivilegios } from '../../../../Models/Master/vista-roles-privilegios';
 import { VistaRolesPrivilegiosService } from '../../../../core/services/Services Configuracion/vista-roles-privilegios.service';
 import { Users } from '../../../../Models/Master/users';
@@ -31,6 +31,7 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
               <th>#</th>
               <th>Sucursal</th>
               <th>Estado de Sincronización</th>
+              <th>Existencias</th>
             </tr>
           </thead>
           <tbody>
@@ -38,6 +39,7 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
               <td>{{ i + 1 }}</td>
               <td>{{ detalle.nombre_sucursal }}</td>
               <td>{{ detalle.estado }}</td>
+              <td>{{ detalle.cantidad_existencia }}</td>
             </tr>
           </tbody>
         </table>
@@ -164,42 +166,50 @@ export class ModalDetallesSincronizacionComponent {
               prcFix: 0,
               localiza: '',
             };
-            const registroFallo = await this.sincronizacionPendienteService
-              .obtenerFalloSincronizacionPorId(producto.id_producto)
-              .toPromise();
             const fechaActual = new Date();
             fechaActual.setHours(fechaActual.getHours() - 6);
             const JSON1 = {
-              id_producto: registroFallo.id_producto,
-              id_sucursal: registroFallo.id_sucursal,
+              id_producto: producto.id_producto,
+              id_sucursal: producto.id_sucursal,
               fecha_registro: fechaActual,
               estado: 'SINCRONIZADO',
               mensaje_error: '',
             };
             try {
-              const urlSucursal = '';
+              const urlSucursal = producto.url_sucursal;
               const product = await this.catalogoSucursalService.getProductById(
                 urlSucursal,
                 producto.id_producto
               );
               if (product) {
-                await this.catalogoSucursalService.updateProductoSucursal(
-                  urlSucursal,
-                  producto.id_producto,
-                  JSON
-                );
-                console.log('Producto encontrado:', producto);
+                try {
+                  await this.catalogoSucursalService.updateProductoSucursal(
+                    urlSucursal,
+                    producto.id_producto,
+                    JSON
+                  );
+                  await this.sincronizacionPendienteService
+                    .registrarFalloSincronizacion(JSON1)
+                    .toPromise();
+                  console.log('Producto encontrado:', producto);
+                } catch (error) {
+                  console.error('Error al actualizar el producto:', error);
+                }
               } else {
-                await this.catalogoSucursalService
-                  .agregarProductoSucursal(urlSucursal, JSON)
-                  .toPromise();
+                try {
+                  await this.catalogoSucursalService
+                    .agregarProductoSucursal(urlSucursal, JSON)
+                    .toPromise();
+                  await this.sincronizacionPendienteService
+                    .registrarFalloSincronizacion(JSON1)
+                    .toPromise();
+                } catch (error) {
+                  console.error('Error al agregar el producto:', error);
+                }
               }
             } catch (error) {
               console.error('Error al obtener el producto:', error);
             }
-            await this.sincronizacionPendienteService
-              .registrarFalloSincronizacion(JSON1)
-              .toPromise();
           } else {
             console.log(
               'No se pudo obtener información del producto con ID:',

@@ -129,7 +129,6 @@ export class AgregarProductoCatalogoComponent {
     }).then((result) => {
       if (result.isConfirmed) {
         this.loading = true;
-        //this.addProducto.emit(this.nuevoProducto);
         this.catalogoGeneralService
           .addCatalogueProduct(this.nuevoProducto)
           .then((success) => {
@@ -159,6 +158,13 @@ export class AgregarProductoCatalogoComponent {
               return { success: true, sucursalNombre: sucursal.nombre };
             })
             .catch((error: any) => {
+              const inventory = {
+                id_sucursal: sucursal.idSucursal,
+                id_producto: this.nuevoProducto.id_producto,
+                cantidad: 0,
+              };
+              console.log(inventory);
+              this.inventarioApiService.postInventory(inventory).subscribe();
               this.registrarFalloSincronizacion(
                 sucursal.idSucursal,
                 productoSucursal.idArticulo,

@@ -21,6 +21,16 @@ export class CatalogoSucursalService {
     }
   }
 
+  getAllProductsHTTP(baseUrl: string): Observable<Products[]> {
+    const url = `${baseUrl}/api/ProductApi`;
+    return this.http.get<Products[]>(url).pipe(
+      catchError((error) => {
+        console.error('Error fetching products:', error);
+        return throwError(error);
+      })
+    );
+  }
+
   agregarProductoSucursal(
     baseUrl: string,
     product: Products
@@ -60,6 +70,7 @@ export class CatalogoSucursalService {
   async getProductById(baseUrl: string, productId: number): Promise<Products | null> {
     try {
       const url = `${baseUrl}/api/ProductApi/${productId}`;
+      console.log(url)
       const data = await fetch(url, { method: 'GET' });
       if (data.ok) {
         return await data.json();

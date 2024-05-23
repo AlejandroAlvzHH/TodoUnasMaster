@@ -107,7 +107,6 @@ export class EditarProductoCatalogoComponent {
     console.log('El ID del usuario es: ', this.currentUser?.id_usuario);
     if (this.id_producto !== null) {
       try {
-        this.loading = true;
         const producto =
           await this.catalogoGeneralService.getCatalogueProductByID(
             this.id_producto
@@ -154,7 +153,6 @@ export class EditarProductoCatalogoComponent {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
-          this.loading = true;
           if (this.id_producto && this.currentUser) {
             const fechaActual = new Date();
             fechaActual.setHours(fechaActual.getHours() - 6);

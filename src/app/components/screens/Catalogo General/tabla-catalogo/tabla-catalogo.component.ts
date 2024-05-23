@@ -166,7 +166,7 @@ import { Inventory } from '../../../../Models/Master/inventory';
                 class="btn"
                 (click)="abrirModalDetalles(filteredProductsList[index])"
               >
-                Sincronización
+                Detalles
               </button>
               <button
                 class="btn"

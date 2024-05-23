@@ -248,13 +248,15 @@ SELECT dm.id_detalle_mov,
       LEFT JOIN catalogo_general cg ON ((dm.id_producto = cg.id_producto)));
 
 --vista_sincronizacion_pendiente_reciente   PARA VER REGISTROS MÁS ACTUALES POR SUCURSAL DE CADA PRODUCTO
-CREATE VIEW vista_sincronizacion_pendiente_reciente AS
+CREATE OR REPLACE VIEW vista_sincronizacion_pendiente_reciente AS
 SELECT 
     sp.id_producto, 
     sp.id_sucursal, 
     s.nombre AS nombre_sucursal,  
     sp.fecha_registro, 
-    sp.estado
+    sp.estado,
+    COALESCE(i.cantidad, 0) AS cantidad_existencia,
+    s.url AS url_sucursal
 FROM (
     SELECT 
         id_producto, 
@@ -265,6 +267,7 @@ FROM (
     FROM sincronizacion_pendiente
 ) AS sp
 JOIN sucursales s ON sp.id_sucursal = s.id_sucursal  
+LEFT JOIN inventario i ON sp.id_producto = i.id_producto AND sp.id_sucursal = i.id_sucursal
 WHERE sp.rn = 1;
 
 --vista_catalogo_sincronizacion PARA VER DE CADA PRODUCTO INDIVIDUALMENTE SU INFO Y SI ESTÁ SYNC O NO
