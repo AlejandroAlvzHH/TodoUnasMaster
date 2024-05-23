@@ -274,7 +274,7 @@ export class TablaCatalogoComponent {
     for (const branch of this.branchesUrls) {
       try {
         const products: Products[] =
-          await this.catalogoSucursalService.getAllProducts(branch.url);
+          await this.catalogoSucursalService.getAllProducts(branch.url, branch.nombre);
         for (const product of products) {
           this.allProducts.push({
             id_sucursal: branch.idSucursal,

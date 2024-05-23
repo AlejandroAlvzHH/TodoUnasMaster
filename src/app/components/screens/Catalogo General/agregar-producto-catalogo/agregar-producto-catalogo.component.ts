@@ -111,7 +111,7 @@ export class AgregarProductoCatalogoComponent {
         title: 'Campos Vacíos',
         text: 'Por favor rellene todos los campos para agregar el nuevo producto.',
         icon: 'warning',
-        confirmButtonColor: '#5c5c5c',
+        confirmButtonColor: '#333333',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -122,7 +122,7 @@ export class AgregarProductoCatalogoComponent {
       icon: 'question',
       showCancelButton: true,
       showConfirmButton: true,
-      confirmButtonColor: '#5c5c5c',
+      confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar registro',
       cancelButtonText: 'Cancelar',
@@ -186,7 +186,7 @@ export class AgregarProductoCatalogoComponent {
               title: 'Error',
               text: mensaje,
               icon: 'error',
-              confirmButtonColor: '#5c5c5c',
+              confirmButtonColor: '#333333',
               confirmButtonText: 'OK',
               customClass: {
                 container: 'swal2-container',
@@ -201,7 +201,7 @@ export class AgregarProductoCatalogoComponent {
               title: 'Éxito',
               text: 'Todos los productos se agregaron correctamente en las sucursales.',
               icon: 'success',
-              confirmButtonColor: '#5c5c5c',
+              confirmButtonColor: '#333333',
               confirmButtonText: 'OK',
               customClass: {
                 container: 'swal2-container',

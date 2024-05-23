@@ -152,7 +152,7 @@ export class TablaProductosComponent implements OnInit {
   private async initialize() {
     try {
       this.productsList = await this.catalogoSucursalService.getAllProducts(
-        this.baseUrl!
+        this.baseUrl!, ''
       );
       this.carritoCommunicationService.itemRemoved$.subscribe((idArticulo) => {
         const indexInFilteredProductsList = this.filteredProductsList.findIndex(

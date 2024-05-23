@@ -133,7 +133,7 @@ export class TablaProductosSucursalComponent {
   private async initialize() {
     try {
       this.productsList = await this.catalogoSucursalService.getAllProducts(
-        this.baseUrl!
+        this.baseUrl!, ''
       );
       this.filteredProductsList = this.productsList.map((product) => ({
         idArticulo: product.idArticulo,

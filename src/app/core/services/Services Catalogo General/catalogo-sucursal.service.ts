@@ -3,6 +3,7 @@ import { Products } from '../../../Models/Factuprint/products';
 import { Observable, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root',
@@ -10,13 +11,22 @@ import { catchError } from 'rxjs';
 export class CatalogoSucursalService {
   constructor(private http: HttpClient) {}
 
-  async getAllProducts(baseUrl: string): Promise<Products[]> {
+  async getAllProducts(baseUrl: string, nombre: string): Promise<Products[]> {
     try {
       const url = `${baseUrl}/api/ProductApi`;
       console.log(url);
       const data = await fetch(url, { method: 'GET' });
       return (await data.json()) ?? [];
     } catch (e) {
+      console.error('Error al obtener los productos:', e);
+      Swal.fire({
+        title: `${nombre} Offline`,
+        text: `Hubo un problema accediendo a los servicios de la sucursal, los siguientes registros pueden no ser los más actuales.`,
+        icon: 'error',
+        showConfirmButton: true,
+        confirmButtonColor: '#333333',
+        confirmButtonText: 'De acuerdo',
+      });
       return [];
     }
   }
@@ -62,15 +72,17 @@ export class CatalogoSucursalService {
       }
     } catch (error) {
       console.error(error);
-      throw error; 
+      throw error;
     }
   }
 
-
-  async getProductById(baseUrl: string, productId: number): Promise<Products | null> {
+  async getProductById(
+    baseUrl: string,
+    productId: number
+  ): Promise<Products | null> {
     try {
       const url = `${baseUrl}/api/ProductApi/${productId}`;
-      console.log(url)
+      console.log(url);
       const data = await fetch(url, { method: 'GET' });
       if (data.ok) {
         return await data.json();
