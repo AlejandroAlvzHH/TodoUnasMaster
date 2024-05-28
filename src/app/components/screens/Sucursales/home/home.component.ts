@@ -53,7 +53,7 @@ import { General_Catalogue } from '../../../../Models/Master/general_catalogue';
       <div class="botonera" *ngIf="mostrarBotonAgregar">
         <button class="btn" (click)="abrirModal()">Agregar Sucursal</button>
         <button class="btn" (click)="actualizarRegistros()">
-          Actualizar Registros
+          Verificar Status de Sucursales
         </button>
       </div>
       <div class="card-container">
