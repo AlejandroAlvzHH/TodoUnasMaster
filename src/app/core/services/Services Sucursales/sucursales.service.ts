@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Branches } from '../../../Models/Master/branches';
 import { map } from 'rxjs';
+import { catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -25,10 +26,14 @@ export class ApiService {
   }
 
   modificarSucursal(sucursal: Branches): Observable<boolean> {
-    return this.http.put<boolean>(
-      `${this.url}/${sucursal.idSucursal}`,
-      sucursal
-    );
+    return this.http
+      .put<boolean>(`${this.url}/${sucursal.idSucursal}`, sucursal)
+      .pipe(
+        catchError((error) => {
+          console.error('Error al modificar la sucursal:', error);
+          return throwError(error);
+        })
+      );
   }
 
   modificarStatusSucursal(id: number, status: number): Observable<boolean> {
@@ -53,7 +58,9 @@ export class ApiService {
     );
   }
 
-  getAllBranchesUrlsConStatus1URL(): Observable<{ idSucursal: number; nombre: string; url: string }[]> {
+  getAllBranchesUrlsConStatus1URL(): Observable<
+    { idSucursal: number; nombre: string; url: string }[]
+  > {
     return this.getAllSucursales().pipe(
       map((sucursales) =>
         sucursales.filter((sucursal) => sucursal.status === 1)
@@ -69,17 +76,19 @@ export class ApiService {
   }
 
   getAllBranchesConStatus1(): Observable<Branches[]> {
-    return this.http.get<Branches[]>(this.url).pipe(
-      map((sucursales) => sucursales.filter((sucursal) => sucursal.status === 1))
-    );
+    return this.http
+      .get<Branches[]>(this.url)
+      .pipe(
+        map((sucursales) =>
+          sucursales.filter((sucursal) => sucursal.status === 1)
+        )
+      );
   }
 
   /* EN ESTE NO IMPORTA EL STATUS 1*/
   getAllUrls(): Observable<string[]> {
     return this.getAllSucursales().pipe(
-      map((sucursales) =>
-        sucursales.map((sucursal) => sucursal.url)
-      )
+      map((sucursales) => sucursales.map((sucursal) => sucursal.url))
     );
   }
 }

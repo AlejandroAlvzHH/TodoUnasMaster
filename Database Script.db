@@ -247,6 +247,17 @@ SELECT dm.id_detalle_mov,
       JOIN movimientos m ON ((dm.id_movimiento = m.id_movimiento)))         
       LEFT JOIN catalogo_general cg ON ((dm.id_producto = cg.id_producto)));
 
+CREATE OR REPLACE VIEW vista_detalle_movimiento AS
+SELECT dm.id_detalle_mov,                                                 
+     m.id_movimiento,                                                       
+     dm.id_producto,
+     cg.nombre AS nombre_producto,                                          
+     dm.cantidad,                                                           
+     dm.precio                                                              
+    FROM ((detalle_movimiento dm                                            
+      JOIN movimientos m ON ((dm.id_movimiento = m.id_movimiento)))         
+      LEFT JOIN catalogo_general cg ON ((dm.id_producto = cg.id_producto)));
+
 --vista_sincronizacion_pendiente_reciente   PARA VER REGISTROS MÁS ACTUALES POR SUCURSAL DE CADA PRODUCTO
 CREATE OR REPLACE VIEW vista_sincronizacion_pendiente_reciente AS
 SELECT 

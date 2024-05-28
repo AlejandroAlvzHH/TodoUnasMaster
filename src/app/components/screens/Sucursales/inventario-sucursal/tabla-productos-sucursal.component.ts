@@ -34,7 +34,8 @@ import { ProductListItem } from '../../../../Models/Master/product_list_item';
           />
         </div>
       </form>
-      <div class="table-container">
+      <div *ngIf="!isDataLoaded" class="spinner"></div>
+      <div class="table-container" *ngIf="isDataLoaded">
         <table border="2">
           <thead>
             <tr>
@@ -79,6 +80,19 @@ import { ProductListItem } from '../../../../Models/Master/product_list_item';
               </th>
               <th
                 scope="col"
+                (click)="ordenarPorColumna('precioVenta')"
+                [class.interactive]="columnaOrdenada === 'precioVenta'"
+              >
+                Precio
+                <i
+                  *ngIf="columnaOrdenada === 'precioVenta'"
+                  class="arrow-icon"
+                  [class.asc]="ordenAscendente"
+                  [class.desc]="!ordenAscendente"
+                ></i>
+              </th>
+              <th
+                scope="col"
                 (click)="ordenarPorColumna('existencia')"
                 [class.interactive]="columnaOrdenada === 'existencia'"
               >
@@ -98,6 +112,7 @@ import { ProductListItem } from '../../../../Models/Master/product_list_item';
                 <td>{{ filteredProductsList[index].idArticulo }}</td>
                 <td>{{ filteredProductsList[index].clave }}</td>
                 <td>{{ filteredProductsList[index].nombre }}</td>
+                <td>{{ filteredProductsList[index].precioVenta }}</td>
                 <td>
                   {{ filteredProductsList[index].existencia }}
                 </td>
@@ -118,6 +133,7 @@ export class TablaProductosSucursalComponent {
   filteredIndices: number[] = [];
   columnaOrdenada: keyof Products | null = null;
   ordenAscendente: boolean = true;
+  isDataLoaded: boolean = false;
 
   constructor(
     private catalogoSucursalService: CatalogoSucursalService,
@@ -133,7 +149,8 @@ export class TablaProductosSucursalComponent {
   private async initialize() {
     try {
       this.productsList = await this.catalogoSucursalService.getAllProducts(
-        this.baseUrl!, ''
+        this.baseUrl!,
+        ''
       );
       this.filteredProductsList = this.productsList.map((product) => ({
         idArticulo: product.idArticulo,
@@ -181,6 +198,7 @@ export class TablaProductosSucursalComponent {
         { length: this.filteredProductsList.length },
         (_, i) => i
       );
+      this.isDataLoaded = true;
       this.cdr.detectChanges();
     } catch (error) {
       console.error('Error al obtener los productos:', error);

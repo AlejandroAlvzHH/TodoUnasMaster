@@ -21,7 +21,7 @@ export class CatalogoSucursalService {
       console.error('Error al obtener los productos:', e);
       Swal.fire({
         title: `${nombre} Offline`,
-        text: `Hubo un problema accediendo a los servicios de la sucursal, los siguientes registros pueden no ser los más actuales.`,
+        text: `Hubo un problema accediendo a los servicios de la sucursal, no se cargaron los registros más actuales.`,
         icon: 'error',
         showConfirmButton: true,
         confirmButtonColor: '#333333',

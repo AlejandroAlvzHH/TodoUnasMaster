@@ -1,10 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Output,
-  Input,
-} from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CarritoServiceService } from '../../../core/services/Services Sucursales/carrito-service.service';
 import { CarritoComunicationService } from '../../../core/services/Services Sucursales/Entradas y Salidas/carrito-comunication.service';
@@ -22,6 +17,7 @@ import { CarritoComunicationService } from '../../../core/services/Services Sucu
             <th scope="col">Id_Artículo</th>
             <th scope="col">Clave</th>
             <th scope="col">Nombre</th>
+            <th scope="col">Precio</th>
             <th scope="col">Cantidad</th>
           </tr>
         </thead>
@@ -30,6 +26,7 @@ import { CarritoComunicationService } from '../../../core/services/Services Sucu
             <td>{{ item.idArticulo }}</td>
             <td>{{ item.clave }}</td>
             <td>{{ item.nombre }}</td>
+            <td>{{ item.precioVenta * item.cantidad }}</td>
             <td>
               <input
                 type="number"
@@ -77,13 +74,14 @@ export class TablaCarritoComponent {
       newValue = 1;
       event.target.value = newValue;
     }
-    if (this.isSalida){
-    if (newValue > item.existencia) {
-      item.cantidad = item.existencia;
-      event.target.value = item.existencia;
-    } else {
-      item.cantidad = newValue;
-    }}
+    if (this.isSalida) {
+      if (newValue > item.existencia) {
+        item.cantidad = item.existencia;
+        event.target.value = item.existencia;
+      } else {
+        item.cantidad = newValue;
+      }
+    }
   }
 
   eliminarItem(index: number) {
@@ -105,5 +103,3 @@ export class TablaCarritoComponent {
     this.cerrar.emit();
   }
 }
-
-

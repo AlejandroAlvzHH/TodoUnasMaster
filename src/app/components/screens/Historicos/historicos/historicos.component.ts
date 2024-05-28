@@ -102,7 +102,8 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
           [fecha]="movimientoSeleccionado!.fecha"
           (cancelar)="cerrarModal()"
         ></app-historicos-detalle>
-        <div class="table-container">
+        <div *ngIf="!isDataLoaded" class="spinner"></div>
+        <div class="table-container" *ngIf="isDataLoaded">
           <table border="2">
             <thead>
               <tr>
@@ -268,6 +269,8 @@ export class HistoricosComponent {
   columnaOrdenada: keyof VistaMovements | null = null;
   ordenAscendente: boolean = true;
 
+  isDataLoaded: boolean = false;
+
   constructor(
     private sidebarOpeningService: SidebaropeningService,
     private historicosMovimientosService: HistoricosMovimientosService,
@@ -300,6 +303,7 @@ export class HistoricosComponent {
         { length: this.filteredMovementsList.length },
         (_, i) => i
       );
+      this.isDataLoaded = true;
       this.cdr.detectChanges();
     } catch (error) {
       console.error('Error al obtener los movimientos:', error);

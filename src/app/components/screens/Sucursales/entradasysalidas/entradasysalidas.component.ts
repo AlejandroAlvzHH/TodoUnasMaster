@@ -90,6 +90,7 @@ import { CatalogoGeneralService } from '../../../../core/services/Services Catal
           <h2>Inventario en {{ sucursal?.nombre }}</h2>
         </div>
         <app-tabla-productos
+          [isSalida]="!isEntradaSelected"
           [baseUrl]="sucursal?.url"
           #tablaProductos
         ></app-tabla-productos>
@@ -173,30 +174,6 @@ export class EntradasysalidasComponent implements OnInit {
         let valor_total_movimiento = 0;
         const logDetalles: Movements_Detail[] = [];
         this.items.forEach((item) => {
-          /*const productGlobalObservable =
-            this.catalogoGeneralService.getCatalogueProductObesrvableByID(
-              item.idArticulo
-            );
-          productGlobalObservable.subscribe((productGlobal) => {
-            if (!productGlobal) {
-              console.error('Producto no encontrado');
-              return;
-            }
-            productGlobal.cantidad_total += item.cantidad;
-            console.log('NUEVA CANTIDAD: ', productGlobal.cantidad_total);
-            this.catalogoGeneralService
-              .updateCatalogueProduct(productGlobal, item.idArticulo)
-              .then((updatedProduct) => {
-                if (updatedProduct) {
-                  console.log('Producto actualizado:', updatedProduct);
-                } else {
-                  console.log('Producto no encontrado o no actualizado.');
-                }
-              })
-              .catch((error) => {
-                console.error('Error al actualizar el producto:', error);
-              });
-          });*/
           valor_total_movimiento += item.precioVenta * item.cantidad;
           const cambiosMaster = {
             id_sucursal: this.sucursal?.idSucursal ?? 0,
@@ -377,29 +354,6 @@ export class EntradasysalidasComponent implements OnInit {
         let valor_total_movimiento = 0;
         const logDetalles: Movements_Detail[] = [];
         this.items.forEach((item) => {
-          const productGlobalObservable =
-            this.catalogoGeneralService.getCatalogueProductObesrvableByID(
-              item.idArticulo
-            );
-          productGlobalObservable.subscribe((productGlobal) => {
-            if (!productGlobal) {
-              console.error('Producto no encontrado');
-              return;
-            }
-            productGlobal.cantidad_total -= item.cantidad;
-            this.catalogoGeneralService
-              .updateCatalogueProduct(productGlobal, item.idArticulo)
-              .then((updatedProduct) => {
-                if (updatedProduct) {
-                  console.log('Producto actualizado:', updatedProduct);
-                } else {
-                  console.log('Producto no encontrado o no actualizado.');
-                }
-              })
-              .catch((error) => {
-                console.error('Error al actualizar el producto:', error);
-              });
-          });
           valor_total_movimiento += item.precioVenta * item.cantidad;
           const cambiosMaster = {
             id_sucursal: this.sucursal?.idSucursal,
@@ -448,7 +402,7 @@ export class EntradasysalidasComponent implements OnInit {
           };
           console.log('JSON final:', cambios);
           console.log('JSON final master:', cambiosMaster);
-          /*this.inventarioServiceMaster
+          this.inventarioServiceMaster
             .registrarSalidaMaster(
               this.sucursal?.idSucursal ?? 0,
               item.idArticulo,
@@ -461,7 +415,7 @@ export class EntradasysalidasComponent implements OnInit {
               (error) => {
                 console.error('Error al registrar salida master:', error);
               }
-            );*/
+            );
           this.inventarioService
             .registrarSalidaUniversal(
               this.sucursal!.url,

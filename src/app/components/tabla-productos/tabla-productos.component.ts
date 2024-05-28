@@ -36,7 +36,8 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
           />
         </div>
       </form>
-      <div class="table-container">
+      <div *ngIf="!isDataLoaded" class="spinner"></div>
+      <div class="table-container" *ngIf="isDataLoaded">
         <table border="2">
           <thead>
             <tr>
@@ -81,6 +82,19 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
               </th>
               <th
                 scope="col"
+                (click)="ordenarPorColumna('precioVenta')"
+                [class.interactive]="columnaOrdenada === 'precioVenta'"
+              >
+                Precio
+                <i
+                  *ngIf="columnaOrdenada === 'precioVenta'"
+                  class="arrow-icon"
+                  [class.asc]="ordenAscendente"
+                  [class.desc]="!ordenAscendente"
+                ></i>
+              </th>
+              <th
+                scope="col"
                 (click)="ordenarPorColumna('existencia')"
                 [class.interactive]="columnaOrdenada === 'existencia'"
               >
@@ -100,15 +114,23 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
                 <td>{{ filteredProductsList[index].idArticulo }}</td>
                 <td>{{ filteredProductsList[index].clave }}</td>
                 <td>{{ filteredProductsList[index].nombre }}</td>
+                <td>{{ filteredProductsList[index].precioVenta }}</td>
                 <td>
                   {{ filteredProductsList[index].existencia }}
                   <button
                     class="btn"
                     [ngClass]="{
                       added: filteredProductsList[index].enCarrito,
-                      disabled: filteredProductsList[index].enCarrito
+                      disabled:
+                        isSalida &&
+                        (filteredProductsList[index].enCarrito ||
+                          filteredProductsList[index].existencia === 0)
                     }"
-                    [disabled]="filteredProductsList[index].enCarrito"
+                    [disabled]="
+                      isSalida &&
+                      (filteredProductsList[index].enCarrito ||
+                        filteredProductsList[index].existencia === 0)
+                    "
                     (click)="agregarAlCarrito(filteredProductsList[index])"
                   >
                     {{
@@ -130,11 +152,13 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
 export class TablaProductosComponent implements OnInit {
   private _baseUrl?: string;
 
+  isDataLoaded: boolean = false;
   productsList: Products[] = [];
   filteredProductsList: ProductListItem[] = [];
   filteredIndices: number[] = [];
   columnaOrdenada: keyof Products | null = null;
   ordenAscendente: boolean = true;
+  @Input() isSalida: boolean = false;
 
   constructor(
     private catalogoSucursalService: CatalogoSucursalService,
@@ -152,7 +176,8 @@ export class TablaProductosComponent implements OnInit {
   private async initialize() {
     try {
       this.productsList = await this.catalogoSucursalService.getAllProducts(
-        this.baseUrl!, ''
+        this.baseUrl!,
+        ''
       );
       this.carritoCommunicationService.itemRemoved$.subscribe((idArticulo) => {
         const indexInFilteredProductsList = this.filteredProductsList.findIndex(
@@ -212,6 +237,7 @@ export class TablaProductosComponent implements OnInit {
         { length: this.filteredProductsList.length },
         (_, i) => i
       );
+      this.isDataLoaded = true;
       this.cdr.detectChanges();
     } catch (error) {
       console.error('Error al obtener los productos:', error);

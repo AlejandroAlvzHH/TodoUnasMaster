@@ -11,6 +11,9 @@ import { Users } from '../../../../Models/Master/users';
 import { VistaRolesPrivilegios } from '../../../../Models/Master/vista-roles-privilegios';
 import { VistaRolesPrivilegiosService } from '../../../../core/services/Services Configuracion/vista-roles-privilegios.service';
 import { PermisosService } from '../../../../core/services/Services Configuracion/permisos.service';
+import { CatalogoSucursalService } from '../../../../core/services/Services Catalogo General/catalogo-sucursal.service';
+import { forkJoin, of, Observable } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -30,6 +33,9 @@ import { PermisosService } from '../../../../core/services/Services Configuracio
         *ngIf="isSidebarOpen"
         (click)="toggleSidebar()"
       ></div>
+      <div *ngIf="loading" class="loading-overlay">
+        <div class="loading-spinner"></div>
+      </div>
       <app-sucursalesmodal
         *ngIf="mostrarModal"
         (addSucursal)="agregarSucursal($event)"
@@ -40,6 +46,9 @@ import { PermisosService } from '../../../../core/services/Services Configuracio
       </div>
       <div class="botonera" *ngIf="mostrarBotonAgregar">
         <button class="btn" (click)="abrirModal()">Agregar Sucursal</button>
+        <button class="btn" (click)="actualizarRegistros()">
+          Actualizar Registros
+        </button>
       </div>
       <div class="card-container">
         <div class="card" *ngFor="let sucursal of filteredSucursalesList">
@@ -68,7 +77,8 @@ export class HomeComponent {
   isSidebarOpen: boolean = false;
   currentUser?: Users | null;
   privilegiosDisponibles?: VistaRolesPrivilegios[] | null;
-
+  sucursalesDisponibles: Branches[] = [];
+  loading: boolean = false;
   //PRIVILEGIOS
   mostrarBotonAgregar: boolean = false;
 
@@ -77,7 +87,8 @@ export class HomeComponent {
     private sidebarOpeningService: SidebaropeningService,
     private authService: AuthService,
     private vistaRolesPrivilegiosService: VistaRolesPrivilegiosService,
-    private permisosService: PermisosService
+    private permisosService: PermisosService,
+    private catalogoSucursalService: CatalogoSucursalService
   ) {}
 
   toggleSidebar(): void {
@@ -100,6 +111,14 @@ export class HomeComponent {
   }
 
   ngOnInit(): void {
+    this.apiService.getAllBranchesConStatus1().subscribe(
+      (sucursales) => {
+        this.sucursalesDisponibles = sucursales;
+      },
+      (error) => {
+        console.error('Error al obtener las sucursales: ', error);
+      }
+    );
     this.authService.currentUser.subscribe((user) => {
       this.currentUser = user;
     });
@@ -117,6 +136,62 @@ export class HomeComponent {
 
   cerrarModal(): void {
     this.mostrarModal = false;
+  }
+
+  actualizarRegistros() {
+    this.loading = true;
+    const requests = this.sucursalesDisponibles.map((sucursal) => {
+      return this.catalogoSucursalService.getAllProductsHTTP(sucursal.url).pipe(
+        switchMap((response) => {
+          console.log(`La sucursal ${sucursal.nombre} está online.`);
+          return this.apiService.getSucursalById(sucursal.idSucursal).pipe(
+            switchMap((actualBranch) => {
+              if (actualBranch) {
+                const fechaActual = new Date();
+                fechaActual.setHours(fechaActual.getHours() - 6);
+                const sucursalModificada = {
+                  ...actualBranch,
+                  estado: 'Online 🟢',
+                  fechaActualizacion: fechaActual,
+                };
+                return this.apiService.modificarSucursal(sucursalModificada);
+              }
+              return of(null);
+            })
+          );
+        }),
+        catchError((error) => {
+          console.error(`La sucursal ${sucursal.nombre} está offline.`);
+          return this.apiService.getSucursalById(sucursal.idSucursal).pipe(
+            switchMap((actualBranch) => {
+              if (actualBranch) {
+                const fechaActual = new Date();
+                fechaActual.setHours(fechaActual.getHours() - 6);
+                const sucursalModificada = {
+                  ...actualBranch,
+                  estado: 'Offline 🔴',
+                  fechaActualizacion: fechaActual,
+                };
+                return this.apiService.modificarSucursal(sucursalModificada);
+              }
+              return of(null);
+            })
+          );
+        })
+      );
+    });
+    forkJoin(requests).subscribe(() => {
+      this.loading = false;
+      window.location.reload();
+    });
+  }
+
+  modificarSucursal(sucursalModificada: Branches): Observable<boolean> {
+    if (!sucursalModificada) {
+      console.error('Sucursal modificada no es válida');
+      return of(false);
+    }
+    return this.apiService.modificarSucursal(sucursalModificada);
   }
 
   agregarSucursal(sucursal: Branches): void {

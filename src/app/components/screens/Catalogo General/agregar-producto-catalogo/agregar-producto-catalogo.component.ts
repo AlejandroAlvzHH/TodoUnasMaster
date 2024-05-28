@@ -27,6 +27,7 @@ import { CatalogoGeneralService } from '../../../../core/services/Services Catal
           [(ngModel)]="nuevoProducto.id_producto"
           (blur)="checkID()"
           (input)="validateID($event)"
+          [placeholder]="siguienteId"
         />
         <label>Clave:</label>
         <input type="text" [(ngModel)]="nuevoProducto.clave" />
@@ -55,7 +56,24 @@ export class AgregarProductoCatalogoComponent {
   sucursales: any[] = [];
   loading: boolean = false;
 
+  productos: General_Catalogue[] = [];
+  siguienteId: number | null = null;
+
+  constructor(
+    private catalogoSucursalService: CatalogoSucursalService,
+    private apiService: ApiService,
+    private sincronizacionPendienteService: SincronizacionPendienteService,
+    private inventarioApiService: InventarioApiService,
+    private catalogoGeneralService: CatalogoGeneralService
+  ) {}
+
   ngOnInit(): void {
+    this.catalogoGeneralService.getAllCatalogueProducts().then((productos) => {
+      this.productos = productos;
+      this.siguienteId = this.obtenerSiguienteIdValido(this.productos);
+      this.nuevoProducto.id_producto = this.siguienteId; 
+      console.log('Siguiente ID válido:', this.siguienteId);
+    });
     this.apiService.getAllBranchesUrlsConStatus1().subscribe((sucursales) => {
       this.sucursales = sucursales.map((sucursal) => ({
         url: sucursal.url,
@@ -65,13 +83,14 @@ export class AgregarProductoCatalogoComponent {
     });
   }
 
-  constructor(
-    private catalogoSucursalService: CatalogoSucursalService,
-    private apiService: ApiService,
-    private sincronizacionPendienteService: SincronizacionPendienteService,
-    private inventarioApiService: InventarioApiService,
-    private catalogoGeneralService: CatalogoGeneralService
-  ) {}
+  obtenerSiguienteIdValido(productos: General_Catalogue[]): number {
+    const idsOcupados = productos.map((producto) => producto.id_producto);
+    let siguienteId = 1;
+    while (idsOcupados.includes(siguienteId)) {
+      siguienteId++;
+    }
+    return siguienteId;
+  }
 
   nuevoProducto: General_Catalogue = {
     id_producto: 0,

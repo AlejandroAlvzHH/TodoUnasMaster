@@ -153,6 +153,7 @@ export class EditarProductoCatalogoComponent {
     }).then(async (result) => {
       try {
         if (result.isConfirmed) {
+          this.loading = true;
           if (this.id_producto && this.currentUser) {
             const fechaActual = new Date();
             fechaActual.setHours(fechaActual.getHours() - 6);
@@ -263,10 +264,12 @@ export class EditarProductoCatalogoComponent {
                             'No se logró insertar. :( ->',
                             sucursal.idSucursal
                           );
+                          this.loading = false;
                         });
                     } else {
                       //ESTO ES PARA SI ESTÁ ONLINE, PERO NO EXISTE EL PRODUCTO
                       console.log('El producto no fue encontrado');
+                      this.loading = false;
                     }
                   } catch (error) {
                     console.error('Error al obtener el producto:', error);
@@ -278,6 +281,7 @@ export class EditarProductoCatalogoComponent {
                       this.id_producto,
                       'error'
                     );
+                    this.loading = false;
                   }
                 }
               })
@@ -315,10 +319,12 @@ export class EditarProductoCatalogoComponent {
                     confirmButtonColor: '#5c5c5c',
                     confirmButtonText: 'Aceptar',
                   }).then(() => {
+                    this.loading = false;
                     this.cerrarModal();
                     window.location.reload();
                   });
                 } else {
+                  this.loading = false;
                   this.cerrarModal();
                   window.location.reload();
                 }
