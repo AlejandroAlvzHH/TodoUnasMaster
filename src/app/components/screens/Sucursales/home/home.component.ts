@@ -14,6 +14,12 @@ import { PermisosService } from '../../../../core/services/Services Configuracio
 import { CatalogoSucursalService } from '../../../../core/services/Services Catalogo General/catalogo-sucursal.service';
 import { forkJoin, of, Observable } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
+import { Products } from '../../../../Models/Factuprint/products';
+import { InventarioApiService } from '../../../../core/services/inventario-api.service';
+import { CatalogoGeneralService } from '../../../../core/services/Services Catalogo General/catalogo-general.service';
+import { Inventory } from '../../../../Models/Master/inventory';
+import { ChangeDetectorRef } from '@angular/core';
+import { General_Catalogue } from '../../../../Models/Master/general_catalogue';
 
 @Component({
   selector: 'app-home',
@@ -79,6 +85,17 @@ export class HomeComponent {
   privilegiosDisponibles?: VistaRolesPrivilegios[] | null;
   sucursalesDisponibles: Branches[] = [];
   loading: boolean = false;
+  branchesUrls: { idSucursal: number; nombre: string; url: string }[] = [];
+  allProducts: {
+    id_sucursal: number;
+    id_producto: number;
+    cantidad: number;
+  }[] = [];
+  totalProducts: { id_producto: number; cantidad: number }[] = [];
+  isDataLoaded: boolean = false;
+  inventarioTotal: { [idProducto: number]: number } = {};
+  productoActual: General_Catalogue | null = null;
+
   //PRIVILEGIOS
   mostrarBotonAgregar: boolean = false;
 
@@ -88,7 +105,10 @@ export class HomeComponent {
     private authService: AuthService,
     private vistaRolesPrivilegiosService: VistaRolesPrivilegiosService,
     private permisosService: PermisosService,
-    private catalogoSucursalService: CatalogoSucursalService
+    private catalogoSucursalService: CatalogoSucursalService,
+    private inventarioApiService: InventarioApiService,
+    private catalogoGeneralService: CatalogoGeneralService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   toggleSidebar(): void {
@@ -111,6 +131,15 @@ export class HomeComponent {
   }
 
   ngOnInit(): void {
+    this.apiService.getAllBranchesUrlsConStatus1URL().subscribe(
+      (data) => {
+        this.branchesUrls = data;
+        this.loadAllProducts();
+      },
+      (error) => {
+        console.error('Error obteniendo la data', error);
+      }
+    );
     this.apiService.getAllBranchesConStatus1().subscribe(
       (sucursales) => {
         this.sucursalesDisponibles = sucursales;
@@ -128,6 +157,91 @@ export class HomeComponent {
       this.isSidebarOpen = isOpen;
     });
     this.actualizarListaSucursales();
+  }
+
+  async loadAllProducts(): Promise<void> {
+    for (const branch of this.branchesUrls) {
+      try {
+        const products: Products[] =
+          await this.catalogoSucursalService.getAllProducts(
+            branch.url,
+            branch.nombre
+          );
+        for (const product of products) {
+          this.allProducts.push({
+            id_sucursal: branch.idSucursal,
+            id_producto: product.idArticulo,
+            cantidad: product.existencia,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching products for branch', branch, error);
+      }
+    }
+    const insertionPromises = this.allProducts.map((product) =>
+      this.inventarioApiService.insertOrUpdateInventory(product).toPromise()
+    );
+    try {
+      await Promise.all(insertionPromises);
+      this.calculateTotalProducts();
+    } catch (error) {
+      console.error('Error during inventory insertion:', error);
+    }
+  }
+
+  calculateTotalProducts(): void {
+    this.inventarioApiService.getInventarios().subscribe(
+      (inventarios: Inventory[]) => {
+        inventarios.forEach((inv) => {
+          const idProducto = inv.id_producto;
+          const cantidad = inv.cantidad;
+          const existingProduct = this.totalProducts.find(
+            (p) => p.id_producto === idProducto
+          );
+          if (existingProduct) {
+            existingProduct.cantidad += cantidad;
+          } else {
+            this.totalProducts.push({
+              id_producto: idProducto,
+              cantidad: cantidad,
+            });
+          }
+        });
+        this.insertTotalProductsInventory();
+        this.isDataLoaded = true;
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error al obtener los datos de inventario:', error);
+      }
+    );
+  }
+
+  insertTotalProductsInventory() {
+    this.totalProducts.forEach((product) => {
+      this.catalogoGeneralService
+        .getCatalogueProductObesrvableByID(product.id_producto)
+        .subscribe(
+          (resultado) => {
+            this.productoActual = resultado;
+            if (this.productoActual) {
+              const fechaActual = new Date();
+              fechaActual.setHours(fechaActual.getHours() - 6);
+              this.productoActual.cantidad_total = product.cantidad;
+              (this.productoActual.usuario_modificador =
+                this.currentUser!.id_usuario),
+                (this.productoActual.fecha_modificado = fechaActual);
+              this.catalogoGeneralService.updateCatalogueProductop(
+                this.productoActual,
+                product.id_producto
+              );
+            }
+          },
+          (error) => {
+            console.error('Ocurrió un error al obtener el producto:', error);
+          }
+        );
+    });
   }
 
   abrirModal(): void {

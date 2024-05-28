@@ -16,6 +16,7 @@ import { VistaRolesPrivilegios } from '../../../../Models/Master/vista-roles-pri
 import { Users } from '../../../../Models/Master/users';
 import { PermisosService } from '../../../../core/services/Services Configuracion/permisos.service';
 import { AuthService } from '../../../../core/services/auth/auth.service';
+import { CatalogoSucursalService } from '../../../../core/services/Services Catalogo General/catalogo-sucursal.service';
 
 type TipoDeError = HttpErrorResponse;
 @Component({
@@ -35,6 +36,9 @@ type TipoDeError = HttpErrorResponse;
         *ngIf="isSidebarOpen"
         (click)="toggleSidebar()"
       ></div>
+      <div *ngIf="loading" class="loading-overlay">
+        <div class="loading-spinner"></div>
+      </div>
       <app-modifysucursalmodal
         *ngIf="mostrarModal"
         [sucursal]="sucursal"
@@ -61,10 +65,18 @@ type TipoDeError = HttpErrorResponse;
           <a href="/traspasos/{{ sucursal?.idSucursal }}" class="opcion"
             >Traspaso a Sucursal</a
           >
-          <button class="opcion" (click)="eliminarSucursal()" *ngIf="mostrarBotonEliminarSucursal">
+          <button
+            class="opcion"
+            (click)="eliminarSucursal()"
+            *ngIf="mostrarBotonEliminarSucursal"
+          >
             Eliminar Sucursal
           </button>
-          <button class="opcion" (click)="abrirModal()" *ngIf="mostrarBotonModificarSucursal">
+          <button
+            class="opcion"
+            (click)="abrirModal()"
+            *ngIf="mostrarBotonModificarSucursal"
+          >
             Modificar Sucursal
           </button>
           <a href="/traspasosclinica/{{ sucursal?.idSucursal }}" class="opcion"
@@ -81,6 +93,7 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
   isSidebarOpen: boolean = false;
   private isOpenSubscription!: Subscription;
 
+  loading: boolean = false;
   currentUser?: Users | null;
   privilegiosDisponibles?: VistaRolesPrivilegios[] | null;
   mostrarBotonEliminarSucursal: boolean = false;
@@ -94,6 +107,7 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
     private permisosService: PermisosService,
     private authService: AuthService,
     private vistaRolesPrivilegiosService: VistaRolesPrivilegiosService,
+    private catalogoSucursalService: CatalogoSucursalService
   ) {}
 
   toggleSidebar(): void {
@@ -137,31 +151,6 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
     }
   }
 
-  obtenerDetalleSucursal(): void {
-    this.route.paramMap.subscribe((params) => {
-      const sucursalId = params.get('id');
-      if (sucursalId) {
-        this.apiService.getSucursalById(parseInt(sucursalId, 10)).subscribe(
-          (sucursal) => {
-            this.sucursal = sucursal;
-            if (this.sucursal) {
-              const fechaActual = new Date();
-              fechaActual.setHours(fechaActual.getHours() - 6);
-              this.modificarSucursal({
-                ...this.sucursal,
-                estado: 'Online 🟢',
-                fechaActualizacion: fechaActual,
-              });
-            }
-          },
-          (error) => {
-            console.error('Error al obtener la sucursal:', error);
-          }
-        );
-      }
-    });
-  }
-
   abrirModal(): void {
     this.mostrarModal = true;
   }
@@ -182,8 +171,8 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
       cancelButtonText: 'Cancelar',
       customClass: {
         confirmButton: 'custom-confirm-button',
-        cancelButton: 'custom-cancel-button' 
-      }
+        cancelButton: 'custom-cancel-button',
+      },
     });
     if (result.isConfirmed) {
       if (this.sucursal) {
@@ -207,14 +196,75 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
     }
   }
 
+  obtenerDetalleSucursal(): void {
+    this.loading = true;
+    this.route.paramMap.subscribe((params) => {
+      const sucursalId = params.get('id');
+      if (sucursalId) {
+        this.apiService.getSucursalById(parseInt(sucursalId, 10)).subscribe(
+          (sucursal) => {
+            this.sucursal = sucursal;
+            if (this.sucursal) {
+              this.catalogoSucursalService
+                .getAllProductsHTTP(this.sucursal.url)
+                .subscribe(
+                  (response) => {
+                    console.log(
+                      `La sucursal ${this.sucursal?.nombre} está online.`
+                    );
+                    const fechaActual = new Date();
+                    fechaActual.setHours(fechaActual.getHours() - 6);
+                    this.modificarSucursal({
+                      ...this.sucursal!,
+                      estado: 'Online 🟢',
+                      fechaActualizacion: fechaActual,
+                    });
+                  },
+                  (error) => {
+                    console.error(
+                      `La sucursal ${this.sucursal?.nombre} está offline.`
+                    );
+                    const fechaActual = new Date();
+                    fechaActual.setHours(fechaActual.getHours() - 6);
+                    this.modificarSucursal({
+                      ...this.sucursal!,
+                      estado: 'Offline 🔴',
+                      fechaActualizacion: fechaActual,
+                    });
+                  }
+                );
+            }
+          },
+          (error) => {
+            console.error('Error al obtener la sucursal:', error);
+            this.loading = false;
+          }
+        );
+      } else {
+        this.loading = false; 
+      }
+    });
+  }
+
   modificarSucursal(sucursalModificada: Branches): void {
-    if (sucursalModificada) {
-      this.apiService.modificarSucursal(sucursalModificada).subscribe(
-        (resultado: boolean) => {},
-        (error: TipoDeError) => {
-          console.error('Error al modificar la sucursal:', error);
-        }
-      );
+    if (!sucursalModificada) {
+      console.error('Sucursal modificada no es válida');
+      this.loading = false;
+      return;
     }
+    this.apiService.modificarSucursal(sucursalModificada).subscribe(
+      (resultado: boolean) => {
+        if (resultado) {
+          console.log('Sucursal modificada exitosamente');
+        } else {
+          console.error('La modificación de la sucursal no fue exitosa');
+        }
+        this.loading = false;
+      },
+      (error) => {
+        console.error('Error al modificar la sucursal:', error);
+        this.loading = false;
+      }
+    );
   }
 }
