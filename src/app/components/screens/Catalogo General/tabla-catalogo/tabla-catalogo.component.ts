@@ -45,7 +45,7 @@ import { Inventory } from '../../../../Models/Master/inventory';
           <input
             type="text"
             placeholder="Buscar por ID"
-            (input)="filterById($event)"
+            (input)="filterByIdArticulo($event)"
           />
         </div>
         <div class="search-input">
@@ -60,13 +60,6 @@ import { Inventory } from '../../../../Models/Master/inventory';
             type="text"
             placeholder="Buscar por nombre"
             (input)="filterByNombre($event)"
-          />
-        </div>
-        <div class="search-input">
-          <input
-            type="text"
-            placeholder="Buscar por precio"
-            (input)="filterByPrecio($event)"
           />
         </div>
       </form>
@@ -152,40 +145,51 @@ import { Inventory } from '../../../../Models/Master/inventory';
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let index of filteredIndices">
-            <td>{{ filteredProductsList[index].id_producto }}</td>
-            <td>{{ filteredProductsList[index].clave }}</td>
-            <td>{{ filteredProductsList[index].nombre }}</td>
-            <td>
-              {{ getTotalCantidad(filteredProductsList[index].id_producto) }}
-            </td>
-            <td>{{ filteredProductsList[index].precio }}</td>
-            <td>{{ filteredProductsList[index].sincronizacion }}</td>
-            <td>
-              <button
-                class="btn"
-                (click)="abrirModalDetalles(filteredProductsList[index])"
-              >
-                Detalles
-              </button>
-              <button
-                class="btn"
-                (click)="abrirModalEditar(filteredProductsList[index])"
-                *ngIf="mostrarBotonEditar"
-              >
-                Editar
-              </button>
-              <button
-                class="btn"
-                (click)="abrirModalEditar(filteredProductsList[index])"
-                *ngIf="mostrarBotonEliminar"
-              >
-                Deshabilitar
-              </button>
-            </td>
-          </tr>
+          <ng-container *ngFor="let index of paginatedIndices">
+            <tr>
+              <td>{{ filteredProductsList[index].id_producto }}</td>
+              <td>{{ filteredProductsList[index].clave }}</td>
+              <td>{{ filteredProductsList[index].nombre }}</td>
+              <td>
+                {{ getTotalCantidad(filteredProductsList[index].id_producto) }}
+              </td>
+              <td>{{ filteredProductsList[index].precio }}</td>
+              <td>{{ filteredProductsList[index].sincronizacion }}</td>
+              <td>
+                <button
+                  class="btn"
+                  (click)="abrirModalDetalles(filteredProductsList[index])"
+                >
+                  Detalles
+                </button>
+                <button
+                  class="btn"
+                  (click)="abrirModalEditar(filteredProductsList[index])"
+                  *ngIf="mostrarBotonEditar"
+                >
+                  Editar
+                </button>
+                <button
+                  class="btn"
+                  (click)="abrirModalEditar(filteredProductsList[index])"
+                  *ngIf="mostrarBotonEliminar"
+                >
+                  Deshabilitar
+                </button>
+              </td>
+            </tr>
+          </ng-container>
         </tbody>
       </table>
+      <div class="pagination-controls">
+        <button (click)="previousPage()" [disabled]="currentPage === 1">
+          Anterior
+        </button>
+        <span>Página {{ currentPage }} de {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+          Siguiente
+        </button>
+      </div>
     </div>
   `,
   styleUrl: './tabla-catalogo.component.css',
@@ -205,10 +209,8 @@ export class TablaCatalogoComponent {
   currentUser?: Users | null;
   inventarios: any[] = [];
   productoActual: General_Catalogue | null = null;
-
   isDataLoaded: boolean = false;
   inventarioTotal: { [idProducto: number]: number } = {};
-
   branchesUrls: { idSucursal: number; nombre: string; url: string }[] = [];
   allProducts: {
     id_sucursal: number;
@@ -216,6 +218,9 @@ export class TablaCatalogoComponent {
     cantidad: number;
   }[] = [];
   totalProducts: { id_producto: number; cantidad: number }[] = [];
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  paginatedIndices: number[] = [];
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -229,19 +234,19 @@ export class TablaCatalogoComponent {
   ) {}
 
   ngOnInit(): void {
+    this.authService.currentUser.subscribe((user) => {
+      this.currentUser = user;
+      this.getAllRolesPrivilegios();
+    });
     this.apiService.getAllBranchesUrlsConStatus1URL().subscribe(
       (data) => {
         this.branchesUrls = data;
-        this.loadAllProducts();
+        this.loadAllProductsForPage();
       },
       (error) => {
         console.error('Error fetching data', error);
       }
     );
-    this.authService.currentUser.subscribe((user) => {
-      this.currentUser = user;
-    });
-    this.getAllRolesPrivilegios();
     this.initialize();
   }
 
@@ -249,11 +254,11 @@ export class TablaCatalogoComponent {
     try {
       this.productsList =
         await this.catalogoSincronizacionService.getAllVistaCatalogoSincronizacion();
-      const inventariosResponse = await this.inventarioApiService
-        .getInventarios()
-        .toPromise();
-      this.inventarios = inventariosResponse || [];
+      this.inventarios =
+        (await this.inventarioApiService.getInventarios().toPromise()) || [];
+      this.filteredProductsList = [...this.productsList];
       this.resetFilteredProductsList();
+      this.isDataLoaded = true;
       this.cdr.detectChanges();
     } catch (error) {
       console.error(
@@ -270,31 +275,116 @@ export class TablaCatalogoComponent {
     return totalProduct ? totalProduct.cantidad : 0;
   }
 
-  async loadAllProducts(): Promise<void> {
+  resetFilteredProductsList(): void {
+    this.filteredIndices = Array.from(
+      { length: this.filteredProductsList.length },
+      (_, i) => i
+    );
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  private updatePagination() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedIndices = this.filteredIndices.slice(startIndex, endIndex);
+  }
+
+  async loadAllProductsForPage(): Promise<void> {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    const productsForPage = this.filteredProductsList.slice(startIndex, endIndex);
+  
     for (const branch of this.branchesUrls) {
       try {
-        const products: Products[] =
-          await this.catalogoSucursalService.getAllProducts(branch.url, branch.nombre);
-        for (const product of products) {
-          this.allProducts.push({
-            id_sucursal: branch.idSucursal,
-            id_producto: product.idArticulo,
-            cantidad: product.existencia,
+        const productsResponse: Products[] | undefined = await this.catalogoSucursalService.getAllProductsHTTP(branch.url).toPromise();
+  
+        if (productsResponse) {
+          const products = productsResponse;
+          products.forEach((product) => {
+            const matchingProduct = productsForPage.find(p => p.id_producto === product.idArticulo);
+            if (matchingProduct) {
+              this.allProducts.push({
+                id_sucursal: branch.idSucursal,
+                id_producto: product.idArticulo,
+                cantidad: product.existencia,
+              });
+            }
           });
         }
       } catch (error) {
         console.error('Error fetching products for branch', branch, error);
       }
     }
-    const insertionPromises = this.allProducts.map((product) =>
-      this.inventarioApiService.insertOrUpdateInventory(product).toPromise()
-    );
     try {
+      const insertionPromises = this.allProducts.map((product) =>
+        this.inventarioApiService.insertOrUpdateInventory(product).toPromise()
+      );
       await Promise.all(insertionPromises);
-      this.calculateTotalProducts();
+      this.calculateTotalProductsForPage();
     } catch (error) {
       console.error('Error during inventory insertion:', error);
     }
+  }
+  
+  calculateTotalProductsForPage(): void {
+    const productsForPageIds = this.filteredProductsList.map(
+      (product) => product.id_producto
+    );
+    const inventariosForPage = this.inventarios.filter((inv) =>
+      productsForPageIds.includes(inv.id_producto)
+    );
+
+    inventariosForPage.forEach((inv) => {
+      const idProducto = inv.id_producto;
+      const cantidad = inv.cantidad;
+      const existingProduct = this.totalProducts.find(
+        (p) => p.id_producto === idProducto
+      );
+      if (existingProduct) {
+        existingProduct.cantidad += cantidad;
+      } else {
+        this.totalProducts.push({
+          id_producto: idProducto,
+          cantidad: cantidad,
+        });
+      }
+    });
+    this.insertTotalProductsInventoryForPage();
+  }
+
+  insertTotalProductsInventoryForPage() {
+    const productsForPageIds = this.filteredProductsList.map(
+      (product) => product.id_producto
+    );
+    const productsForPage = this.totalProducts.filter((product) =>
+      productsForPageIds.includes(product.id_producto)
+    );
+
+    productsForPage.forEach((product) => {
+      this.catalogoGeneralService
+        .getCatalogueProductObesrvableByID(product.id_producto)
+        .subscribe(
+          (resultado) => {
+            this.productoActual = resultado;
+            if (this.productoActual) {
+              const fechaActual = new Date();
+              fechaActual.setHours(fechaActual.getHours() - 6);
+              this.productoActual.cantidad_total = product.cantidad;
+              this.productoActual.usuario_modificador =
+                this.currentUser!.id_usuario;
+              this.productoActual.fecha_modificado = fechaActual;
+              this.catalogoGeneralService.updateCatalogueProductop(
+                this.productoActual,
+                product.id_producto
+              );
+            }
+          },
+          (error) => {
+            console.error('Ocurrió un error al obtener el producto:', error);
+          }
+        );
+    });
   }
 
   calculateTotalProducts(): void {
@@ -336,9 +426,9 @@ export class TablaCatalogoComponent {
               const fechaActual = new Date();
               fechaActual.setHours(fechaActual.getHours() - 6);
               this.productoActual.cantidad_total = product.cantidad;
-              (this.productoActual.usuario_modificador =
-                this.currentUser!.id_usuario),
-                (this.productoActual.fecha_modificado = fechaActual);
+              this.productoActual.usuario_modificador =
+                this.currentUser!.id_usuario;
+              this.productoActual.fecha_modificado = fechaActual;
               this.catalogoGeneralService.updateCatalogueProductop(
                 this.productoActual,
                 product.id_producto
@@ -370,48 +460,46 @@ export class TablaCatalogoComponent {
     }
   }
 
-  resetFilteredProductsList(): void {
-    this.filteredProductsList = [...this.productsList];
-    this.updateFilteredIndices();
-  }
-
   filterByNombre(event: Event) {
     const text = (event.target as HTMLInputElement).value.toLowerCase();
-    this.filteredProductsList = this.productsList.filter((product) =>
-      product.nombre.toLowerCase().includes(text)
-    );
-    this.updateFilteredIndices();
+    this.filteredIndices = this.productsList
+      .map((product, index) => ({ product, index }))
+      .filter(({ product }) => product.nombre.toLowerCase().includes(text))
+      .map(({ index }) => index);
+    this.currentPage = 1;
+    this.updatePagination();
   }
 
   filterByClave(event: Event) {
     const text = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.filteredProductsList = this.productsList.filter((product) =>
-      product.clave.toLowerCase().includes(text)
-    );
-    this.updateFilteredIndices();
+    this.filteredIndices = this.productsList
+      .map((product, index) => ({ product, index }))
+      .filter(({ product }) => product.clave.toLowerCase().includes(text))
+      .map(({ index }) => index);
+    this.currentPage = 1;
+    this.updatePagination();
   }
 
-  filterById(event: Event) {
+  filterByIdArticulo(event: Event) {
     const text = (event.target as HTMLInputElement).value.trim();
-    this.filteredProductsList = this.productsList.filter((product) =>
-      product.id_producto.toString().startsWith(text)
-    );
-    this.updateFilteredIndices();
+    if (text === '') {
+      this.filteredIndices = Array.from(
+        { length: this.productsList.length },
+        (_, i) => i
+      );
+    } else {
+      const idArticulo = parseInt(text, 10);
+      this.filteredIndices = this.productsList
+        .map((product, index) => ({ product, index }))
+        .filter(({ product }) => product.id_producto === idArticulo)
+        .map(({ index }) => index);
+    }
+    this.currentPage = 1;
+    this.updatePagination();
   }
 
-  filterByPrecio(event: Event) {
-    const text = (event.target as HTMLInputElement).value.trim();
-    this.filteredProductsList = this.productsList.filter((product) =>
-      product.precio.toString().startsWith(text)
-    );
-    this.updateFilteredIndices();
-  }
-
-  private updateFilteredIndices() {
-    this.filteredIndices = Array.from(
-      { length: this.filteredProductsList.length },
-      (_, i) => i
-    );
+  updateFilteredIndices() {
+    this.filteredIndices = this.filteredProductsList.map((_, i) => i);
   }
 
   ordenarPorColumna(columna: keyof VistaCatalogoSincronizacion) {
@@ -421,11 +509,33 @@ export class TablaCatalogoComponent {
       this.columnaOrdenada = columna;
       this.ordenAscendente = true;
     }
+
     this.filteredProductsList.sort((a, b) => {
-      if (this.columnaOrdenada === null) return 0;
-      const order = a[this.columnaOrdenada] > b[this.columnaOrdenada] ? 1 : -1;
-      return this.ordenAscendente ? order : -order;
+      if (a[columna] < b[columna]) {
+        return this.ordenAscendente ? -1 : 1;
+      }
+      if (a[columna] > b[columna]) {
+        return this.ordenAscendente ? 1 : -1;
+      }
+      return 0;
     });
+
+    this.updateFilteredIndices();
+    this.updatePagination();
+  }
+
+  verDetalles(producto: VistaCatalogoSincronizacion) {
+    this.productoSeleccionado = producto;
+    this.mostrarModalDetalles = true;
+  }
+
+  editarProducto(producto: VistaCatalogoSincronizacion) {
+    this.productoSeleccionado = producto;
+    this.mostrarModalEditar = true;
+  }
+
+  eliminarProducto(producto: VistaCatalogoSincronizacion) {
+    // PENDIENTE
   }
 
   abrirModalDetalles(producto: VistaCatalogoSincronizacion): void {
@@ -444,5 +554,23 @@ export class TablaCatalogoComponent {
 
   cerrarModalEditar(): void {
     this.mostrarModalEditar = false;
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagination();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagination();
+    }
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredIndices.length / this.itemsPerPage);
   }
 }

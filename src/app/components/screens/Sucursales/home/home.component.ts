@@ -134,7 +134,7 @@ export class HomeComponent {
     this.apiService.getAllBranchesUrlsConStatus1URL().subscribe(
       (data) => {
         this.branchesUrls = data;
-        this.loadAllProducts();
+        //this.loadAllProducts();
       },
       (error) => {
         console.error('Error obteniendo la data', error);
@@ -159,7 +159,7 @@ export class HomeComponent {
     this.actualizarListaSucursales();
   }
 
-  async loadAllProducts(): Promise<void> {
+  /*async loadAllProducts(): Promise<void> {
     for (const branch of this.branchesUrls) {
       try {
         const products: Products[] =
@@ -242,7 +242,7 @@ export class HomeComponent {
           }
         );
     });
-  }
+  }*/
 
   abrirModal(): void {
     this.mostrarModal = true;

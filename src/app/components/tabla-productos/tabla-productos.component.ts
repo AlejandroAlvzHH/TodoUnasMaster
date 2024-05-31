@@ -109,7 +109,7 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
             </tr>
           </thead>
           <tbody>
-            <ng-container *ngFor="let index of filteredIndices">
+            <ng-container *ngFor="let index of paginatedIndices">
               <tr>
                 <td>{{ filteredProductsList[index].idArticulo }}</td>
                 <td>{{ filteredProductsList[index].clave }}</td>
@@ -144,6 +144,15 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
             </ng-container>
           </tbody>
         </table>
+        <div class="pagination-controls">
+          <button (click)="previousPage()" [disabled]="currentPage === 1">
+            Anterior
+          </button>
+          <span>Página {{ currentPage }} de {{ totalPages }}</span>
+          <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+            Siguiente
+          </button>
+        </div>
       </div>
     </div>
   `,
@@ -159,6 +168,11 @@ export class TablaProductosComponent implements OnInit {
   columnaOrdenada: keyof Products | null = null;
   ordenAscendente: boolean = true;
   @Input() isSalida: boolean = false;
+
+  //PAGINACIÓN PARA QUE NO EXPLOTE
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  paginatedIndices: number[] = [];
 
   constructor(
     private catalogoSucursalService: CatalogoSucursalService,
@@ -233,10 +247,7 @@ export class TablaProductosComponent implements OnInit {
         enCarrito: false,
         botonDesactivado: false,
       }));
-      this.filteredIndices = Array.from(
-        { length: this.filteredProductsList.length },
-        (_, i) => i
-      );
+      this.resetFilteredProductsList();
       this.isDataLoaded = true;
       this.cdr.detectChanges();
     } catch (error) {
@@ -244,53 +255,19 @@ export class TablaProductosComponent implements OnInit {
     }
   }
 
+  private updatePagination() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedIndices = this.filteredIndices.slice(startIndex, endIndex);
+  }
+
   resetFilteredProductsList(): void {
-    this.filteredProductsList = this.productsList.map((product) => ({
-      idArticulo: product.idArticulo,
-      clave: product.clave,
-      nombre: product.nombre,
-      precioVenta: product.precioVenta,
-      precioCompra: product.precioCompra,
-      unidadVenta: product.unidadVenta,
-      unidadCompra: product.unidadCompra,
-      relacion: product.relacion,
-      idImp1: product.idImp1,
-      idImp2: product.idImp2,
-      idRet1: product.idRet1,
-      idRet2: product.idRet2,
-      existencia: product.existencia,
-      observaciones: product.observaciones,
-      neto: product.neto,
-      netoC: product.netoC,
-      inventariable: product.inventariable,
-      costo: product.costo,
-      lotes: product.lotes,
-      series: product.series,
-      precioSug: product.precioSug,
-      oferta: product.oferta,
-      promocion: product.promocion,
-      impCig: product.impCig,
-      color: product.color,
-      precioLista: product.precioLista,
-      condiciones: product.condiciones,
-      utilidad: product.utilidad,
-      alterna: product.alterna,
-      kit: product.kit,
-      dpc: product.dpc,
-      dpv: product.dpv,
-      reorden: product.reorden,
-      maximo: product.maximo,
-      kitSuelto: product.kitSuelto,
-      idClaseMultiple: product.idClaseMultiple,
-      prcFix: product.prcFix,
-      localiza: product.localiza,
-      enCarrito: false,
-      botonDesactivado: false,
-    }));
     this.filteredIndices = Array.from(
       { length: this.filteredProductsList.length },
       (_, i) => i
     );
+    this.currentPage = 1;
+    this.updatePagination();
   }
 
   filterResults(event: Event) {
@@ -307,6 +284,8 @@ export class TablaProductosComponent implements OnInit {
       .map((product, index) => ({ product, index }))
       .filter(({ product }) => product.clave.toLowerCase().includes(text))
       .map(({ index }) => index);
+    this.currentPage = 1;
+    this.updatePagination();
   }
 
   filterByIdArticulo(event: Event) {
@@ -323,6 +302,8 @@ export class TablaProductosComponent implements OnInit {
         .filter(({ product }) => product.idArticulo === idArticulo)
         .map(({ index }) => index);
     }
+    this.currentPage = 1;
+    this.updatePagination();
   }
 
   ordenarPorColumna(columna: keyof Products) {
@@ -348,6 +329,26 @@ export class TablaProductosComponent implements OnInit {
         return 0;
       }
     });
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagination();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagination();
+    }
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredIndices.length / this.itemsPerPage);
   }
 
   @Input()

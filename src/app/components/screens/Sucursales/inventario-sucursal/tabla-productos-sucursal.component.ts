@@ -30,7 +30,7 @@ import { ProductListItem } from '../../../../Models/Master/product_list_item';
           <input
             type="text"
             placeholder="Buscar por nombre"
-            (input)="filterResults($event)"
+            (input)="filterByNombre($event)"
           />
         </div>
       </form>
@@ -107,7 +107,7 @@ import { ProductListItem } from '../../../../Models/Master/product_list_item';
             </tr>
           </thead>
           <tbody>
-            <ng-container *ngFor="let index of filteredIndices">
+            <ng-container *ngFor="let index of paginatedIndices">
               <tr>
                 <td>{{ filteredProductsList[index].idArticulo }}</td>
                 <td>{{ filteredProductsList[index].clave }}</td>
@@ -120,6 +120,15 @@ import { ProductListItem } from '../../../../Models/Master/product_list_item';
             </ng-container>
           </tbody>
         </table>
+        <div class="pagination-controls">
+          <button (click)="previousPage()" [disabled]="currentPage === 1">
+            Anterior
+          </button>
+          <span>Página {{ currentPage }} de {{ totalPages }}</span>
+          <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+            Siguiente
+          </button>
+        </div>
       </div>
     </div>
   `,
@@ -135,6 +144,11 @@ export class TablaProductosSucursalComponent {
   ordenAscendente: boolean = true;
   isDataLoaded: boolean = false;
 
+  //PAGINACIÓN PARA QUE NO EXPLOTE
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  paginatedIndices: number[] = [];
+  
   constructor(
     private catalogoSucursalService: CatalogoSucursalService,
     private cdr: ChangeDetectorRef
@@ -194,10 +208,7 @@ export class TablaProductosSucursalComponent {
         enCarrito: false,
         botonDesactivado: false,
       }));
-      this.filteredIndices = Array.from(
-        { length: this.filteredProductsList.length },
-        (_, i) => i
-      );
+      this.resetFilteredProductsList();
       this.isDataLoaded = true;
       this.cdr.detectChanges();
     } catch (error) {
@@ -205,61 +216,29 @@ export class TablaProductosSucursalComponent {
     }
   }
 
+  private updatePagination() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedIndices = this.filteredIndices.slice(startIndex, endIndex);
+  }
+
   resetFilteredProductsList(): void {
-    this.filteredProductsList = this.productsList.map((product) => ({
-      idArticulo: product.idArticulo,
-      clave: product.clave,
-      nombre: product.nombre,
-      precioVenta: product.precioVenta,
-      precioCompra: product.precioCompra,
-      unidadVenta: product.unidadVenta,
-      unidadCompra: product.unidadCompra,
-      relacion: product.relacion,
-      idImp1: product.idImp1,
-      idImp2: product.idImp2,
-      idRet1: product.idRet1,
-      idRet2: product.idRet2,
-      existencia: product.existencia,
-      observaciones: product.observaciones,
-      neto: product.neto,
-      netoC: product.netoC,
-      inventariable: product.inventariable,
-      costo: product.costo,
-      lotes: product.lotes,
-      series: product.series,
-      precioSug: product.precioSug,
-      oferta: product.oferta,
-      promocion: product.promocion,
-      impCig: product.impCig,
-      color: product.color,
-      precioLista: product.precioLista,
-      condiciones: product.condiciones,
-      utilidad: product.utilidad,
-      alterna: product.alterna,
-      kit: product.kit,
-      dpc: product.dpc,
-      dpv: product.dpv,
-      reorden: product.reorden,
-      maximo: product.maximo,
-      kitSuelto: product.kitSuelto,
-      idClaseMultiple: product.idClaseMultiple,
-      prcFix: product.prcFix,
-      localiza: product.localiza,
-      enCarrito: false,
-      botonDesactivado: false,
-    }));
     this.filteredIndices = Array.from(
       { length: this.filteredProductsList.length },
       (_, i) => i
     );
+    this.currentPage = 1;
+    this.updatePagination();
   }
 
-  filterResults(event: Event) {
+  filterByNombre(event: Event) {
     const text = (event.target as HTMLInputElement).value.toLowerCase();
     this.filteredIndices = this.productsList
       .map((product, index) => ({ product, index }))
       .filter(({ product }) => product.nombre.toLowerCase().includes(text))
       .map(({ index }) => index);
+    this.currentPage = 1;
+    this.updatePagination();
   }
 
   filterByClave(event: Event) {
@@ -268,6 +247,8 @@ export class TablaProductosSucursalComponent {
       .map((product, index) => ({ product, index }))
       .filter(({ product }) => product.clave.toLowerCase().includes(text))
       .map(({ index }) => index);
+    this.currentPage = 1;
+    this.updatePagination();
   }
 
   filterByIdArticulo(event: Event) {
@@ -284,6 +265,8 @@ export class TablaProductosSucursalComponent {
         .filter(({ product }) => product.idArticulo === idArticulo)
         .map(({ index }) => index);
     }
+    this.currentPage = 1;
+    this.updatePagination();
   }
 
   ordenarPorColumna(columna: keyof Products) {
@@ -309,6 +292,26 @@ export class TablaProductosSucursalComponent {
         return 0;
       }
     });
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagination();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagination();
+    }
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredIndices.length / this.itemsPerPage);
   }
 
   @Input()

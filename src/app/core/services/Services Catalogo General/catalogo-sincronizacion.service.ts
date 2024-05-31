@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { VistaCatalogoSincronizacion } from '../../../Models/Master/vista-catalogo-sincronizacion';
+import { HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +12,9 @@ export class CatalogoSincronizacionService {
 
   constructor(private http: HttpClient) {}
 
-  async getAllVistaCatalogoSincronizacion(): Promise<VistaCatalogoSincronizacion[]> {
+  async getAllVistaCatalogoSincronizacion(): Promise<
+    VistaCatalogoSincronizacion[]
+  > {
     try {
       const url = `${this.apiUrl}`;
       const data = await fetch(url, { method: 'GET' });
@@ -19,5 +23,18 @@ export class CatalogoSincronizacionService {
       alert('Error: ' + e);
       return [];
     }
+  }
+
+  getVistaCatalogoSincronizacionPaginated(
+    startIndex: number,
+    itemsPerPage: number
+  ): Observable<VistaCatalogoSincronizacion[]> {
+    const params = new HttpParams()
+      .set('startIndex', startIndex.toString())
+      .set('itemsPerPage', itemsPerPage.toString());
+
+    return this.http.get<VistaCatalogoSincronizacion[]>(this.apiUrl, {
+      params,
+    });
   }
 }

@@ -36,6 +36,12 @@ export class CatalogoGeneralService {
     }
   }
 
+  addCatalogueProductHTTP(product: General_Catalogue): Observable<General_Catalogue> {
+    return this.http.post<General_Catalogue>(this.url, product, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   getCatalogueProductObesrvableByID(id: number): Observable<General_Catalogue | null> {
     return this.http.get<General_Catalogue>(`${this.url}/${id}`).pipe(
       catchError(error => {
