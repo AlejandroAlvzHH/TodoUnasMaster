@@ -64,8 +64,8 @@ import { Inventory } from '../../../../Models/Master/inventory';
         </div>
       </form>
     </div>
-    <div *ngIf="!isDataLoaded" class="spinner"></div>
-    <div class="table-container" *ngIf="isDataLoaded">
+    <div *ngIf="isLoading" class="spinner"></div>
+    <div *ngIf="!isLoading" class="table-container">
       <table border="2">
         <thead>
           <tr>
@@ -221,6 +221,7 @@ export class TablaCatalogoComponent {
   currentPage: number = 1;
   itemsPerPage: number = 10;
   paginatedIndices: number[] = [];
+  isLoading: boolean = true;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -258,13 +259,16 @@ export class TablaCatalogoComponent {
         (await this.inventarioApiService.getInventarios().toPromise()) || [];
       this.filteredProductsList = [...this.productsList];
       this.resetFilteredProductsList();
-      this.isDataLoaded = true;
+      await this.loadAllProductsForPage();
+      this.isLoading = false;
       this.cdr.detectChanges();
     } catch (error) {
       console.error(
         'Error al obtener los productos del catálogo general:',
         error
       );
+      this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 
@@ -293,16 +297,24 @@ export class TablaCatalogoComponent {
   async loadAllProductsForPage(): Promise<void> {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    const productsForPage = this.filteredProductsList.slice(startIndex, endIndex);
-  
+    const productsForPage = this.filteredProductsList.slice(
+      startIndex,
+      endIndex
+    );
+
     for (const branch of this.branchesUrls) {
       try {
-        const productsResponse: Products[] | undefined = await this.catalogoSucursalService.getAllProductsHTTP(branch.url).toPromise();
-  
+        const productsResponse: Products[] | undefined =
+          await this.catalogoSucursalService
+            .getAllProductsHTTP(branch.url)
+            .toPromise();
+
         if (productsResponse) {
           const products = productsResponse;
           products.forEach((product) => {
-            const matchingProduct = productsForPage.find(p => p.id_producto === product.idArticulo);
+            const matchingProduct = productsForPage.find(
+              (p) => p.id_producto === product.idArticulo
+            );
             if (matchingProduct) {
               this.allProducts.push({
                 id_sucursal: branch.idSucursal,
@@ -326,7 +338,7 @@ export class TablaCatalogoComponent {
       console.error('Error during inventory insertion:', error);
     }
   }
-  
+
   calculateTotalProductsForPage(): void {
     const productsForPageIds = this.filteredProductsList.map(
       (product) => product.id_producto
