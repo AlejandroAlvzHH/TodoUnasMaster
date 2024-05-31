@@ -153,7 +153,7 @@ import { Inventory } from '../../../../Models/Master/inventory';
               <td>
                 {{ getTotalCantidad(filteredProductsList[index].id_producto) }}
               </td>
-              <td>{{ filteredProductsList[index].precio }}</td>
+              <td>{{ '$' + filteredProductsList[index].precio }}</td>
               <td>{{ filteredProductsList[index].sincronizacion }}</td>
               <td>
                 <button
@@ -169,13 +169,13 @@ import { Inventory } from '../../../../Models/Master/inventory';
                 >
                   Editar
                 </button>
-                <button
+                <!--<button
                   class="btn"
                   (click)="abrirModalEditar(filteredProductsList[index])"
                   *ngIf="mostrarBotonEliminar"
                 >
                   Deshabilitar
-                </button>
+                </button>-->
               </td>
             </tr>
           </ng-container>

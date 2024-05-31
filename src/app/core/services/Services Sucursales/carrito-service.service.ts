@@ -14,14 +14,13 @@ export class CarritoServiceService {
     const items = this.itemsSubject.getValue();
     const index = items.findIndex((i) => i.idArticulo === item.idArticulo);
     if (index !== -1) {
-        items[index].cantidad += item.cantidad;
+      items[index].cantidad += item.cantidad;
     } else {
-        items.push(item);
+      items.push(item);
     }
     items.sort((a, b) => a.idArticulo - b.idArticulo);
     this.itemsSubject.next([...items]);
-}
-
+  }
 
   eliminarItem(index: number) {
     const items = this.itemsSubject.getValue();
@@ -29,6 +28,15 @@ export class CarritoServiceService {
     this.itemsSubject.next(items);
   }
 
+  eliminarItemPorId(idArticulo: number) {
+    const items = this.itemsSubject.getValue();
+    const index = items.findIndex((i) => i.idArticulo === idArticulo);
+    if (index !== -1) {
+      items.splice(index, 1);
+      this.itemsSubject.next([...items]);
+    }
+  }
+  
   actualizarCantidad(index: number, cantidad: number) {
     const items = this.itemsSubject.getValue();
     const existencia = items[index].existencia;

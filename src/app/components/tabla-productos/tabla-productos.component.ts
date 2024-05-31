@@ -114,22 +114,22 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
                 <td>{{ filteredProductsList[index].idArticulo }}</td>
                 <td>{{ filteredProductsList[index].clave }}</td>
                 <td>{{ filteredProductsList[index].nombre }}</td>
-                <td>{{ filteredProductsList[index].precioVenta }}</td>
+                <td>{{ '$' + filteredProductsList[index].precioVenta }}</td>
                 <td>
                   {{ filteredProductsList[index].existencia }}
                   <button
                     class="btn"
                     [ngClass]="{
                       added: filteredProductsList[index].enCarrito,
-                      disabled:
-                        isSalida &&
-                        (filteredProductsList[index].enCarrito ||
-                          filteredProductsList[index].existencia === 0)
+                      'disabled-button':
+                        (isSalida &&
+                          filteredProductsList[index].existencia === 0) ||
+                        filteredProductsList[index].enCarrito
                     }"
                     [disabled]="
-                      isSalida &&
-                      (filteredProductsList[index].enCarrito ||
-                        filteredProductsList[index].existencia === 0)
+                      (isSalida &&
+                        filteredProductsList[index].existencia === 0) ||
+                      filteredProductsList[index].enCarrito
                     "
                     (click)="agregarAlCarrito(filteredProductsList[index])"
                   >
@@ -250,6 +250,7 @@ export class TablaProductosComponent implements OnInit {
       this.resetFilteredProductsList();
       this.isDataLoaded = true;
       this.cdr.detectChanges();
+      this.handleModeChange(this.isSalida);
     } catch (error) {
       console.error('Error al obtener los productos:', error);
     }
@@ -351,6 +352,20 @@ export class TablaProductosComponent implements OnInit {
     return Math.ceil(this.filteredIndices.length / this.itemsPerPage);
   }
 
+  handleModeChange(isSalida: boolean) {
+    if (isSalida) {
+      this.filteredProductsList.forEach(product => {
+        if (product.existencia <= 0) {
+          this.quitarDelCarrito(product.idArticulo);
+        }
+      });
+    }
+  }
+  
+  quitarDelCarrito(idArticulo: number) {
+    this.carritoService.eliminarItem(idArticulo);
+  }
+
   @Input()
   set baseUrl(value: string | undefined) {
     this._baseUrl = value;
@@ -364,6 +379,9 @@ export class TablaProductosComponent implements OnInit {
   }
 
   agregarAlCarrito(item: ProductListItem) {
+    if (this.isSalida && item.existencia === 0) {
+      return;
+    }
     item.enCarrito = true;
     item.botonDesactivado = true;
     this.carritoService.agregarItem({ ...item, cantidad: 1 });

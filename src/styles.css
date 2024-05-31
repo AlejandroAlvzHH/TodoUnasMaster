@@ -101,6 +101,12 @@ button:hover {
   cursor: not-allowed;
 }
 
+.disabled-button {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
 .btn-cerrar {
   font-size: 16px;
   background-color: #6e7881;

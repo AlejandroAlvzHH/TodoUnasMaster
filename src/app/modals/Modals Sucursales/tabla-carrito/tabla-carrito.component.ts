@@ -26,7 +26,7 @@ import { CarritoComunicationService } from '../../../core/services/Services Sucu
             <td>{{ item.idArticulo }}</td>
             <td>{{ item.clave }}</td>
             <td>{{ item.nombre }}</td>
-            <td>{{ item.precioVenta * item.cantidad }}</td>
+            <td>{{ '$' + item.precioVenta * item.cantidad }}</td>
             <td>
               <input
                 type="number"

@@ -112,7 +112,7 @@ import { ProductListItem } from '../../../../Models/Master/product_list_item';
                 <td>{{ filteredProductsList[index].idArticulo }}</td>
                 <td>{{ filteredProductsList[index].clave }}</td>
                 <td>{{ filteredProductsList[index].nombre }}</td>
-                <td>{{ filteredProductsList[index].precioVenta }}</td>
+                <td>{{ '$' +filteredProductsList[index].precioVenta }}</td>
                 <td>
                   {{ filteredProductsList[index].existencia }}
                 </td>
