@@ -2,19 +2,23 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Users } from '../../../Models/Master/users';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:10395/api/UsuariosApi';
-  private rolesPrivilegiosUrl = 'http://localhost:10395/api/VistaRolesPrivilegiosApi';
+  private baseUrl = environment.baseUrl;
+  private urlUsers = `${this.baseUrl}/api/UsuariosApi`;
+  private urlRolesPrivilegios = `${this.baseUrl}/api/VistaRolesPrivilegiosApi`; 
   private currentUserSubject: BehaviorSubject<Users | null>;
   public currentUser: Observable<Users | null>;
   public userPrivileges: any[] = [];
 
   constructor(private http: HttpClient) {
-    this.currentUserSubject = new BehaviorSubject<Users | null>(JSON.parse(localStorage.getItem('currentUser') || 'null'));
+    this.currentUserSubject = new BehaviorSubject<Users | null>(
+      JSON.parse(localStorage.getItem('currentUser') || 'null')
+    );
     this.currentUser = this.currentUserSubject.asObservable();
 
     if (this.currentUserValue) {
@@ -32,7 +36,7 @@ export class AuthService {
 
   async login(username: string, password: string): Promise<Users> {
     return this.http
-      .get<any[]>(`${this.apiUrl}?correo=${username}&contrasena=${password}`)
+      .get<any[]>(`${this.urlUsers}?correo=${username}&contrasena=${password}`)
       .toPromise()
       .then(async (users) => {
         const user = users?.find(
@@ -64,7 +68,9 @@ export class AuthService {
 
   async loadUserPrivileges(userId: number): Promise<void> {
     try {
-      const response = await this.http.get<any[]>(`${this.rolesPrivilegiosUrl}/${userId}`).toPromise();
+      const response = await this.http
+        .get<any[]>(`${this.urlRolesPrivilegios}/${userId}`)
+        .toPromise();
       this.userPrivileges = response || [];
     } catch (error) {
       console.error('Error loading privileges:', error);
@@ -73,7 +79,9 @@ export class AuthService {
   }
 
   hasPrivilege(privilegeName: string): boolean {
-    const hasPrivilege = this.userPrivileges.some(p => p.nombre_privilegio === privilegeName);
+    const hasPrivilege = this.userPrivileges.some(
+      (p) => p.nombre_privilegio === privilegeName
+    );
     console.log('Has privilege:', hasPrivilege);
     return hasPrivilege;
   }
