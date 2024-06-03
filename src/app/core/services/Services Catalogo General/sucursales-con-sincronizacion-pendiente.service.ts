@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { VistaSincronizacionPendienteReciente } from '../../../Models/Master/vista-sincronizacion-pendiente-reciente copy';
+import { VistaSincronizacionPendienteReciente } from '../../../Models/Master/vista-sincronizacion-pendiente-reciente';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({

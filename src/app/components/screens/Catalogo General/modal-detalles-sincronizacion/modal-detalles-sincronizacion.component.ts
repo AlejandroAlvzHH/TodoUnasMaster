@@ -8,7 +8,7 @@ import { CatalogoGeneralService } from '../../../../core/services/Services Catal
 import { CatalogoSucursalService } from '../../../../core/services/Services Catalogo General/catalogo-sucursal.service';
 import { SincronizacionPendienteService } from '../../../../core/services/Services Catalogo General/sincronizacion-pendiente.service';
 import Swal from 'sweetalert2';
-import { VistaSincronizacionPendienteReciente } from '../../../../Models/Master/vista-sincronizacion-pendiente-reciente copy';
+import { VistaSincronizacionPendienteReciente } from '../../../../Models/Master/vista-sincronizacion-pendiente-reciente';
 import { VistaRolesPrivilegios } from '../../../../Models/Master/vista-roles-privilegios';
 import { VistaRolesPrivilegiosService } from '../../../../core/services/Services Configuracion/vista-roles-privilegios.service';
 import { Users } from '../../../../Models/Master/users';

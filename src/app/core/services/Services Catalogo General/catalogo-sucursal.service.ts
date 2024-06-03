@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Products } from '../../../Models/Factuprint/products';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, catchError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { catchError } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Injectable({

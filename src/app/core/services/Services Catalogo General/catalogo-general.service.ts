@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { General_Catalogue } from '../../../Models/Master/general_catalogue';
 import { HttpClient } from '@angular/common/http';
-import { catchError } from 'rxjs';
-import { Observable } from 'rxjs';
-import { of } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({

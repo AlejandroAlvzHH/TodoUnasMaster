@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Movements_Detail } from '../../Models/Master/movements_detail';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DetalleMovimientosService {
-  url = 'http://localhost:10395/api/DetalleMovimientoApi';
+  private baseUrl = environment.baseUrl;
+  private url = `${this.baseUrl}/api/DetalleMovimientoApi`;
+
   constructor(private http: HttpClient) {}
 
   getAllMovimientosDetail(): Observable<Movements_Detail[]> {

@@ -3,18 +3,19 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Inventory } from '../../Models/Master/inventory';
-import { switchMap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InventarioApiService {
-  private apiUrl = 'http://localhost:10395/api/InventarioApi';
+  private baseUrl = environment.baseUrl;
+  private url = `${this.baseUrl}/api/InventarioApi`;
 
   constructor(private http: HttpClient) {}
 
   getInventarios(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+    return this.http.get<any[]>(this.url);
   }
 
   getInventariosFromSucursal(sucursalUrl: string): Observable<any[]> {
@@ -33,12 +34,12 @@ export class InventarioApiService {
   }
 
   postInventory(inventory: Inventory): Observable<any> {
-    return this.http.post(`${this.apiUrl}`, inventory);
+    return this.http.post(`${this.url}`, inventory);
   }
 
   insertOrUpdateInventory(inventory: Inventory): Observable<any> {
     return this.http.put(
-      `${this.apiUrl}/${inventory.id_sucursal}/${inventory.id_producto}`,
+      `${this.url}/${inventory.id_sucursal}/${inventory.id_producto}`,
       inventory
     );
   }

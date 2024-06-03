@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { Branches } from '../../../Models/Master/branches';
-import { map } from 'rxjs';
-import { catchError, throwError } from 'rxjs';
+import { catchError, throwError, Observable, map } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
-  url = 'http://localhost:10395/api/SucursalApi';
+  private baseUrl = environment.baseUrl;
+  private url = `${this.baseUrl}/api/SucursalApi`;
 
   constructor(private http: HttpClient) {}
 

@@ -1,31 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Clinics } from '../../../Models/Master/clinics';
-import { map } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClinicasService {
-  private clinicasUrl = 'http://localhost:10395/api/ClinicasApi';
+  private baseUrl = environment.baseUrl;
+  private url = `${this.baseUrl}/api/ClinicasApi`;
 
   constructor(private http: HttpClient) {}
 
   getClinicas(): Observable<Clinics[]> {
-    return this.http.get<Clinics[]>(this.clinicasUrl);
+    return this.http.get<Clinics[]>(this.url);
   }
 
   getClinicasStatus1(): Observable<Clinics[]> {
-    return this.http.get<Clinics[]>(this.clinicasUrl).pipe(
-      map(clinicas => clinicas.filter(clinica => clinica.status === 1))
-    );
+    return this.http
+      .get<Clinics[]>(this.url)
+      .pipe(
+        map((clinicas) => clinicas.filter((clinica) => clinica.status === 1))
+      );
   }
 
   async getAllClinicas(): Promise<Clinics[]> {
     try {
-      const url = `${this.clinicasUrl}`;
-      const data = await fetch(url, { method: 'GET' });
+      const data = await fetch(this.url, { method: 'GET' });
       return (await data.json()) ?? [];
     } catch (e) {
       alert('Error: ' + e);
@@ -34,7 +36,7 @@ export class ClinicasService {
   }
 
   addClinica(catalogoSalida: Clinics): Observable<Clinics> {
-    return this.http.post<Clinics>(this.clinicasUrl, catalogoSalida);
+    return this.http.post<Clinics>(this.url, catalogoSalida);
   }
 
   async updateClinica(
@@ -42,7 +44,7 @@ export class ClinicasService {
     id_clinica: number
   ): Promise<Clinics | null> {
     try {
-      const response = await fetch(`${this.clinicasUrl}/${id_clinica}`, {
+      const response = await fetch(`${this.url}/${id_clinica}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -60,14 +62,14 @@ export class ClinicasService {
   }
 
   updateStatusClinica(clinica: Clinics): Observable<Clinics> {
-    const updateUrl = `${this.clinicasUrl}/${clinica.id_clinica}`;
-    console.log(updateUrl)
+    const updateUrl = `${this.url}/${clinica.id_clinica}`;
+    console.log(updateUrl);
     return this.http.put<Clinics>(updateUrl, clinica);
   }
 
   async deleteClinica(id_clinica: number): Promise<void> {
     try {
-      const response = await fetch(`${this.clinicasUrl}/${id_clinica}`, {
+      const response = await fetch(`${this.url}/${id_clinica}`, {
         method: 'DELETE',
       });
       if (response.status !== 204) {

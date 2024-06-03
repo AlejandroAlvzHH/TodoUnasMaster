@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Movements } from '../../Models/Master/movements';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovimientosService {
-  url = 'http://localhost:10395/api/MovimientosApi';
+  private baseUrl = environment.baseUrl;
+  private url = `${this.baseUrl}/api/MovimientosApi`;
+
   constructor(private http: HttpClient) {}
 
   getAllMovimientos(): Observable<Movements[]> {
@@ -22,5 +25,3 @@ export class MovimientosService {
     return this.http.post<number | null>(this.url, movimiento);
   }
 }
-
-

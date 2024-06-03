@@ -1,31 +1,35 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { CatalogoSalidas } from '../../../../Models/Master/catalogo_salidas';
-import { map } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CatalogoSalidasService {
-  private catalogoSalidasUrl = 'http://localhost:10395/api/CatalogoSalidasApi';
+  private baseUrl = environment.baseUrl;
+  private url = `${this.baseUrl}/api/CatalogoSalidasApi`;
 
   constructor(private http: HttpClient) {}
 
   getCatalogoSalidas(): Observable<CatalogoSalidas[]> {
-    return this.http.get<CatalogoSalidas[]>(this.catalogoSalidasUrl);
+    return this.http.get<CatalogoSalidas[]>(this.url);
   }
-  
+
   getCatalogoSalidasStatus1(): Observable<CatalogoSalidas[]> {
-    return this.http.get<CatalogoSalidas[]>(this.catalogoSalidasUrl).pipe(
-      map(catalogoSalidas => catalogoSalidas.filter(item => item.status === 1))
-    );
+    return this.http
+      .get<CatalogoSalidas[]>(this.url)
+      .pipe(
+        map((catalogoSalidas) =>
+          catalogoSalidas.filter((item) => item.status === 1)
+        )
+      );
   }
 
   async getAllCatalogoSalidas(): Promise<CatalogoSalidas[]> {
     try {
-      const url = `${this.catalogoSalidasUrl}`;
-      const data = await fetch(url, { method: 'GET' });
+      const data = await fetch(this.url, { method: 'GET' });
       return (await data.json()) ?? [];
     } catch (e) {
       alert('Error: ' + e);
@@ -36,15 +40,12 @@ export class CatalogoSalidasService {
   addMotivoSalida(
     catalogoSalida: CatalogoSalidas
   ): Observable<CatalogoSalidas> {
-    return this.http.post<CatalogoSalidas>(
-      this.catalogoSalidasUrl,
-      catalogoSalida
-    );
+    return this.http.post<CatalogoSalidas>(this.url, catalogoSalida);
   }
 
   updateStatusMotivo(motivo: CatalogoSalidas): Observable<CatalogoSalidas> {
-    const updateUrl = `${this.catalogoSalidasUrl}/${motivo.id_tipo_salida}`;
-    console.log(updateUrl)
+    const updateUrl = `${this.url}/${motivo.id_tipo_salida}`;
+    console.log(updateUrl);
     return this.http.put<CatalogoSalidas>(updateUrl, motivo);
   }
 
@@ -53,16 +54,13 @@ export class CatalogoSalidasService {
     id_tipo_salida: number
   ): Promise<CatalogoSalidas | null> {
     try {
-      const response = await fetch(
-        `${this.catalogoSalidasUrl}/${id_tipo_salida}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(motivo),
-        }
-      );
+      const response = await fetch(`${this.url}/${id_tipo_salida}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(motivo),
+      });
       if (response.status === 204) {
         return null;
       }
@@ -75,12 +73,9 @@ export class CatalogoSalidasService {
 
   async deleteMotivoSalida(id_tipo_salida: number): Promise<void> {
     try {
-      const response = await fetch(
-        `${this.catalogoSalidasUrl}/${id_tipo_salida}`,
-        {
-          method: 'DELETE',
-        }
-      );
+      const response = await fetch(`${this.url}/${id_tipo_salida}`, {
+        method: 'DELETE',
+      });
       if (response.status !== 204) {
         throw new Error('Failed to delete motivo');
       }
