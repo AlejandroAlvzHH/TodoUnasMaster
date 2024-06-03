@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { VistaSincronizacionPendienteReciente } from '../../../Models/Master/vista-sincronizacion-pendiente-reciente copy';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SucursalesConSincronizacionPendienteService {
-  private baseUrl =
-    'http://localhost:10395/api/VistaSincronizacionPendienteReciente';
+  private baseUrl = environment.baseUrl;
+  private url = `${this.baseUrl}/api/VistaSincronizacionPendienteReciente`;
 
   constructor(private http: HttpClient) {}
 
@@ -16,7 +17,7 @@ export class SucursalesConSincronizacionPendienteService {
     id: number
   ): Observable<VistaSincronizacionPendienteReciente[]> {
     return this.http.get<VistaSincronizacionPendienteReciente[]>(
-      `${this.baseUrl}/${id}`
+      `${this.url}/${id}`
     );
   }
 }

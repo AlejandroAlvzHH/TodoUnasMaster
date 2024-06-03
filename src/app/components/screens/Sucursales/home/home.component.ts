@@ -10,7 +10,6 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
 import { Users } from '../../../../Models/Master/users';
 import { VistaRolesPrivilegios } from '../../../../Models/Master/vista-roles-privilegios';
 import { VistaRolesPrivilegiosService } from '../../../../core/services/Services Configuracion/vista-roles-privilegios.service';
-import { PermisosService } from '../../../../core/services/Services Configuracion/permisos.service';
 import { CatalogoSucursalService } from '../../../../core/services/Services Catalogo General/catalogo-sucursal.service';
 import { forkJoin, of, Observable } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
@@ -104,7 +103,6 @@ export class HomeComponent {
     private sidebarOpeningService: SidebaropeningService,
     private authService: AuthService,
     private vistaRolesPrivilegiosService: VistaRolesPrivilegiosService,
-    private permisosService: PermisosService,
     private catalogoSucursalService: CatalogoSucursalService,
     private inventarioApiService: InventarioApiService,
     private catalogoGeneralService: CatalogoGeneralService,
@@ -152,7 +150,6 @@ export class HomeComponent {
       this.currentUser = user;
     });
     this.getAllRolesPrivilegios();
-    const canAddBranch = this.permisosService.canAddBranch();
     this.sidebarOpeningService.isOpen$.subscribe((isOpen) => {
       this.isSidebarOpen = isOpen;
     });

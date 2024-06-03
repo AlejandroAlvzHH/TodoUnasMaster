@@ -4,14 +4,16 @@ import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs';
 import { Observable } from 'rxjs';
 import { of } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CatalogoGeneralService {
-  constructor(private http: HttpClient) {}
+  private baseUrl = environment.baseUrl;
+  private url = `${this.baseUrl}/api/CatalogoGeneralApi`;
 
-  url = `http://localhost:10395/api/CatalogoGeneralApi`;
+  constructor(private http: HttpClient) {}
 
   async getAllCatalogueProducts(): Promise<General_Catalogue[]> {
     try {
@@ -36,15 +38,19 @@ export class CatalogoGeneralService {
     }
   }
 
-  addCatalogueProductHTTP(product: General_Catalogue): Observable<General_Catalogue> {
+  addCatalogueProductHTTP(
+    product: General_Catalogue
+  ): Observable<General_Catalogue> {
     return this.http.post<General_Catalogue>(this.url, product, {
       headers: { 'Content-Type': 'application/json' },
     });
   }
 
-  getCatalogueProductObesrvableByID(id: number): Observable<General_Catalogue | null> {
+  getCatalogueProductObesrvableByID(
+    id: number
+  ): Observable<General_Catalogue | null> {
     return this.http.get<General_Catalogue>(`${this.url}/${id}`).pipe(
-      catchError(error => {
+      catchError((error) => {
         console.error('Error fetching product:', error);
         return of(null);
       })
@@ -101,16 +107,15 @@ export class CatalogoGeneralService {
       },
       body: JSON.stringify(product),
     })
-    .then(response => {
-      if (response.status === 204) {
-        return null;
-      }
-      return response.json();
-    })
-    .catch(error => {
-      console.error('Error updating product:', error);
-      throw error;
-    });
+      .then((response) => {
+        if (response.status === 204) {
+          return null;
+        }
+        return response.json();
+      })
+      .catch((error) => {
+        console.error('Error updating product:', error);
+        throw error;
+      });
   }
-  
 }

@@ -3,12 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { VistaCatalogoSincronizacion } from '../../../Models/Master/vista-catalogo-sincronizacion';
 import { HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CatalogoSincronizacionService {
-  private apiUrl = 'http://localhost:10395/api/VistaCatalogoSincronizacion';
+  private baseUrl = environment.baseUrl;
+  private url = `${this.baseUrl}/api/VistaCatalogoSincronizacion`;
 
   constructor(private http: HttpClient) {}
 
@@ -16,8 +18,7 @@ export class CatalogoSincronizacionService {
     VistaCatalogoSincronizacion[]
   > {
     try {
-      const url = `${this.apiUrl}`;
-      const data = await fetch(url, { method: 'GET' });
+      const data = await fetch(this.url, { method: 'GET' });
       return (await data.json()) ?? [];
     } catch (e) {
       alert('Error: ' + e);
@@ -33,7 +34,7 @@ export class CatalogoSincronizacionService {
       .set('startIndex', startIndex.toString())
       .set('itemsPerPage', itemsPerPage.toString());
 
-    return this.http.get<VistaCatalogoSincronizacion[]>(this.apiUrl, {
+    return this.http.get<VistaCatalogoSincronizacion[]>(this.url, {
       params,
     });
   }

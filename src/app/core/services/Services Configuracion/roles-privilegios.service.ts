@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { VistaRolesPrivilegios } from '../../../Models/Master/vista-roles-privilegios';
-import { Roles_Privileges } from '../../../Models/Master/roles_privileges';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RolesPrivilegiosService {
-  private url = 'http://localhost:10395/api/RolesPrivilegiosApi';
+  private baseUrl = environment.baseUrl;
+  private url = `${this.baseUrl}/api/RolesPrivilegiosApi`;
 
   constructor(private http: HttpClient) {}
 
@@ -18,7 +18,7 @@ export class RolesPrivilegiosService {
     idPrivilegio: number
   ): Observable<void> {
     const deleteUrl = `${this.url}/${idRol}/${idPrivilegio}`;
-    console.log('entra a mi api')
+    console.log('entra a mi api');
     return this.http.delete<void>(deleteUrl).pipe(
       catchError((error) => {
         console.error('Error eliminando roles privilegios:', error);
@@ -28,7 +28,7 @@ export class RolesPrivilegiosService {
   }
 
   createRolesPrivilegios(rolesPrivilegios: any): Observable<any> {
-    console.log(rolesPrivilegios)
+    console.log(rolesPrivilegios);
     return this.http.post<any>(this.url, rolesPrivilegios).pipe(
       catchError((error) => {
         console.error('Error creando roles privilegios:', error);

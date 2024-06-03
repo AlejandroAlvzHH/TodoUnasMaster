@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { VistaRolesPrivilegios } from '../../../Models/Master/vista-roles-privilegios';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VistaRolesPrivilegiosService {
-  private url = 'http://localhost:10395/api/VistaRolesPrivilegiosApi';
+  private baseUrl = environment.baseUrl;
+  private url = `${this.baseUrl}/api/VistaRolesPrivilegiosApi`;
 
   constructor(private http: HttpClient) {}
 

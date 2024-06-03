@@ -2,23 +2,24 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Privileges } from '../../../Models/Master/privileges';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PrivilegiosService {
-  private privilegiosUrl = 'http://localhost:10395/api/PrivilegiosApi';
+  private baseUrl = environment.baseUrl;
+  private url = `${this.baseUrl}/api/PrivilegiosApi`;
 
   constructor(private http: HttpClient) {}
 
   getPrivilegios(): Observable<Privileges[]> {
-    return this.http.get<Privileges[]>(this.privilegiosUrl);
+    return this.http.get<Privileges[]>(this.url);
   }
 
   async getAllPrivilegios(): Promise<Privileges[]> {
     try {
-      const url = `${this.privilegiosUrl}`;
-      const data = await fetch(url, { method: 'GET' });
+      const data = await fetch(this.url, { method: 'GET' });
       return (await data.json()) ?? [];
     } catch (e) {
       alert('Error: ' + e);
@@ -27,7 +28,7 @@ export class PrivilegiosService {
   }
 
   addRol(rol: Privileges): Observable<Privileges> {
-    return this.http.post<Privileges>(this.privilegiosUrl, rol);
+    return this.http.post<Privileges>(this.url, rol);
   }
 
   async updateRol(
@@ -35,7 +36,7 @@ export class PrivilegiosService {
     id_privilegio: number
   ): Promise<Privileges | null> {
     try {
-      const response = await fetch(`${this.privilegiosUrl}/${id_privilegio}`, {
+      const response = await fetch(`${this.url}/${id_privilegio}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

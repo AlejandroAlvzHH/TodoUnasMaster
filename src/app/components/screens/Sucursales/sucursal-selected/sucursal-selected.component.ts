@@ -14,7 +14,6 @@ import { Subscription } from 'rxjs';
 import { VistaRolesPrivilegiosService } from '../../../../core/services/Services Configuracion/vista-roles-privilegios.service';
 import { VistaRolesPrivilegios } from '../../../../Models/Master/vista-roles-privilegios';
 import { Users } from '../../../../Models/Master/users';
-import { PermisosService } from '../../../../core/services/Services Configuracion/permisos.service';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { CatalogoSucursalService } from '../../../../core/services/Services Catalogo General/catalogo-sucursal.service';
 
@@ -104,7 +103,6 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private sidebarOpeningService: SidebaropeningService,
     private router: Router,
-    private permisosService: PermisosService,
     private authService: AuthService,
     private vistaRolesPrivilegiosService: VistaRolesPrivilegiosService,
     private catalogoSucursalService: CatalogoSucursalService
@@ -115,7 +113,6 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const canDeleteBranch = this.permisosService.canDeleteBranch();
     this.authService.currentUser.subscribe((user) => {
       this.currentUser = user;
     });
