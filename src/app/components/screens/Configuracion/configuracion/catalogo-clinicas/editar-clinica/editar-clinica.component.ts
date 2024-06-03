@@ -43,6 +43,7 @@ export class EditarClinicaComponent {
       id_clinica: this.clinica?.id_clinica,
       nombre: this.clinica?.nombre || '',
       direccion: this.clinica?.direccion || '',
+      status: this.clinica?.status,
     };
   }
 

@@ -129,7 +129,7 @@ import { AjustarPrivilegiosComponent } from './ajustar-privilegios/ajustar-privi
                     filteredRolesList[index].id_rol !== 1
                   "
                   class="btn"
-                  (click)="eliminarRol(filteredRolesList[index])"
+                  (click)="deshabilitarRol(filteredRolesList[index])"
                 >
                   Deshabilitar
                 </button>
@@ -245,15 +245,15 @@ export class RolesUsuariosComponent {
     this.mostrarModalPrivilegios = false;
   }
 
-  eliminarRol(rol: Roles) {
+  deshabilitarRol(rol: Roles) {
     Swal.fire({
-      title: 'Confirmar Eliminación',
-      text: `¿Estás seguro de eliminar el rol ${rol.nombre}?`,
+      title: 'Confirmar Deshabilitación',
+      text: `¿Estás seguro de deshabilitar el rol ${rol.nombre}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
-      confirmButtonText: 'Sí, confirmar eliminación',
+      confirmButtonText: 'Sí, confirmar deshabilitación',
       cancelButtonText: 'Cancelar',
     }).then(async (result) => {
       if (result.isConfirmed) {
@@ -262,8 +262,8 @@ export class RolesUsuariosComponent {
           rolModificado.status = 0;
           await this.rolesService.updateStatusRol(rolModificado).subscribe();
           Swal.fire({
-            title: 'Eliminación Realizada',
-            text: `Se eliminó el rol: ${rol.nombre}`,
+            title: 'Deshabilitación Realizada',
+            text: `Se deshabilitó el rol: ${rol.nombre}`,
             icon: 'success',
             confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',
@@ -273,8 +273,8 @@ export class RolesUsuariosComponent {
           });
         } catch (error) {
           Swal.fire({
-            title: 'Eliminación No Realizada',
-            text: `No se logró eliminar el rol: ${rol.nombre}`,
+            title: 'Deshabilitación No Realizada',
+            text: `No se logró deshabilitar el rol: ${rol.nombre}`,
             icon: 'error',
             confirmButtonColor: '#333333',
             confirmButtonText: 'Aceptar',

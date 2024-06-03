@@ -42,6 +42,7 @@ export class EditarRolComponent {
     this.nuevoRol = {
       id_rol: this.rol?.id_rol,
       nombre: this.rol?.nombre || '',
+      status: this.rol?.status
     };
   }
 

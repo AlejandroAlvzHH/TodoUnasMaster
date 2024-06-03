@@ -40,7 +40,7 @@ export class EditarMotivoComponent {
     this.nuevoMotivo = {
       id_tipo_salida: this.motivo?.id_tipo_salida,
       tipo: this.motivo?.tipo || '',
-      status: 1
+      status: this.motivo?.status,
     };
   }
 
@@ -54,7 +54,7 @@ export class EditarMotivoComponent {
         title: 'Campo Vacío',
         text: 'Por favor ingrese un nuevo valor para modificar el motivo.',
         icon: 'warning',
-        confirmButtonColor:'#333333',
+        confirmButtonColor: '#333333',
         confirmButtonText: 'Aceptar',
       });
       return;
@@ -96,7 +96,7 @@ export class EditarMotivoComponent {
                   title: 'Error',
                   text: 'Ha ocurrido un error al registrar la edición del motivo.',
                   icon: 'error',
-                  confirmButtonColor:'#333333',
+                  confirmButtonColor: '#333333',
                   confirmButtonText: 'Aceptar',
                 }).then(() => {
                   this.loading = false;
