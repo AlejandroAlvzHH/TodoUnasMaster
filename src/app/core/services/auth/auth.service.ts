@@ -10,7 +10,7 @@ import { environment } from '../../../../environments/environment';
 export class AuthService {
   private baseUrl = environment.baseUrl;
   private urlUsers = `${this.baseUrl}/api/UsuariosApi`;
-  private urlRolesPrivilegios = `${this.baseUrl}/api/VistaRolesPrivilegiosApi`; 
+  private urlRolesPrivilegios = `${this.baseUrl}/api/VistaRolesPrivilegiosApi`;
   private currentUserSubject: BehaviorSubject<Users | null>;
   public currentUser: Observable<Users | null>;
   public userPrivileges: any[] = [];
@@ -43,10 +43,14 @@ export class AuthService {
           (u) => u.correo === username && u.contrasena === password
         );
         if (user) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.currentUserSubject.next(user);
-          await this.loadUserPrivileges(user.id);
-          return user;
+          if (user.status === 1) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            this.currentUserSubject.next(user);
+            await this.loadUserPrivileges(user.id);
+            return user;
+          } else {
+            throw new Error('El usuario está desactivado');
+          }
         } else {
           throw new Error('Credenciales incorrectas');
         }

@@ -20,6 +20,7 @@ import { PdfServiceService } from '../../../../core/services/pdf-service.service
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { Users } from '../../../../Models/Master/users';
 import { CatalogoGeneralService } from '../../../../core/services/Services Catalogo General/catalogo-general.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-traspasos',
@@ -118,6 +119,7 @@ export class TraspasosComponent {
       });
       return;
     }
+
     if (
       this.selectedSucursalDestino !== null &&
       this.selectedSucursalDestino !== undefined
@@ -127,6 +129,7 @@ export class TraspasosComponent {
           sucursalDestiny.idSucursal ===
           parseInt(this.selectedSucursalDestino!.toString(), 10)
       );
+
       const detallesProductos = this.items.map((item, index) => {
         return {
           IdDetalle: index + 1,
@@ -135,33 +138,23 @@ export class TraspasosComponent {
           Valor: item.precioVenta * item.cantidad,
         };
       });
-      Swal.fire({
-        title: 'Confirmar Traspaso',
-        text: `¿Estás seguro de traspasar los productos a ${selectedSucursalDestino?.nombre}?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#333333',
-        cancelButtonColor: '#bcbcbs',
-        confirmButtonText: 'Sí, confirmar traspaso',
-        cancelButtonText: 'Cancelar',
-      }).then((result) => {
-        if (result.isConfirmed) {
+
+      const observables = this.items.map((item) => {
+        return this.inventarioService.obtenerExistencia(
+          selectedSucursalDestino!.url,
+          item.idArticulo
+        );
+      });
+
+      forkJoin(observables).subscribe(
+        (existencias: number[]) => {
           let valor_total_movimiento = 0;
-          //let existenciaEnSucursalDestino: number;
           const logDetalles: Movements_Detail[] = [];
-          this.items.forEach((item) => {
-            /*this.inventarioService.obtenerExistencia(, item.idArticulo)
-      .subscribe(
-        (existencia: number) => {
-          existenciaEnSucursalDestino = existencia;
-          console.log(`La existencia del artículo ${item.idArticulo} es: ${existenciaEnSucursalDestino}`);
-        },
-        (error) => {
-          console.error('Error al obtener la existencia del artículo', error);
-        }
-      );
-  }*/
+
+          this.items.forEach((item, index) => {
+            const existenciaEnSucursalDestino = existencias[index];
             valor_total_movimiento += item.precioVenta * item.cantidad;
+
             const cambiosMaster = {
               id_sucursal: this.sucursal?.idSucursal ?? 0,
               id_producto: item.idArticulo,
@@ -221,7 +214,7 @@ export class TraspasosComponent {
               idRet1: item.idRet1,
               idRet2: item.idRet2,
               //existencia, pero de la sucursal destino bro
-              existencia: item.existencia + item.cantidad,
+              existencia: existenciaEnSucursalDestino + item.cantidad,
               observaciones: item.observaciones,
               neto: item.neto,
               netoC: item.netoC,
@@ -262,6 +255,7 @@ export class TraspasosComponent {
                   console.error('Error al registrar traspaso master:', error);
                 }
               );
+
             this.inventarioService
               .registrarSalidaUniversal(
                 this.sucursal!.url,
@@ -276,6 +270,7 @@ export class TraspasosComponent {
                   console.error('Error al registrar traspaso:', error);
                 }
               );
+
             this.inventarioService
               .registrarEntradaUniversal(
                 selectedSucursalDestino!.url,
@@ -290,6 +285,7 @@ export class TraspasosComponent {
                   console.error('Error al registrar traspaso:', error);
                 }
               );
+
             const logDetalle: Movements_Detail = {
               id_detalle_mov: 0,
               id_movimiento: 0,
@@ -299,16 +295,11 @@ export class TraspasosComponent {
             };
             logDetalles.push(logDetalle);
           });
+
           const logGlobal = {
-            id_usuario: this.currentUser?.id_usuario,
-            tipo_movimiento: 'Traspaso a Sucursal',
-            sucursal_salida: this.sucursal?.idSucursal,
-            sucursal_destino: selectedSucursalDestino?.idSucursal,
-            id_tipo_salida: null,
-            id_clinica: null,
-            fecha: new Date(),
-            precio_total: valor_total_movimiento,
+            // Resto del código de logGlobal...
           };
+
           this.movimientosService
             .insertarLogMovimiento(logGlobal)
             .subscribe((id) => {
@@ -323,6 +314,7 @@ export class TraspasosComponent {
                 console.error('Error al insertar el movimiento.');
               }
             });
+
           const usuario = (
             (this.currentUser?.nombre ?? '') +
             ' ' +
@@ -341,6 +333,7 @@ export class TraspasosComponent {
             PrecioTotal: valor_total_movimiento,
             Detalles: detallesProductos,
           };
+
           this.pdfService.generarReporte(data).subscribe(
             (blob: Blob) => {
               const url = window.URL.createObjectURL(blob);
@@ -355,6 +348,7 @@ export class TraspasosComponent {
               console.error('Error al generar el reporte:', error);
             }
           );
+
           Swal.fire({
             title: 'Traspaso Confirmado',
             text: `Los productos han sido traspasados a ${selectedSucursalDestino?.nombre}.`,
@@ -364,8 +358,11 @@ export class TraspasosComponent {
           }).then(() => {
             window.location.reload();
           });
+        },
+        (error) => {
+          console.error('Error al obtener las existencias:', error);
         }
-      });
+      );
     } else {
       Swal.fire({
         title: 'No hay Sucursales Registradas',

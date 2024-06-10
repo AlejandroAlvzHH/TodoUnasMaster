@@ -11,8 +11,8 @@ import { Roles } from '../../../../../../Models/Master/roles';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `<div class="modal">
-    <div class="modal-content">
-      <h2>Agregar Clínica al Catálogo de Clínicas</h2>
+    <div class="modal-content" *ngIf="!loadingRoles">
+      <h2>Agregar Usuario al Sistema</h2>
       <div *ngIf="loading" class="loading-overlay">
         <div class="loading-spinner"></div>
       </div>
@@ -25,9 +25,18 @@ import { Roles } from '../../../../../../Models/Master/roles';
       <label>Contraseña:</label>
       <input type="text" [(ngModel)]="nuevoUsuario.contrasena" />
       <label>Correo:</label>
-      <div class="input-container" [ngClass]="{ 'invalid-email': showEmailError }">
-        <input type="text" [(ngModel)]="nuevoUsuario.correo" (input)="onEmailInput()" />
-        <div *ngIf="showEmailError" class="error-message">Por favor ingrese un correo válido.</div>
+      <div
+        class="input-container"
+        [ngClass]="{ 'invalid-email': showEmailError }"
+      >
+        <input
+          type="text"
+          [(ngModel)]="nuevoUsuario.correo"
+          (input)="onEmailInput()"
+        />
+        <div *ngIf="showEmailError" class="error-message">
+          Por favor ingrese un correo válido.
+        </div>
       </div>
       <label>Rol:</label>
       <select [(ngModel)]="selectedRol">
@@ -39,6 +48,9 @@ import { Roles } from '../../../../../../Models/Master/roles';
         <button class="btn" (click)="agregarUsuario()">Añadir</button>
         <button class="btn-cerrar" (click)="cerrarModal()">Cancelar</button>
       </div>
+    </div>
+    <div *ngIf="loadingRoles" class="loading-overlay">
+      <div class="loading-spinner"></div>
     </div>
   </div>`,
   styleUrl: './agregar-contrasenas.component.css',
@@ -54,9 +66,10 @@ export class AgregarContrasenasComponent {
     apellido_materno: '',
     contrasena: '',
     correo: '',
-    id_rol: 1,
+    id_rol: null,
     status: 1,
   };
+  loadingRoles: boolean = true;
   emailTimer: any;
   showEmailError: boolean = false;
 
@@ -66,44 +79,46 @@ export class AgregarContrasenasComponent {
   ) {}
 
   ngOnInit(): void {
+    this.loadingRoles = true;
     this.rolesService.getRoles().subscribe(
       (roles) => {
-        this.roles = roles;
+        this.roles = roles.filter((role) => role.status === 1);
         if (this.roles.length > 0) {
           this.selectedRol = this.roles[0].id_rol;
+          this.nuevoUsuario.id_rol = this.roles[0].id_rol;
         }
+        this.loadingRoles = false;
       },
       (error) => {
         console.error('Error al obtener los roles: ', error);
+        this.loadingRoles = false;
       }
     );
   }
+
   cerrarModal() {
     this.cancelar.emit();
   }
 
   onEmailInput(): void {
-    // Reiniciar el temporizador cada vez que el usuario escribe en el campo de correo
     clearTimeout(this.emailTimer);
     this.emailTimer = setTimeout(() => {
-      // Verificar si el correo es válido después de un cierto tiempo
       this.showEmailError = !this.isValidEmail(this.nuevoUsuario.correo);
-    }, 500); // Tiempo de espera en milisegundos (por ejemplo, 500 ms)
+    }, 500);
   }
 
   isValidEmail(email: string): boolean {
-    // Expresión regular para validar el formato del correo electrónico
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
 
   agregarUsuario(): void {
     if (
-      this.nuevoUsuario.nombre == '' ||
-      this.nuevoUsuario.apellido_paterno == '' ||
-      this.nuevoUsuario.apellido_materno == '' ||
-      this.nuevoUsuario.contrasena == '' ||
-      this.nuevoUsuario.correo == '' ||
+      this.nuevoUsuario.nombre === '' ||
+      this.nuevoUsuario.apellido_paterno === '' ||
+      this.nuevoUsuario.apellido_materno === '' ||
+      this.nuevoUsuario.contrasena === '' ||
+      this.nuevoUsuario.correo === '' ||
       !this.isValidEmail(this.nuevoUsuario.correo)
     ) {
       Swal.fire({
@@ -115,12 +130,40 @@ export class AgregarContrasenasComponent {
       });
       return;
     }
+    this.usuariosService
+      .verificarCorreoExistente(this.nuevoUsuario.correo)
+      .subscribe(
+        (existe) => {
+          if (existe) {
+            Swal.fire({
+              title: 'Correo Existente',
+              text: 'El correo ingresado ya está registrado. Por favor ingrese un correo diferente.',
+              icon: 'error',
+              confirmButtonColor: '#333333',
+              confirmButtonText: 'Aceptar',
+            });
+          } else {
+            this.confirmarAgregarUsuario();
+          }
+        },
+        (error) => {
+          Swal.fire({
+            title: 'Error',
+            text: 'Ha ocurrido un error al verificar el correo.',
+            icon: 'error',
+            confirmButtonColor: '#333333',
+            confirmButtonText: 'Aceptar',
+          });
+        }
+      );
+  }
+
+  confirmarAgregarUsuario(): void {
     Swal.fire({
       title: 'Confirmar Registro',
       text: `¿Estás seguro de registrar el nuevo usuario ${this.nuevoUsuario.nombre}?`,
       icon: 'question',
       showCancelButton: true,
-      showConfirmButton: true,
       confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
       confirmButtonText: 'Sí, confirmar registro',

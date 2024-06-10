@@ -14,8 +14,8 @@ import { firstValueFrom } from 'rxjs';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="modal">
-      <div class="modal-content">
-        <h2>Editar Motivo</h2>
+      <div class="modal-content" *ngIf="!loadingRoles">
+        <h2>Editar Usuario</h2>
         <div *ngIf="loading" class="loading-overlay">
           <div class="loading-spinner"></div>
         </div>
@@ -28,7 +28,19 @@ import { firstValueFrom } from 'rxjs';
         <label>Contraseña:</label>
         <input type="text" [(ngModel)]="nuevoUsuario.contrasena" />
         <label>Correo:</label>
-        <input type="text" [(ngModel)]="nuevoUsuario.correo" />
+        <div
+          class="input-container"
+          [ngClass]="{ 'invalid-email': showEmailError }"
+        >
+          <input
+            type="text"
+            [(ngModel)]="nuevoUsuario.correo"
+            (input)="onEmailInput()"
+          />
+          <div *ngIf="showEmailError" class="error-message">
+            Por favor ingrese un correo válido.
+          </div>
+        </div>
         <label>Rol:</label>
         <select [(ngModel)]="selectedRol">
           <option *ngFor="let rol of roles" [value]="rol.id_rol">
@@ -41,6 +53,9 @@ import { firstValueFrom } from 'rxjs';
             Cancelar
           </button>
         </div>
+      </div>
+      <div *ngIf="loadingRoles" class="loading-overlay">
+        <div class="loading-spinner"></div>
       </div>
     </div>
   `,
@@ -55,6 +70,10 @@ export class EditarContrasenasComponent {
   contrasena: Users | null = null;
   nuevoUsuario: any = {};
 
+  loadingRoles: boolean = true;
+  emailTimer: any;
+  showEmailError: boolean = false;
+
   constructor(
     private usuariosService: UsuariosService,
     private rolesService: RolesService
@@ -62,6 +81,7 @@ export class EditarContrasenasComponent {
 
   async ngOnInit(): Promise<void> {
     this.loading = true;
+    this.loadingRoles = true;
     try {
       this.contrasena = await firstValueFrom(
         this.usuariosService.getUserById(this.id_usuario!)
@@ -80,16 +100,31 @@ export class EditarContrasenasComponent {
       this.roles = await firstValueFrom(this.rolesService.getRoles());
       if (this.roles.length > 0) {
         this.selectedRol = this.roles[0].id_rol;
+        this.loadingRoles = false;
       }
     } catch (error) {
       console.error('Error fetching user or roles:', error);
+      this.loadingRoles = false;
     } finally {
       this.loading = false;
+      this.loadingRoles = false;
     }
   }
 
   cerrarModalEditar() {
     this.cancelar.emit();
+  }
+
+  onEmailInput(): void {
+    clearTimeout(this.emailTimer);
+    this.emailTimer = setTimeout(() => {
+      this.showEmailError = !this.isValidEmail(this.nuevoUsuario.correo);
+    }, 500);
+  }
+
+  isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 
   async editarUsuario() {
@@ -103,7 +138,6 @@ export class EditarContrasenasComponent {
       });
       return;
     }
-
     Swal.fire({
       title: 'Confirmar Edición',
       text: `¿Estás seguro de registrar el nuevo usuario ${this.nuevoUsuario.nombre}?`,

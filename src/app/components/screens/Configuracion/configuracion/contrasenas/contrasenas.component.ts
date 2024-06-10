@@ -45,7 +45,7 @@ import { VistaUsuarioDetalleService } from '../../../../../core/services/Service
         (cancelar)="cerrarModalEditar()"
       ></app-editar-contrasenas>
       <div class="flex flex-col">
-        <div class="overflow-x-auto">
+        <div class="table-container overflow-x-auto">
           <div class="inline-block min-w-full py-1">
             <div class="overflow-hidden">
               <table class="min-w-full text-left text-xs font-light">

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Users } from '../../../Models/Master/users';
 import { environment } from '../../../../environments/environment';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -39,4 +40,11 @@ export class UsuariosService {
     console.log(updateUrl)
     return this.http.put<Users>(updateUrl, usuario);
   }
+
+  verificarCorreoExistente(correo: string): Observable<boolean> {
+    const params = new HttpParams().set('correo', correo);
+    const verificarUrl = `${this.url}/existe-correo`;
+    return this.http.get<boolean>(verificarUrl, { params });
+  }
+  
 }

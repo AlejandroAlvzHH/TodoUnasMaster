@@ -63,6 +63,14 @@ export class LoginComponent {
           confirmButtonColor: '#333333',
           confirmButtonText: 'Aceptar',
         });
+      } else if (error.message === 'El usuario está desactivado') {
+        Swal.fire({
+          title: 'Usuario Desactivado',
+          text: 'Su usuario está desactivado, por favor contacte al administrador.',
+          icon: 'error',
+          confirmButtonColor: '#333333',
+          confirmButtonText: 'Aceptar',
+        });
       } else {
         Swal.fire({
           title: 'Error de conexión',

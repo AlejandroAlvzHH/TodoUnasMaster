@@ -31,7 +31,7 @@ export class InventarioService {
     urlServicios: string,
     idArticulo: number
   ): Observable<number> {
-    const apiUrl = `${urlServicios}/api/CatalogoGeneralApi/${idArticulo}`;
+    const apiUrl = `${urlServicios}/api/ProductApi/${idArticulo}`;
     return this.http
       .get<Products>(apiUrl)
       .pipe(map((producto: Products) => producto.existencia));

@@ -228,32 +228,44 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let index of filteredIndices">
-                <td>{{ filteredMovementsList[index].id_movimiento }}</td>
-                <td>{{ filteredMovementsList[index].nombre_usuario }}</td>
-                <td>{{ filteredMovementsList[index].tipo_movimiento }}</td>
-                <td>{{ filteredMovementsList[index].sucursal_salida }}</td>
-                <td>{{ filteredMovementsList[index].sucursal_destino }}</td>
-                <td>{{ filteredMovementsList[index].tipo_salida }}</td>
-                <td>{{ filteredMovementsList[index].nombre_clinica }}</td>
-                <td>
-                  {{ filteredMovementsList[index].fecha | date : 'short' }}
-                </td>
-                <td>
-                  {{ filteredMovementsList[index].precio_total }}
-                </td>
-                <td>
-                  <button
-                    class="btn"
-                    (click)="abrirModal(filteredMovementsList[index])"
-                  >
-                    Ver Detalle
-                  </button>
-                </td>
-              </tr>
+              <ng-container *ngFor="let index of paginatedIndices">
+                <tr *ngFor="let index of filteredIndices">
+                  <td>{{ filteredMovementsList[index].id_movimiento }}</td>
+                  <td>{{ filteredMovementsList[index].nombre_usuario }}</td>
+                  <td>{{ filteredMovementsList[index].tipo_movimiento }}</td>
+                  <td>{{ filteredMovementsList[index].sucursal_salida }}</td>
+                  <td>{{ filteredMovementsList[index].sucursal_destino }}</td>
+                  <td>{{ filteredMovementsList[index].tipo_salida }}</td>
+                  <td>{{ filteredMovementsList[index].nombre_clinica }}</td>
+                  <td>
+                    {{ filteredMovementsList[index].fecha | date : 'short' }}
+                  </td>
+                  <td>
+                    {{ filteredMovementsList[index].precio_total }}
+                  </td>
+                  <td>
+                    <button
+                      class="btn"
+                      (click)="abrirModal(filteredMovementsList[index])"
+                    >
+                      Ver Detalle
+                    </button>
+                  </td>
+                </tr>
+              </ng-container>
             </tbody>
           </table>
         </div>
+        <div class="pagination-controls mt-4">
+          <button (click)="previousPage()" [disabled]="currentPage === 1">
+            Anterior
+          </button>
+          <span>Página {{ currentPage }} de {{ totalPages }}</span>
+          <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+            Siguiente
+          </button>
+        </div>
+        <br />
       </div>
     </main>`,
   styleUrl: './historicos.component.css',
@@ -270,6 +282,10 @@ export class HistoricosComponent {
   ordenAscendente: boolean = true;
 
   isDataLoaded: boolean = false;
+
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  paginatedIndices: number[] = [];
 
   constructor(
     private sidebarOpeningService: SidebaropeningService,
@@ -288,6 +304,7 @@ export class HistoricosComponent {
     try {
       this.movementsList =
         await this.historicosMovimientosService.getAllMovimientos();
+      console.log('Movements List:', this.movementsList);
       this.filteredMovementsList = this.movementsList.map((movement) => ({
         id_movimiento: movement.id_movimiento,
         nombre_usuario: movement.nombre_usuario,
@@ -304,7 +321,9 @@ export class HistoricosComponent {
         (_, i) => i
       );
       this.isDataLoaded = true;
+      this.updatePagination();
       this.cdr.detectChanges();
+      console.log(this.filteredMovementsList);
     } catch (error) {
       console.error('Error al obtener los movimientos:', error);
     }
@@ -488,6 +507,30 @@ export class HistoricosComponent {
 
   cerrarModal(): void {
     this.mostrarModal = false;
+  }
+
+  private updatePagination() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedIndices = this.filteredIndices.slice(startIndex, endIndex);
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagination();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagination();
+    }
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredIndices.length / this.itemsPerPage);
   }
 
   toggleSidebar(): void {

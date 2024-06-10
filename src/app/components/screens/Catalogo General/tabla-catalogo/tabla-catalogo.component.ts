@@ -336,14 +336,12 @@ export class TablaCatalogoComponent {
       startIndex,
       endIndex
     );
-
     for (const branch of this.branchesUrls) {
       try {
         const productsResponse: Products[] | undefined =
           await this.catalogoSucursalService
             .getAllProductsHTTP(branch.url)
             .toPromise();
-
         if (productsResponse) {
           const products = productsResponse;
           products.forEach((product) => {
@@ -381,7 +379,6 @@ export class TablaCatalogoComponent {
     const inventariosForPage = this.inventarios.filter((inv) =>
       productsForPageIds.includes(inv.id_producto)
     );
-
     inventariosForPage.forEach((inv) => {
       const idProducto = inv.id_producto;
       const cantidad = inv.cantidad;
@@ -407,7 +404,6 @@ export class TablaCatalogoComponent {
     const productsForPage = this.totalProducts.filter((product) =>
       productsForPageIds.includes(product.id_producto)
     );
-
     productsForPage.forEach((product) => {
       this.catalogoGeneralService
         .getCatalogueProductObesrvableByID(product.id_producto)
@@ -556,7 +552,6 @@ export class TablaCatalogoComponent {
       this.columnaOrdenada = columna;
       this.ordenAscendente = true;
     }
-
     this.filteredProductsList.sort((a, b) => {
       if (a[columna] < b[columna]) {
         return this.ordenAscendente ? -1 : 1;
@@ -566,7 +561,6 @@ export class TablaCatalogoComponent {
       }
       return 0;
     });
-
     this.updateFilteredIndices();
     this.updatePagination();
   }
