@@ -36,7 +36,7 @@ import { RolesService } from '../../core/services/Services Configuracion/roles.s
       </ul>
     </aside>
   `,
-  styleUrl: './sidebar.component.css',
+  styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent implements OnInit {
   isOpen = false;

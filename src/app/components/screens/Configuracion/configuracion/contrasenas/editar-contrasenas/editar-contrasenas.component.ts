@@ -63,7 +63,9 @@ export class EditarContrasenasComponent {
   async ngOnInit(): Promise<void> {
     this.loading = true;
     try {
-      this.contrasena = await firstValueFrom(this.usuariosService.getUserById(this.id_usuario!));
+      this.contrasena = await firstValueFrom(
+        this.usuariosService.getUserById(this.id_usuario!)
+      );
       console.log(this.contrasena);
       this.nuevoUsuario = {
         id_usuario: this.contrasena.id_usuario,
@@ -115,7 +117,9 @@ export class EditarContrasenasComponent {
       if (result.isConfirmed) {
         this.loading = true;
         try {
-          await firstValueFrom(this.usuariosService.updateStatusUsuario(this.nuevoUsuario));
+          await firstValueFrom(
+            this.usuariosService.updateStatusUsuario(this.nuevoUsuario)
+          );
           Swal.fire({
             title: 'Éxito',
             text: 'El usuario editado se ha registrado correctamente.',

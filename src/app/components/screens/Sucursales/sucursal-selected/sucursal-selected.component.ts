@@ -83,6 +83,8 @@ type TipoDeError = HttpErrorResponse;
           >
         </div>
       </div>
+      <br />
+      <br />
     </main>`,
   styleUrls: ['./sucursal-selected.component.css'],
 })
@@ -238,7 +240,7 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
           }
         );
       } else {
-        this.loading = false; 
+        this.loading = false;
       }
     });
   }

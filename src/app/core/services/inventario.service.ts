@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
+import { Products } from '../../Models/Factuprint/products';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InventarioService {
-
   constructor(private http: HttpClient) {}
 
   registrarEntradaUniversal(
@@ -25,5 +25,15 @@ export class InventarioService {
   ): Observable<any> {
     const apiUrl = `${urlServicios}/api/ProductApi/${idArticulo}`;
     return this.http.put<any>(apiUrl, changes);
+  }
+
+  obtenerExistencia(
+    urlServicios: string,
+    idArticulo: number
+  ): Observable<number> {
+    const apiUrl = `${urlServicios}/api/CatalogoGeneralApi/${idArticulo}`;
+    return this.http
+      .get<Products>(apiUrl)
+      .pipe(map((producto: Products) => producto.existencia));
   }
 }

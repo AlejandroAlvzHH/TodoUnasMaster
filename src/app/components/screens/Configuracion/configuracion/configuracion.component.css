@@ -23,10 +23,3 @@ h2 {
   margin-top: 1%;
   font-family: "Montserrat", sans-serif;
 }
-
-.menu-container {
-  max-width: 80%;
-  margin: 2vh auto 0;
-  padding: 1vh 2%;
-  border-radius: 5px;
-}

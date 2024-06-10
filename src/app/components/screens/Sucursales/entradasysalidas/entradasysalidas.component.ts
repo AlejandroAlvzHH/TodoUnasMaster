@@ -84,17 +84,15 @@ import { CatalogoGeneralService } from '../../../../core/services/Services Catal
         [isSalida]="!isEntradaSelected"
         (cerrar)="cerrarModal()"
       ></app-tabla-carrito>
-      <div class="table">
-        <br />
-        <div class="subtitle-container-especial">
-          <h2>Inventario en {{ sucursal?.nombre }}</h2>
-        </div>
-        <app-tabla-productos
-          [isSalida]="!isEntradaSelected"
-          [baseUrl]="sucursal?.url"
-          #tablaProductos
-        ></app-tabla-productos>
+      <br />
+      <div class="subtitle-container-especial">
+        <h2>Inventario en {{ sucursal?.nombre }}</h2>
       </div>
+      <app-tabla-productos
+        [isSalida]="!isEntradaSelected"
+        [baseUrl]="sucursal?.url"
+        #tablaProductos
+      ></app-tabla-productos>
     </main> `,
   styleUrl: './entradasysalidas.component.css',
 })

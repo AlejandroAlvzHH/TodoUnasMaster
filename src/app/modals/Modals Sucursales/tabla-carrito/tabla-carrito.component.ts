@@ -9,38 +9,59 @@ import { CarritoComunicationService } from '../../../core/services/Services Sucu
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="table-container">
+    <div class="table-container overflow-x-auto">
       <button class="btn" (click)="cerrarModal()">Cerrar</button>
-      <table border="2">
-        <thead>
-          <tr>
-            <th scope="col">Id_Artículo</th>
-            <th scope="col">Clave</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">Precio</th>
-            <th scope="col">Cantidad</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of items; let i = index">
-            <td>{{ item.idArticulo }}</td>
-            <td>{{ item.clave }}</td>
-            <td>{{ item.nombre }}</td>
-            <td>{{ '$' + item.precioVenta * item.cantidad }}</td>
-            <td>
-              <input
-                type="number"
-                [min]="1"
-                [max]="item.existencia"
-                [(ngModel)]="item.cantidad"
-                (input)="validarCantidad($event, item)"
-                class="quantity-input"
-              />
-              <button class="btn" (click)="eliminarItem(i)">Eliminar</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="flex flex-col">
+        <div class="overflow-x-auto">
+          <div class="inline-block min-w-full py-1">
+            <div class="overflow-hidden">
+              <table class="min-w-full text-left text-xs font-light">
+                <thead class="border-b border-neutral-200 font-medium">
+                  <tr>
+                    <th scope="col" class="px-2 py-1">Id Artículo</th>
+                    <th scope="col" class="px-2 py-1">Clave</th>
+                    <th scope="col" class="px-2 py-1">Nombre</th>
+                    <th scope="col" class="px-2 py-1">Precio</th>
+                    <th scope="col" class="px-2 py-1">Cantidad</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let item of items; let i = index"
+                    class="border-b border-neutral-200"
+                  >
+                    <td class="whitespace-nowrap px-2 py-1 font-medium">
+                      {{ item.idArticulo }}
+                    </td>
+                    <td class="whitespace-nowrap px-2 py-1 font-medium">
+                      {{ item.clave }}
+                    </td>
+                    <td class="whitespace-nowrap px-2 py-1 font-medium">
+                      {{ item.nombre }}
+                    </td>
+                    <td class="whitespace-nowrap px-2 py-1 font-medium">
+                      {{ '$' + item.precioVenta * item.cantidad }}
+                    </td>
+                    <td class="whitespace-nowrap px-2 py-1 font-medium">
+                      <input
+                        type="number"
+                        [min]="1"
+                        [max]="item.existencia"
+                        [(ngModel)]="item.cantidad"
+                        (input)="validarCantidad($event, item)"
+                        class="quantity-input"
+                      />
+                      <button class="btn" (click)="eliminarItem(i)">
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   `,
   styleUrl: './tabla-carrito.component.css',

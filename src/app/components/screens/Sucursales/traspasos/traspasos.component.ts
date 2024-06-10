@@ -147,15 +147,26 @@ export class TraspasosComponent {
       }).then((result) => {
         if (result.isConfirmed) {
           let valor_total_movimiento = 0;
+          //let existenciaEnSucursalDestino: number;
           const logDetalles: Movements_Detail[] = [];
           this.items.forEach((item) => {
+            /*this.inventarioService.obtenerExistencia(, item.idArticulo)
+      .subscribe(
+        (existencia: number) => {
+          existenciaEnSucursalDestino = existencia;
+          console.log(`La existencia del artículo ${item.idArticulo} es: ${existenciaEnSucursalDestino}`);
+        },
+        (error) => {
+          console.error('Error al obtener la existencia del artículo', error);
+        }
+      );
+  }*/
             valor_total_movimiento += item.precioVenta * item.cantidad;
             const cambiosMaster = {
               id_sucursal: this.sucursal?.idSucursal ?? 0,
               id_producto: item.idArticulo,
               cantidad: item.existencia - item.cantidad,
             };
-            //const existenciaSucursalDestino = 
             const cambiosSalida = {
               idArticulo: item.idArticulo,
               clave: item.clave,
@@ -209,6 +220,7 @@ export class TraspasosComponent {
               idImp2: item.idImp2,
               idRet1: item.idRet1,
               idRet2: item.idRet2,
+              //existencia, pero de la sucursal destino bro
               existencia: item.existencia + item.cantidad,
               observaciones: item.observaciones,
               neto: item.neto,

@@ -2,8 +2,6 @@ input[type="text"] {
   padding: 8px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  width: 200px;
-  margin-bottom: 8px;
 }
 
 .arrow-icon {
@@ -30,28 +28,8 @@ input[type="text"] {
   text-decoration: underline;
 }
 
-.search-form {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.search-input {
-  flex: 1;
-  margin-right: 10px;
-}
-
-.search-input:last-child {
-  margin-right: 0;
-}
-
-h1 {
+h1,
+h2 {
   margin-top: 1%;
   font-family: "Montserrat", sans-serif;
-}
-
-.table-container {
-  margin: 0 auto;
-  width: 90%;
-  max-width: 100%;
 }

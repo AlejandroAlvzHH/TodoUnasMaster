@@ -13,138 +13,167 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
   template: `
     <div>
       <br />
-      <form class="search-form">
-        <div class="search-input">
-          <input
-            type="text"
-            placeholder="Buscar por ID de artículo"
-            (input)="filterByIdArticulo($event)"
-          />
-        </div>
-        <div class="search-input">
-          <input
-            type="text"
-            placeholder="Buscar por clave"
-            (input)="filterByClave($event)"
-          />
-        </div>
-        <div class="search-input">
-          <input
-            type="text"
-            placeholder="Buscar por nombre"
-            (input)="filterResults($event)"
-          />
-        </div>
-      </form>
       <div *ngIf="!isDataLoaded" class="spinner"></div>
-      <div class="table-container" *ngIf="isDataLoaded">
-        <table border="2">
-          <thead>
-            <tr>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('idArticulo')"
-                [class.interactive]="columnaOrdenada === 'idArticulo'"
-              >
-                Id_Artículo
-                <i
-                  *ngIf="columnaOrdenada === 'idArticulo'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('clave')"
-                [class.interactive]="columnaOrdenada === 'clave'"
-              >
-                Clave
-                <i
-                  *ngIf="columnaOrdenada === 'clave'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('nombre')"
-                [class.interactive]="columnaOrdenada === 'nombre'"
-              >
-                Nombre
-                <i
-                  *ngIf="columnaOrdenada === 'nombre'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('precioVenta')"
-                [class.interactive]="columnaOrdenada === 'precioVenta'"
-              >
-                Precio
-                <i
-                  *ngIf="columnaOrdenada === 'precioVenta'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('existencia')"
-                [class.interactive]="columnaOrdenada === 'existencia'"
-              >
-                Existencia
-                <i
-                  *ngIf="columnaOrdenada === 'existencia'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngFor="let index of paginatedIndices">
-              <tr>
-                <td>{{ filteredProductsList[index].idArticulo }}</td>
-                <td>{{ filteredProductsList[index].clave }}</td>
-                <td>{{ filteredProductsList[index].nombre }}</td>
-                <td>{{ '$' + filteredProductsList[index].precioVenta }}</td>
-                <td>
-                  {{ filteredProductsList[index].existencia }}
-                  <button
-                    class="btn"
-                    [ngClass]="{
-                      added: filteredProductsList[index].enCarrito,
-                      'disabled-button':
-                        (isSalida &&
-                          filteredProductsList[index].existencia === 0) ||
-                        filteredProductsList[index].enCarrito
-                    }"
-                    [disabled]="
-                      (isSalida &&
-                        filteredProductsList[index].existencia === 0) ||
-                      filteredProductsList[index].enCarrito
-                    "
-                    (click)="agregarAlCarrito(filteredProductsList[index])"
-                  >
-                    {{
-                      filteredProductsList[index].enCarrito
-                        ? 'Agregado'
-                        : 'Agregar'
-                    }}
-                  </button>
-                </td>
-              </tr>
-            </ng-container>
-          </tbody>
-        </table>
-        <div class="pagination-controls">
+      <div *ngIf="isDataLoaded" class="table-container overflow-x-auto">
+        <div class="mb-4 flex justify-between" style="width: 100%">
+          <form class="search-form flex flex-wrap gap-2 md:flex-nowrap w-full">
+            <div class="search-input flex-grow w-full max-w-[calc(33%-0.5rem)]">
+              <input
+                type="text"
+                placeholder="Buscar ID"
+                class="w-full p-2 border rounded"
+                (input)="filterByIdArticulo($event)"
+              />
+            </div>
+            <div class="search-input flex-grow w-full max-w-[calc(33%-0.5rem)]">
+              <input
+                type="text"
+                placeholder="Buscar clave"
+                class="w-full p-2 border rounded"
+                (input)="filterByClave($event)"
+              />
+            </div>
+            <div class="search-input flex-grow w-full max-w-[calc(33%-0.5rem)]">
+              <input
+                type="text"
+                placeholder="Buscar nombre"
+                class="w-full p-2 border rounded"
+                (input)="filterByNombre($event)"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="flex flex-col">
+          <div class="overflow-x-auto">
+            <div class="inline-block min-w-full py-1">
+              <div class="overflow-hidden">
+                <table class="min-w-full text-left text-xs font-light">
+                  <thead class="border-b border-neutral-200 font-medium">
+                    <tr>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('idArticulo')"
+                        [class.interactive]="columnaOrdenada === 'idArticulo'"
+                      >
+                        Id Artículo
+                        <i
+                          *ngIf="columnaOrdenada === 'idArticulo'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('clave')"
+                        [class.interactive]="columnaOrdenada === 'clave'"
+                      >
+                        Clave
+                        <i
+                          *ngIf="columnaOrdenada === 'clave'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('nombre')"
+                        [class.interactive]="columnaOrdenada === 'nombre'"
+                      >
+                        Nombre
+                        <i
+                          *ngIf="columnaOrdenada === 'nombre'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('precioVenta')"
+                        [class.interactive]="columnaOrdenada === 'precioVenta'"
+                      >
+                        Precio
+                        <i
+                          *ngIf="columnaOrdenada === 'precioVenta'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('existencia')"
+                        [class.interactive]="columnaOrdenada === 'existencia'"
+                      >
+                        Existencia
+                        <i
+                          *ngIf="columnaOrdenada === 'existencia'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngFor="let index of paginatedIndices">
+                      <tr class="border-b border-neutral-200">
+                        <td class="whitespace-nowrap px-2 py-1 font-medium">
+                          {{ filteredProductsList[index].idArticulo }}
+                        </td>
+                        <td class="whitespace-nowrap px-2 py-1 font-medium">
+                          {{ filteredProductsList[index].clave }}
+                        </td>
+                        <td class="whitespace-nowrap px-2 py-1 font-medium">
+                          {{ filteredProductsList[index].nombre }}
+                        </td>
+                        <td class="whitespace-nowrap px-2 py-1 font-medium">
+                          {{ '$' + filteredProductsList[index].precioVenta }}
+                        </td>
+                        <td class="whitespace-nowrap px-2 py-1 font-medium">
+                          {{ filteredProductsList[index].existencia }}
+                          <button
+                            class="btn"
+                            [ngClass]="{
+                              added: filteredProductsList[index].enCarrito,
+                              'disabled-button':
+                                (isSalida &&
+                                  filteredProductsList[index].existencia ===
+                                    0) ||
+                                filteredProductsList[index].enCarrito
+                            }"
+                            [disabled]="
+                              (isSalida &&
+                                filteredProductsList[index].existencia === 0) ||
+                              filteredProductsList[index].enCarrito
+                            "
+                            (click)="
+                              agregarAlCarrito(filteredProductsList[index])
+                            "
+                          >
+                            {{
+                              filteredProductsList[index].enCarrito
+                                ? 'Agregado'
+                                : 'Agregar'
+                            }}
+                          </button>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pagination-controls mt-4">
           <button (click)="previousPage()" [disabled]="currentPage === 1">
             Anterior
           </button>
@@ -153,6 +182,7 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
             Siguiente
           </button>
         </div>
+        <br />
       </div>
     </div>
   `,
@@ -271,7 +301,7 @@ export class TablaProductosComponent implements OnInit {
     this.updatePagination();
   }
 
-  filterResults(event: Event) {
+  filterByNombre(event: Event) {
     const text = (event.target as HTMLInputElement).value.toLowerCase();
     this.filteredIndices = this.productsList
       .map((product, index) => ({ product, index }))
@@ -354,14 +384,14 @@ export class TablaProductosComponent implements OnInit {
 
   handleModeChange(isSalida: boolean) {
     if (isSalida) {
-      this.filteredProductsList.forEach(product => {
+      this.filteredProductsList.forEach((product) => {
         if (product.existencia <= 0) {
           this.quitarDelCarrito(product.idArticulo);
         }
       });
     }
   }
-  
+
   quitarDelCarrito(idArticulo: number) {
     this.carritoService.eliminarItem(idArticulo);
   }

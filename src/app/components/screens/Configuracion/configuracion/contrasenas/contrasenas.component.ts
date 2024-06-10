@@ -5,7 +5,6 @@ import { HeaderComponent } from '../../../../header/header.component';
 import { SidebaropeningService } from '../../../../../core/services/sidebaropening.service';
 import { EditarContrasenasComponent } from './editar-contrasenas/editar-contrasenas.component';
 import { AgregarContrasenasComponent } from './agregar-contrasenas/agregar-contrasenas.component';
-import { Users } from '../../../../../Models/Master/users';
 import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
 import { UsuariosService } from '../../../../../core/services/Services Configuracion/usuarios.service';
@@ -44,141 +43,166 @@ import { VistaUsuarioDetalleService } from '../../../../../core/services/Service
         *ngIf="mostrarModalEditar"
         [id_usuario]="usuarioSeleccionado"
         (cancelar)="cerrarModalEditar()"
-      >
-      </app-editar-contrasenas>
-      <div class="table-container">
-        <table border="2">
-          <thead>
-            <tr>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('id_usuario')"
-                [class.interactive]="columnaOrdenada === 'id_usuario'"
-              >
-                ID Usuario
-                <i
-                  *ngIf="columnaOrdenada === 'id_usuario'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('nombre')"
-                [class.interactive]="columnaOrdenada === 'nombre'"
-              >
-                Nombre
-                <i
-                  *ngIf="columnaOrdenada === 'nombre'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('correo')"
-                [class.interactive]="columnaOrdenada === 'correo'"
-              >
-                Correo
-                <i
-                  *ngIf="columnaOrdenada === 'correo'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('nombre')"
-                [class.interactive]="columnaOrdenada === 'nombre'"
-              >
-                Rol
-                <i
-                  *ngIf="columnaOrdenada === 'nombre'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th>Contraseña</th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('status')"
-                [class.interactive]="columnaOrdenada === 'status'"
-              >
-                Status
-                <i
-                  *ngIf="columnaOrdenada === 'status'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let index of filteredIndices">
-              <td>{{ filteredContrasenasListVista[index].id_usuario }}</td>
-              <td>
-                {{ filteredContrasenasListVista[index].nombre }}
-              </td>
-              <td>{{ filteredContrasenasListVista[index].correo }}</td>
-              <td>{{ filteredContrasenasListVista[index].rol }}</td>
-              <td type="password">
-                {{ filteredContrasenasListVista[index].contrasena }}
-              </td>
-              <td>
-                <span *ngIf="filteredContrasenasListVista[index].status === 1"
-                  >Activo</span
-                >
-                <span *ngIf="filteredContrasenasListVista[index].status === 0"
-                  >Inactivo</span
-                >
-              </td>
-              <td>
-                <button
-                  class="btn"
-                  (click)="
-                    abrirModalEditar(
-                      filteredContrasenasListVista[index].id_usuario
-                    )
-                  "
-                >
-                  Editar
-                </button>
-                <button
-                  *ngIf="
-                    filteredContrasenasListVista[index].status === 1 &&
-                    filteredContrasenasListVista[index].id_usuario !== 1
-                  "
-                  class="btn"
-                  (click)="
-                    deshabilitarContrasena(filteredContrasenasListVista[index])
-                  "
-                >
-                  Deshabilitar
-                </button>
-                <button
-                  *ngIf="
-                    filteredContrasenasListVista[index].status === 0 &&
-                    filteredContrasenasListVista[index].id_usuario !== 0
-                  "
-                  class="btn"
-                  (click)="
-                    restaurarContrasena(filteredContrasenasListVista[index])
-                  "
-                >
-                  Restaurar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      ></app-editar-contrasenas>
+      <div class="flex flex-col">
+        <div class="overflow-x-auto">
+          <div class="inline-block min-w-full py-1">
+            <div class="overflow-hidden">
+              <table class="min-w-full text-left text-xs font-light">
+                <thead class="border-b border-neutral-200 font-medium">
+                  <tr>
+                    <th
+                      scope="col"
+                      class="px-2 py-1"
+                      (click)="ordenarPorColumna('id_usuario')"
+                      [class.interactive]="columnaOrdenada === 'id_usuario'"
+                    >
+                      ID Usuario
+                      <i
+                        *ngIf="columnaOrdenada === 'id_usuario'"
+                        class="arrow-icon"
+                        [class.asc]="ordenAscendente"
+                        [class.desc]="!ordenAscendente"
+                      ></i>
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-2 py-1"
+                      (click)="ordenarPorColumna('nombre')"
+                      [class.interactive]="columnaOrdenada === 'nombre'"
+                    >
+                      Nombre
+                      <i
+                        *ngIf="columnaOrdenada === 'nombre'"
+                        class="arrow-icon"
+                        [class.asc]="ordenAscendente"
+                        [class.desc]="!ordenAscendente"
+                      ></i>
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-2 py-1"
+                      (click)="ordenarPorColumna('correo')"
+                      [class.interactive]="columnaOrdenada === 'correo'"
+                    >
+                      Correo
+                      <i
+                        *ngIf="columnaOrdenada === 'correo'"
+                        class="arrow-icon"
+                        [class.asc]="ordenAscendente"
+                        [class.desc]="!ordenAscendente"
+                      ></i>
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-2 py-1"
+                      (click)="ordenarPorColumna('nombre')"
+                      [class.interactive]="columnaOrdenada === 'nombre'"
+                    >
+                      Rol
+                      <i
+                        *ngIf="columnaOrdenada === 'nombre'"
+                        class="arrow-icon"
+                        [class.asc]="ordenAscendente"
+                        [class.desc]="!ordenAscendente"
+                      ></i>
+                    </th>
+                    <th scope="col" class="px-2 py-1">Contraseña</th>
+                    <th
+                      scope="col"
+                      class="px-2 py-1"
+                      (click)="ordenarPorColumna('status')"
+                      [class.interactive]="columnaOrdenada === 'status'"
+                    >
+                      Status
+                      <i
+                        *ngIf="columnaOrdenada === 'status'"
+                        class="arrow-icon"
+                        [class.asc]="ordenAscendente"
+                        [class.desc]="!ordenAscendente"
+                      ></i>
+                    </th>
+                    <th scope="col" class="px-2 py-1">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let index of filteredIndices"
+                    class="border-b border-neutral-200"
+                  >
+                    <td class="whitespace-nowrap px-2 py-1 font-medium">
+                      {{ filteredContrasenasListVista[index].id_usuario }}
+                    </td>
+                    <td class="whitespace-nowrap px-2 py-1 font-medium">
+                      {{ filteredContrasenasListVista[index].nombre }}
+                    </td>
+                    <td class="whitespace-nowrap px-2 py-1 font-medium">
+                      {{ filteredContrasenasListVista[index].correo }}
+                    </td>
+                    <td class="whitespace-nowrap px-2 py-1 font-medium">
+                      {{ filteredContrasenasListVista[index].rol }}
+                    </td>
+                    <td class="whitespace-nowrap px-2 py-1 font-medium">
+                      {{ filteredContrasenasListVista[index].contrasena }}
+                    </td>
+                    <td class="whitespace-nowrap px-2 py-1 font-medium">
+                      <span
+                        *ngIf="filteredContrasenasListVista[index].status === 1"
+                        >Activo</span
+                      >
+                      <span
+                        *ngIf="filteredContrasenasListVista[index].status === 0"
+                        >Inactivo</span
+                      >
+                    </td>
+                    <td class="whitespace-nowrap px-2 py-1 font-medium">
+                      <button
+                        class="btn"
+                        (click)="
+                          abrirModalEditar(
+                            filteredContrasenasListVista[index].id_usuario
+                          )
+                        "
+                      >
+                        Editar
+                      </button>
+                      <button
+                        *ngIf="
+                          filteredContrasenasListVista[index].status === 1 &&
+                          filteredContrasenasListVista[index].id_usuario !== 1
+                        "
+                        class="btn"
+                        (click)="
+                          deshabilitarContrasena(
+                            filteredContrasenasListVista[index]
+                          )
+                        "
+                      >
+                        Deshabilitar
+                      </button>
+                      <button
+                        *ngIf="
+                          filteredContrasenasListVista[index].status === 0 &&
+                          filteredContrasenasListVista[index].id_usuario !== 0
+                        "
+                        class="btn"
+                        (click)="
+                          restaurarContrasena(
+                            filteredContrasenasListVista[index]
+                          )
+                        "
+                      >
+                        Restaurar
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-    </main>`,
+    </main> `,
   styleUrl: './contrasenas.component.css',
 })
 export class ContrasenasComponent {
