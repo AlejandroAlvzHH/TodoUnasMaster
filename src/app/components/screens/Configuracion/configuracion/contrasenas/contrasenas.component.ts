@@ -107,7 +107,6 @@ import { VistaUsuarioDetalleService } from '../../../../../core/services/Service
                         [class.desc]="!ordenAscendente"
                       ></i>
                     </th>
-                    <th scope="col" class="px-2 py-1">Contraseña</th>
                     <th
                       scope="col"
                       class="px-2 py-1"
@@ -141,9 +140,6 @@ import { VistaUsuarioDetalleService } from '../../../../../core/services/Service
                     </td>
                     <td class="whitespace-nowrap px-2 py-1 font-medium">
                       {{ filteredContrasenasListVista[index].rol }}
-                    </td>
-                    <td class="whitespace-nowrap px-2 py-1 font-medium">
-                      {{ filteredContrasenasListVista[index].contrasena }}
                     </td>
                     <td class="whitespace-nowrap px-2 py-1 font-medium">
                       <span

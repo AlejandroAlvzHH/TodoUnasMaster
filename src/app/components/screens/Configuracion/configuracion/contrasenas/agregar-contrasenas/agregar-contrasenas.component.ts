@@ -22,8 +22,43 @@ import { Roles } from '../../../../../../Models/Master/roles';
       <input type="text" [(ngModel)]="nuevoUsuario.apellido_paterno" />
       <label>Apellido Materno:</label>
       <input type="text" [(ngModel)]="nuevoUsuario.apellido_materno" />
+      <!-- Agregar esto dentro del template del componente -->
       <label>Contraseña:</label>
-      <input type="text" [(ngModel)]="nuevoUsuario.contrasena" />
+      <div class="password-input">
+        <input
+          type="password"
+          [(ngModel)]="nuevoUsuario.contrasena"
+          [ngClass]="{
+            mismatch:
+              nuevoUsuario.contrasena !== nuevoUsuario.confirmarContrasena &&
+              nuevoUsuario.confirmarContrasena !== ''
+          }"
+        />
+        <i class="fa fa-eye" (click)="togglePasswordVisibility('password')"></i>
+      </div>
+      <label>Confirmar Contraseña:</label>
+      <div class="password-input">
+        <input
+          type="password"
+          [(ngModel)]="nuevoUsuario.confirmarContrasena"
+          [ngClass]="{
+            mismatch:
+              nuevoUsuario.contrasena !== nuevoUsuario.confirmarContrasena &&
+              nuevoUsuario.confirmarContrasena !== ''
+          }"
+        />
+        <i class="fa fa-eye" (click)="togglePasswordVisibility('confirm')"></i>
+      </div>
+
+      <div
+        *ngIf="
+          nuevoUsuario.confirmarContrasena !== '' &&
+          nuevoUsuario.contrasena !== nuevoUsuario.confirmarContrasena
+        "
+        class="error-message"
+      >
+        Las contraseñas no coinciden.
+      </div>
       <label>Correo:</label>
       <div
         class="input-container"
@@ -65,6 +100,7 @@ export class AgregarContrasenasComponent {
     apellido_paterno: '',
     apellido_materno: '',
     contrasena: '',
+    confirmarContrasena: '',
     correo: '',
     id_rol: null,
     status: 1,
@@ -72,6 +108,7 @@ export class AgregarContrasenasComponent {
   loadingRoles: boolean = true;
   emailTimer: any;
   showEmailError: boolean = false;
+  passwordVisible: boolean = false;
 
   constructor(
     private usuariosService: UsuariosService,
@@ -119,11 +156,12 @@ export class AgregarContrasenasComponent {
       this.nuevoUsuario.apellido_materno === '' ||
       this.nuevoUsuario.contrasena === '' ||
       this.nuevoUsuario.correo === '' ||
-      !this.isValidEmail(this.nuevoUsuario.correo)
+      !this.isValidEmail(this.nuevoUsuario.correo) ||
+      this.nuevoUsuario.contrasena !== this.nuevoUsuario.confirmarContrasena
     ) {
       Swal.fire({
-        title: 'Campos Vacíos',
-        text: 'Por favor rellene los campos vacíos correctamente para poder agregar un nuevo usuario.',
+        title: 'Campos Vacíos o Contraseñas no Coinciden',
+        text: 'Por favor rellene los campos vacíos correctamente y asegúrese de que las contraseñas coincidan.',
         icon: 'warning',
         confirmButtonColor: '#333333',
         confirmButtonText: 'Aceptar',
@@ -200,5 +238,11 @@ export class AgregarContrasenasComponent {
         );
       }
     });
+  }
+
+  togglePasswordVisibility(field: string): void {
+    if (field === 'password') {
+      this.passwordVisible = !this.passwordVisible;
+    }
   }
 }
