@@ -106,6 +106,7 @@ export class TablaCarritoComponent {
   }
 
   eliminarItem(index: number) {
+    console.log(this.items[index])
     const item = this.items[index];
     item.enCarrito = false;
     item.botonDesactivado = false;

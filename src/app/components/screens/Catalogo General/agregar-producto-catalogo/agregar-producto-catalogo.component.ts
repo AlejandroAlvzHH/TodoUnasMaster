@@ -71,7 +71,7 @@ export class AgregarProductoCatalogoComponent {
     this.catalogoGeneralService.getAllCatalogueProducts().then((productos) => {
       this.productos = productos;
       this.siguienteId = this.obtenerSiguienteIdValido(this.productos);
-      this.nuevoProducto.id_producto = this.siguienteId; 
+      this.nuevoProducto.id_producto = this.siguienteId;
       console.log('Siguiente ID válido:', this.siguienteId);
     });
     this.apiService.getAllBranchesUrlsConStatus1().subscribe((sucursales) => {
@@ -135,105 +135,115 @@ export class AgregarProductoCatalogoComponent {
       });
       return;
     }
-    Swal.fire({
-      title: 'Confirmar Registro',
-      text: `¿Estás seguro de registrar el nuevo producto ${this.nuevoProducto?.nombre}?`,
-      icon: 'question',
-      showCancelButton: true,
-      showConfirmButton: true,
-      confirmButtonColor: '#333333',
-      cancelButtonColor: '#bcbcbs',
-      confirmButtonText: 'Sí, confirmar registro',
-      cancelButtonText: 'Cancelar',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.loading = true;
-        this.catalogoGeneralService
-          .addCatalogueProduct(this.nuevoProducto)
-          .then((success) => {
-            console.log('Éxito al agregar el producto:', success);
-          })
-          .catch((error) => {
-            console.error('Error al agregar el producto:', error);
-          });
-        const requests = this.sucursales.map((sucursal) => {
-          const productoSucursal = this.mapToProductsModel(this.nuevoProducto);
-          return this.catalogoSucursalService
-            .agregarProductoSucursal(sucursal.url, productoSucursal)
-            .toPromise()
-            .then(() => {
-              const inventory = {
-                id_sucursal: sucursal.idSucursal,
-                id_producto: this.nuevoProducto.id_producto,
-                cantidad: 0,
-              };
-              console.log(inventory);
-              this.inventarioApiService.postInventory(inventory).subscribe();
-              this.registrarFalloSincronizacion(
-                sucursal.idSucursal,
-                productoSucursal.idArticulo,
-                ''
-              );
-              return { success: true, sucursalNombre: sucursal.nombre };
+    if (this.validarExistenciaID()) {
+      Swal.fire({
+        title: 'Confirmar Registro',
+        text: `¿Estás seguro de registrar el nuevo producto ${this.nuevoProducto?.nombre}?`,
+        icon: 'question',
+        showCancelButton: true,
+        showConfirmButton: true,
+        confirmButtonColor: '#333333',
+        cancelButtonColor: '#bcbcbs',
+        confirmButtonText: 'Sí, confirmar registro',
+        cancelButtonText: 'Cancelar',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.loading = true;
+          this.catalogoGeneralService
+            .addCatalogueProduct(this.nuevoProducto)
+            .then((success) => {
+              console.log('Éxito al agregar el producto:', success);
             })
-            .catch((error: any) => {
-              const inventory = {
-                id_sucursal: sucursal.idSucursal,
-                id_producto: this.nuevoProducto.id_producto,
-                cantidad: 0,
-              };
-              console.log(inventory);
-              this.inventarioApiService.postInventory(inventory).subscribe();
-              this.registrarFalloSincronizacion(
-                sucursal.idSucursal,
-                productoSucursal.idArticulo,
-                error.message
-              );
-              return { success: false, sucursalNombre: sucursal.nombre };
+            .catch((error) => {
+              console.error('Error al agregar el producto:', error);
             });
-        });
-        Promise.all(requests).then((results) => {
-          const errores = results.filter((result) => !result.success);
-          if (errores.length > 0) {
-            const mensaje = errores
-              .map(
-                (error) =>
-                  `Error al agregar producto en la sucursal: ${error.sucursalNombre}`
-              )
-              .join('\n');
-            Swal.fire({
-              title: 'Error',
-              text: mensaje,
-              icon: 'error',
-              confirmButtonColor: '#333333',
-              confirmButtonText: 'OK',
-              customClass: {
-                container: 'swal2-container',
-              },
-            }).then((result) => {
-              this.loading = false;
-              this.cerrarModal();
-              window.location.reload();
-            });
-          } else {
-            Swal.fire({
-              title: 'Éxito',
-              text: 'Todos los productos se agregaron correctamente en las sucursales.',
-              icon: 'success',
-              confirmButtonColor: '#333333',
-              confirmButtonText: 'OK',
-              customClass: {
-                container: 'swal2-container',
-              },
-            }).then((result) => {
-              this.loading = false;
-              this.cerrarModal();
-              window.location.reload();
-            });
-          }
-        });
-      }
-    });
+          const requests = this.sucursales.map((sucursal) => {
+            const productoSucursal = this.mapToProductsModel(
+              this.nuevoProducto
+            );
+            return this.catalogoSucursalService
+              .agregarProductoSucursal(sucursal.url, productoSucursal)
+              .toPromise()
+              .then(() => {
+                const inventory = {
+                  id_sucursal: sucursal.idSucursal,
+                  id_producto: this.nuevoProducto.id_producto,
+                  cantidad: 0,
+                };
+                console.log(inventory);
+                this.inventarioApiService.postInventory(inventory).subscribe();
+                this.registrarFalloSincronizacion(
+                  sucursal.idSucursal,
+                  productoSucursal.idArticulo,
+                  ''
+                );
+                return { success: true, sucursalNombre: sucursal.nombre };
+              })
+              .catch((error: any) => {
+                const inventory = {
+                  id_sucursal: sucursal.idSucursal,
+                  id_producto: this.nuevoProducto.id_producto,
+                  cantidad: 0,
+                };
+                console.log(inventory);
+                this.inventarioApiService.postInventory(inventory).subscribe();
+                this.registrarFalloSincronizacion(
+                  sucursal.idSucursal,
+                  productoSucursal.idArticulo,
+                  error.message
+                );
+                return { success: false, sucursalNombre: sucursal.nombre };
+              });
+          });
+          Promise.all(requests).then((results) => {
+            const errores = results.filter((result) => !result.success);
+            if (errores.length > 0) {
+              const mensaje = errores
+                .map(
+                  (error) =>
+                    `Error al agregar producto en la sucursal: ${error.sucursalNombre}`
+                )
+                .join('\n');
+              Swal.fire({
+                title: 'Error',
+                text: mensaje,
+                icon: 'error',
+                confirmButtonColor: '#333333',
+                confirmButtonText: 'OK',
+                customClass: {
+                  container: 'swal2-container',
+                },
+              }).then((result) => {
+                this.loading = false;
+                this.cerrarModal();
+                window.location.reload();
+              });
+            } else {
+              Swal.fire({
+                title: 'Éxito',
+                text: 'Todos los productos se agregaron correctamente en las sucursales.',
+                icon: 'success',
+                confirmButtonColor: '#333333',
+                confirmButtonText: 'OK',
+                customClass: {
+                  container: 'swal2-container',
+                },
+              }).then((result) => {
+                this.loading = false;
+                this.cerrarModal();
+                window.location.reload();
+              });
+            }
+          });
+        }
+      });
+    }
+  }
+
+  validarExistenciaID(): boolean {
+    return this.productos.some(
+      (producto) => producto.id_producto === this.nuevoProducto.id_producto
+    );
   }
 
   registrarFalloSincronizacion(

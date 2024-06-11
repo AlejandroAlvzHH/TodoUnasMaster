@@ -524,12 +524,6 @@ export class EntradasysalidasComponent implements OnInit {
     });
   }
 
-  cantidadReset(): void {
-    this.items.forEach((item) => {
-      item.cantidad = 1;
-    });
-  }
-
   async ngOnInit(): Promise<void> {
     this.authService.currentUser.subscribe((user) => {
       this.currentUser = user;
@@ -556,7 +550,6 @@ export class EntradasysalidasComponent implements OnInit {
     } catch (error) {
       console.error('Error al obtener el catálogo de salidas:', error);
     }
-
     this.obtenerDetalleSucursal();
     this.carritoService.items$.subscribe((items) => {
       this.items = items;
@@ -581,6 +574,21 @@ export class EntradasysalidasComponent implements OnInit {
 
   selectSalida(): void {
     this.isEntradaSelected = false;
-    this.cantidadReset();
+    this.comprobacionNegativos();
+  }
+
+  comprobacionNegativos() {
+    const itemsConExistenciaCeroIds: number[] = [];
+    this.items.forEach((item) => {
+      if (item.existencia === 0) {
+        item.enCarrito = false;
+        item.botonDesactivado = false;
+        itemsConExistenciaCeroIds.push(item.idArticulo);
+        console.log(item);
+      }
+    });
+    itemsConExistenciaCeroIds.forEach((id) => {
+      this.carritoService.eliminarItemPorId(id);
+    });
   }
 }
