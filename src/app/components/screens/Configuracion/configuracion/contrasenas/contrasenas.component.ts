@@ -30,7 +30,7 @@ import { VistaUsuarioDetalleService } from '../../../../../core/services/Service
         (click)="toggleSidebar()"
       ></div>
       <div class="title-container">
-        <h1>CONTRASEÑAS</h1>
+        <h1>USUARIOS</h1>
       </div>
       <div class="botonera">
         <button class="btn" (click)="abrirModal()">Agregar Usuario</button>

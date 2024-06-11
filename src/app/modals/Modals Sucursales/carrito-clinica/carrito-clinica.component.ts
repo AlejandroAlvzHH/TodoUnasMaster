@@ -5,6 +5,7 @@ import {
   Output,
   Input,
   SimpleChanges,
+  input,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CarritoServiceService } from '../../../core/services/Services Sucursales/carrito-service.service';
@@ -23,7 +24,7 @@ import { CarritoComunicationService } from '../../../core/services/Services Sucu
         <table border="2">
           <thead>
             <tr>
-              <th scope="col">Id_Artículo</th>
+              <th scope="col">ID Artículo</th>
               <th scope="col">Clave</th>
               <th scope="col">Nombre</th>
               <th scope="col">Cantidad</th>
@@ -67,6 +68,7 @@ export class CarritoClinicaComponent {
   items: any[] = [];
   @Output() cerrar = new EventEmitter<void>();
   @Input() isSalida: boolean = false;
+  @Input() isTraspaso: boolean = false;
   @Input() productsList: any[] = [];
   @Input() filteredProductsList: any[] = [];
   catalogoSalidas: CatalogoSalidas[] = [];
@@ -94,11 +96,7 @@ export class CarritoClinicaComponent {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (
-      changes['isSalida'] &&
-      !changes['isSalida'].firstChange &&
-      changes['isSalida'].currentValue
-    ) {
+    if (changes['isSalida'] && changes['isSalida'].currentValue) {
       this.actualizarMotivosSalida();
     }
   }

@@ -56,7 +56,7 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
                         (click)="ordenarPorColumna('idArticulo')"
                         [class.interactive]="columnaOrdenada === 'idArticulo'"
                       >
-                        Id Artículo
+                        ID Artículo
                         <i
                           *ngIf="columnaOrdenada === 'idArticulo'"
                           class="arrow-icon"
@@ -145,14 +145,18 @@ import { CarritoComunicationService } from '../../core/services/Services Sucursa
                               added: filteredProductsList[index].enCarrito,
                               'disabled-button':
                                 (isSalida &&
-                                  filteredProductsList[index].existencia ===
+                                  filteredProductsList[index].existencia <=
                                     0) ||
-                                filteredProductsList[index].enCarrito
+                                filteredProductsList[index].enCarrito ||
+                                (isTraspaso &&
+                                  filteredProductsList[index].existencia <= 0)
                             }"
                             [disabled]="
                               (isSalida &&
-                                filteredProductsList[index].existencia === 0) ||
-                              filteredProductsList[index].enCarrito
+                                filteredProductsList[index].existencia <= 0) ||
+                              filteredProductsList[index].enCarrito ||
+                              (isTraspaso &&
+                                filteredProductsList[index].existencia <= 0)
                             "
                             (click)="
                               agregarAlCarrito(filteredProductsList[index])
@@ -198,6 +202,7 @@ export class TablaProductosComponent implements OnInit {
   columnaOrdenada: keyof Products | null = null;
   ordenAscendente: boolean = true;
   @Input() isSalida: boolean = false;
+  @Input() isTraspaso: boolean = false;
 
   //PAGINACIÓN PARA QUE NO EXPLOTE
   currentPage: number = 1;
@@ -409,7 +414,10 @@ export class TablaProductosComponent implements OnInit {
   }
 
   agregarAlCarrito(item: ProductListItem) {
-    if (this.isSalida && item.existencia === 0) {
+    if (
+      (this.isSalida && item.existencia === 0) ||
+      (this.isTraspaso && item.existencia === 0)
+    ) {
       return;
     }
     item.enCarrito = true;

@@ -28,7 +28,7 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
       <div class="menu-container">
         <div class="menu">
           <a *ngIf="mostrarBotonContrasenas" href="/contrasenas" class="opcion"
-            >Contraseñas</a
+            >Usuarios</a
           >
           <a
             *ngIf="mostrarBotonCatalogoSalidas"
@@ -46,7 +46,7 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
             *ngIf="mostrarBotonRolesUsuarios"
             href="/roles-usuarios"
             class="opcion"
-            >Roles y Usuarios</a
+            >Roles</a
           >
         </div>
       </div>

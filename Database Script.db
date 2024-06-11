@@ -379,7 +379,7 @@ SELECT * FROM vista_catalogo_sincronizacion;
 --> VER EL QUERY DE UNA VIEW
 SELECT definition
 FROM pg_views
-WHERE viewname = 'vista_catalogo_sincronizacion_definitiva';
+WHERE viewname = 'vista_movimientos';
 
 -->AGREGAR COLUMNA
 ALTER TABLE roles

@@ -62,9 +62,13 @@ import { forkJoin } from 'rxjs';
       <button class="btn" (click)="confirmAction()">Confirmar Traspaso</button>
       <app-carrito-clinica
         *ngIf="mostrarModal"
+        [isTraspaso]="isTraspaso"
         (cerrar)="cerrarModal()"
       ></app-carrito-clinica>
-      <app-tabla-productos [baseUrl]="sucursal?.url"></app-tabla-productos>
+      <app-tabla-productos
+        [baseUrl]="sucursal?.url"
+        [isTraspaso]="isTraspaso"
+      ></app-tabla-productos>
     </main>`,
   styleUrl: './traspasos.component.css',
 })
@@ -76,6 +80,7 @@ export class TraspasosComponent {
   mostrarModal: boolean = false;
   items: any[] = [];
   currentUser?: Users | null;
+  isTraspaso: boolean = true;
 
   carritoClinicaComponent!: CarritoClinicaComponent;
   constructor(
@@ -99,13 +104,29 @@ export class TraspasosComponent {
         this.apiService.getSucursalById(parseInt(sucursalId, 10)).subscribe(
           (sucursal) => {
             this.sucursal = sucursal;
+            this.filtrarSucursalesDestino();
           },
           (error) => {
             console.error('Error al obtener la sucursal:', error);
+            this.sucursal = null;
+            this.filtrarSucursalesDestino();
           }
         );
       }
     });
+  }
+
+  filtrarSucursalesDestino(): void {
+    if (this.sucursal) {
+      this.sucursalDestino = this.sucursalDestino.filter(
+        (sucursal) => sucursal.idSucursal !== this.sucursal!.idSucursal
+      );
+    }
+    if (this.sucursalDestino.length > 0) {
+      this.selectedSucursalDestino = this.sucursalDestino[0].idSucursal;
+    } else {
+      this.selectedSucursalDestino = null;
+    }
   }
 
   confirmAction(): void {
@@ -130,239 +151,249 @@ export class TraspasosComponent {
           parseInt(this.selectedSucursalDestino!.toString(), 10)
       );
 
-      const detallesProductos = this.items.map((item, index) => {
-        return {
-          IdDetalle: index + 1,
-          Producto: item.nombre,
-          Cantidad: item.cantidad,
-          Valor: item.precioVenta * item.cantidad,
-        };
-      });
-
-      const observables = this.items.map((item) => {
-        return this.inventarioService.obtenerExistencia(
-          selectedSucursalDestino!.url,
-          item.idArticulo
-        );
-      });
-
-      forkJoin(observables).subscribe(
-        (existencias: number[]) => {
-          let valor_total_movimiento = 0;
-          const logDetalles: Movements_Detail[] = [];
-
-          this.items.forEach((item, index) => {
-            const existenciaEnSucursalDestino = existencias[index];
-            valor_total_movimiento += item.precioVenta * item.cantidad;
-
-            const cambiosMaster = {
-              id_sucursal: this.sucursal?.idSucursal ?? 0,
-              id_producto: item.idArticulo,
-              cantidad: item.existencia - item.cantidad,
+      Swal.fire({
+        title: 'Confirmar Traspaso',
+        text: `¿Estás seguro de traspasar los productos a ${selectedSucursalDestino?.nombre}?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#333333',
+        cancelButtonColor: '#bcbcbs',
+        confirmButtonText: 'Sí, confirmar traspaso',
+        cancelButtonText: 'Cancelar',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const detallesProductos = this.items.map((item, index) => {
+            return {
+              IdDetalle: index + 1,
+              Producto: item.nombre,
+              Cantidad: item.cantidad,
+              Valor: item.precioVenta * item.cantidad,
             };
-            const cambiosSalida = {
-              idArticulo: item.idArticulo,
-              clave: item.clave,
-              nombre: item.nombre,
-              precioVenta: item.precioVenta,
-              precioCompra: item.precioCompra,
-              unidadVenta: item.unidadVenta,
-              unidadCompra: item.unidadCompra,
-              relacion: item.relacion,
-              idImp1: item.idImp1,
-              idImp2: item.idImp2,
-              idRet1: item.idRet1,
-              idRet2: item.idRet2,
-              existencia: item.existencia - item.cantidad,
-              observaciones: item.observaciones,
-              neto: item.neto,
-              netoC: item.netoC,
-              inventariable: item.inventariable,
-              costo: item.costo,
-              lotes: item.lotes,
-              series: item.series,
-              precioSug: item.precioSug,
-              oferta: item.oferta,
-              promocion: item.promocion,
-              impCig: item.impCig,
-              color: item.color,
-              precioLista: item.precioLista,
-              condiciones: item.condiciones,
-              utilidad: item.utilidad,
-              alterna: item.alterna,
-              kit: item.kit,
-              dpc: item.dpc,
-              dpv: item.dpv,
-              reorden: item.reorden,
-              maximo: item.maximo,
-              kitSuelto: item.kitSuelto,
-              idClaseMultiple: item.idClaseMultiple,
-              prcFix: item.prcFix,
-              localiza: item.localiza,
-            };
-            const cambiosEntrada = {
-              idArticulo: item.idArticulo,
-              clave: item.clave,
-              nombre: item.nombre,
-              precioVenta: item.precioVenta,
-              precioCompra: item.precioCompra,
-              unidadVenta: item.unidadVenta,
-              unidadCompra: item.unidadCompra,
-              relacion: item.relacion,
-              idImp1: item.idImp1,
-              idImp2: item.idImp2,
-              idRet1: item.idRet1,
-              idRet2: item.idRet2,
-              //existencia, pero de la sucursal destino bro
-              existencia: existenciaEnSucursalDestino + item.cantidad,
-              observaciones: item.observaciones,
-              neto: item.neto,
-              netoC: item.netoC,
-              inventariable: item.inventariable,
-              costo: item.costo,
-              lotes: item.lotes,
-              series: item.series,
-              precioSug: item.precioSug,
-              oferta: item.oferta,
-              promocion: item.promocion,
-              impCig: item.impCig,
-              color: item.color,
-              precioLista: item.precioLista,
-              condiciones: item.condiciones,
-              utilidad: item.utilidad,
-              alterna: item.alterna,
-              kit: item.kit,
-              dpc: item.dpc,
-              dpv: item.dpv,
-              reorden: item.reorden,
-              maximo: item.maximo,
-              kitSuelto: item.kitSuelto,
-              idClaseMultiple: item.idClaseMultiple,
-              prcFix: item.prcFix,
-              localiza: item.localiza,
-            };
-            this.inventarioServiceMaster
-              .registrarSalidaMaster(
-                this.sucursal?.idSucursal ?? 0,
-                item.idArticulo,
-                cambiosMaster
-              )
-              .subscribe(
-                () => {
-                  console.log('Traspaso master registrado exitosamente.');
-                },
-                (error) => {
-                  console.error('Error al registrar traspaso master:', error);
-                }
-              );
-
-            this.inventarioService
-              .registrarSalidaUniversal(
-                this.sucursal!.url,
-                item.idArticulo,
-                cambiosSalida
-              )
-              .subscribe(
-                () => {
-                  console.log('Traspaso registrado exitosamente.');
-                },
-                (error) => {
-                  console.error('Error al registrar traspaso:', error);
-                }
-              );
-
-            this.inventarioService
-              .registrarEntradaUniversal(
-                selectedSucursalDestino!.url,
-                item.idArticulo,
-                cambiosEntrada
-              )
-              .subscribe(
-                () => {
-                  console.log('Traspaso registrado exitosamente.');
-                },
-                (error) => {
-                  console.error('Error al registrar traspaso:', error);
-                }
-              );
-
-            const logDetalle: Movements_Detail = {
-              id_detalle_mov: 0,
-              id_movimiento: 0,
-              id_producto: item.idArticulo,
-              cantidad: item.cantidad,
-              precio: item.precioVenta * item.cantidad,
-            };
-            logDetalles.push(logDetalle);
           });
-
-          const logGlobal = {
-            // Resto del código de logGlobal...
-          };
-
-          this.movimientosService
-            .insertarLogMovimiento(logGlobal)
-            .subscribe((id) => {
-              if (id !== null) {
-                logDetalles.forEach((logDetalle) => {
-                  logDetalle.id_movimiento = id;
-                  this.detalleMovimientosService
-                    .insertarLogMovimientoDetail(logDetalle)
-                    .subscribe();
+          const observables = this.items.map((item) => {
+            return this.inventarioService.obtenerExistencia(
+              selectedSucursalDestino!.url,
+              item.idArticulo
+            );
+          });
+          forkJoin(observables).subscribe(
+            (existencias: number[]) => {
+              let valor_total_movimiento = 0;
+              const logDetalles: Movements_Detail[] = [];
+              this.items.forEach((item, index) => {
+                const existenciaEnSucursalDestino = existencias[index];
+                valor_total_movimiento += item.precioVenta * item.cantidad;
+                const cambiosMaster = {
+                  id_sucursal: this.sucursal?.idSucursal ?? 0,
+                  id_producto: item.idArticulo,
+                  cantidad: item.existencia - item.cantidad,
+                };
+                const cambiosSalida = {
+                  idArticulo: item.idArticulo,
+                  clave: item.clave,
+                  nombre: item.nombre,
+                  precioVenta: item.precioVenta,
+                  precioCompra: item.precioCompra,
+                  unidadVenta: item.unidadVenta,
+                  unidadCompra: item.unidadCompra,
+                  relacion: item.relacion,
+                  idImp1: item.idImp1,
+                  idImp2: item.idImp2,
+                  idRet1: item.idRet1,
+                  idRet2: item.idRet2,
+                  existencia: item.existencia - item.cantidad,
+                  observaciones: item.observaciones,
+                  neto: item.neto,
+                  netoC: item.netoC,
+                  inventariable: item.inventariable,
+                  costo: item.costo,
+                  lotes: item.lotes,
+                  series: item.series,
+                  precioSug: item.precioSug,
+                  oferta: item.oferta,
+                  promocion: item.promocion,
+                  impCig: item.impCig,
+                  color: item.color,
+                  precioLista: item.precioLista,
+                  condiciones: item.condiciones,
+                  utilidad: item.utilidad,
+                  alterna: item.alterna,
+                  kit: item.kit,
+                  dpc: item.dpc,
+                  dpv: item.dpv,
+                  reorden: item.reorden,
+                  maximo: item.maximo,
+                  kitSuelto: item.kitSuelto,
+                  idClaseMultiple: item.idClaseMultiple,
+                  prcFix: item.prcFix,
+                  localiza: item.localiza,
+                };
+                const cambiosEntrada = {
+                  idArticulo: item.idArticulo,
+                  clave: item.clave,
+                  nombre: item.nombre,
+                  precioVenta: item.precioVenta,
+                  precioCompra: item.precioCompra,
+                  unidadVenta: item.unidadVenta,
+                  unidadCompra: item.unidadCompra,
+                  relacion: item.relacion,
+                  idImp1: item.idImp1,
+                  idImp2: item.idImp2,
+                  idRet1: item.idRet1,
+                  idRet2: item.idRet2,
+                  existencia: existenciaEnSucursalDestino + item.cantidad,
+                  observaciones: item.observaciones,
+                  neto: item.neto,
+                  netoC: item.netoC,
+                  inventariable: item.inventariable,
+                  costo: item.costo,
+                  lotes: item.lotes,
+                  series: item.series,
+                  precioSug: item.precioSug,
+                  oferta: item.oferta,
+                  promocion: item.promocion,
+                  impCig: item.impCig,
+                  color: item.color,
+                  precioLista: item.precioLista,
+                  condiciones: item.condiciones,
+                  utilidad: item.utilidad,
+                  alterna: item.alterna,
+                  kit: item.kit,
+                  dpc: item.dpc,
+                  dpv: item.dpv,
+                  reorden: item.reorden,
+                  maximo: item.maximo,
+                  kitSuelto: item.kitSuelto,
+                  idClaseMultiple: item.idClaseMultiple,
+                  prcFix: item.prcFix,
+                  localiza: item.localiza,
+                };
+                this.inventarioServiceMaster
+                  .registrarSalidaMaster(
+                    this.sucursal?.idSucursal ?? 0,
+                    item.idArticulo,
+                    cambiosMaster
+                  )
+                  .subscribe(
+                    () => {
+                      console.log('Traspaso master registrado exitosamente.');
+                    },
+                    (error) => {
+                      console.error(
+                        'Error al registrar traspaso master:',
+                        error
+                      );
+                    }
+                  );
+                this.inventarioService
+                  .registrarSalidaUniversal(
+                    this.sucursal!.url,
+                    item.idArticulo,
+                    cambiosSalida
+                  )
+                  .subscribe(
+                    () => {
+                      console.log('Traspaso registrado exitosamente.');
+                    },
+                    (error) => {
+                      console.error('Error al registrar traspaso:', error);
+                    }
+                  );
+                this.inventarioService
+                  .registrarEntradaUniversal(
+                    selectedSucursalDestino!.url,
+                    item.idArticulo,
+                    cambiosEntrada
+                  )
+                  .subscribe(
+                    () => {
+                      console.log('Traspaso registrado exitosamente.');
+                    },
+                    (error) => {
+                      console.error('Error al registrar traspaso:', error);
+                    }
+                  );
+                const logDetalle: Movements_Detail = {
+                  id_detalle_mov: 0,
+                  id_movimiento: 0,
+                  id_producto: item.idArticulo,
+                  cantidad: item.cantidad,
+                  precio: item.precioVenta * item.cantidad,
+                };
+                logDetalles.push(logDetalle);
+              });
+              const logGlobal = {
+                id_usuario: this.currentUser?.id_usuario,
+                tipo_movimiento: 'Traspaso a Sucursal',
+                sucursal_salida: this.sucursal?.idSucursal,
+                sucursal_destino: selectedSucursalDestino?.idSucursal,
+                id_tipo_salida: null,
+                id_clinica: null,
+                fecha: new Date(),
+                precio_total: valor_total_movimiento,
+              };
+              this.movimientosService
+                .insertarLogMovimiento(logGlobal)
+                .subscribe((id) => {
+                  if (id !== null) {
+                    logDetalles.forEach((logDetalle) => {
+                      logDetalle.id_movimiento = id;
+                      this.detalleMovimientosService
+                        .insertarLogMovimientoDetail(logDetalle)
+                        .subscribe();
+                    });
+                  } else {
+                    console.error('Error al insertar el movimiento.');
+                  }
                 });
-              } else {
-                console.error('Error al insertar el movimiento.');
-              }
-            });
-
-          const usuario = (
-            (this.currentUser?.nombre ?? '') +
-            ' ' +
-            (this.currentUser?.apellido_paterno ?? '') +
-            ' ' +
-            (this.currentUser?.apellido_materno ?? '')
-          ).trim();
-          const data = {
-            Usuario: usuario,
-            Tipo: 'Traspaso a Sucursal',
-            SucursalSalida: this.sucursal?.nombre,
-            SucursalDestino: selectedSucursalDestino?.nombre,
-            TipoSalida: '',
-            Clinica: '',
-            Fecha: new Date(),
-            PrecioTotal: valor_total_movimiento,
-            Detalles: detallesProductos,
-          };
-
-          this.pdfService.generarReporte(data).subscribe(
-            (blob: Blob) => {
-              const url = window.URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = 'reporte_movimiento.pdf';
-              document.body.appendChild(a);
-              a.click();
-              window.URL.revokeObjectURL(url);
+              const usuario = (
+                (this.currentUser?.nombre ?? '') +
+                ' ' +
+                (this.currentUser?.apellido_paterno ?? '') +
+                ' ' +
+                (this.currentUser?.apellido_materno ?? '')
+              ).trim();
+              const data = {
+                Usuario: usuario,
+                Tipo: 'Traspaso a Sucursal',
+                SucursalSalida: this.sucursal?.nombre,
+                SucursalDestino: selectedSucursalDestino?.nombre,
+                TipoSalida: '',
+                Clinica: '',
+                Fecha: new Date(),
+                PrecioTotal: valor_total_movimiento,
+                Detalles: detallesProductos,
+              };
+              this.pdfService.generarReporte(data).subscribe(
+                (blob: Blob) => {
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'reporte_movimiento.pdf';
+                  document.body.appendChild(a);
+                  a.click();
+                  window.URL.revokeObjectURL(url);
+                },
+                (error: any) => {
+                  console.error('Error al generar el reporte:', error);
+                }
+              );
+              Swal.fire({
+                title: 'Traspaso Confirmado',
+                text: `Los productos han sido traspasados a ${selectedSucursalDestino?.nombre}.`,
+                icon: 'success',
+                confirmButtonColor: '#333333',
+                confirmButtonText: 'Aceptar',
+              }).then(() => {
+                window.location.reload();
+              });
             },
-            (error: any) => {
-              console.error('Error al generar el reporte:', error);
+            (error) => {
+              console.error('Error al obtener las existencias:', error);
             }
           );
-
-          Swal.fire({
-            title: 'Traspaso Confirmado',
-            text: `Los productos han sido traspasados a ${selectedSucursalDestino?.nombre}.`,
-            icon: 'success',
-            confirmButtonColor: '#333333',
-            confirmButtonText: 'Aceptar',
-          }).then(() => {
-            window.location.reload();
-          });
-        },
-        (error) => {
-          console.error('Error al obtener las existencias:', error);
         }
-      );
+      });
     } else {
       Swal.fire({
         title: 'No hay Sucursales Registradas',
@@ -385,9 +416,8 @@ export class TraspasosComponent {
     this.obtenerDetalleSucursal();
     this.apiService.getAllBranchesConStatus1().subscribe(
       (sucursales) => {
-        this.sucursalDestino = sucursales.filter(
-          (sucursal) => sucursal.idSucursal !== this.sucursal?.idSucursal
-        );
+        this.sucursalDestino = sucursales;
+        this.filtrarSucursalesDestino();
         if (this.sucursalDestino.length > 0) {
           this.selectedSucursalDestino = this.sucursalDestino[0].idSucursal;
         }

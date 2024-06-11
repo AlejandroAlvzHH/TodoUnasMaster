@@ -31,7 +31,7 @@ import { AjustarPrivilegiosComponent } from './ajustar-privilegios/ajustar-privi
         (click)="toggleSidebar()"
       ></div>
       <div class="title-container">
-        <h1>ROLES Y USUARIOS</h1>
+        <h1>ROLES</h1>
       </div>
       <div class="botonera">
         <button class="btn" (click)="abrirModal()">Agregar Rol</button>
