@@ -22,7 +22,6 @@ import { Roles } from '../../../../../../Models/Master/roles';
       <input type="text" [(ngModel)]="nuevoUsuario.apellido_paterno" />
       <label>Apellido Materno:</label>
       <input type="text" [(ngModel)]="nuevoUsuario.apellido_materno" />
-      <!-- Agregar esto dentro del template del componente -->
       <label>Contraseña:</label>
       <div class="password-input">
         <input
@@ -49,7 +48,6 @@ import { Roles } from '../../../../../../Models/Master/roles';
         />
         <i class="fa fa-eye" (click)="togglePasswordVisibility('confirm')"></i>
       </div>
-
       <div
         *ngIf="
           nuevoUsuario.confirmarContrasena !== '' &&
@@ -74,7 +72,7 @@ import { Roles } from '../../../../../../Models/Master/roles';
         </div>
       </div>
       <label>Rol:</label>
-      <select [(ngModel)]="selectedRol">
+      <select [(ngModel)]="selectedRol" (ngModelChange)="onRolChange($event)">
         <option *ngFor="let rol of roles" [value]="rol.id_rol">
           {{ rol.nombre }}
         </option>
@@ -135,6 +133,10 @@ export class AgregarContrasenasComponent {
 
   cerrarModal() {
     this.cancelar.emit();
+  }
+
+  onRolChange(newRolId: number): void {
+    this.nuevoUsuario.id_rol = newRolId;
   }
 
   onEmailInput(): void {

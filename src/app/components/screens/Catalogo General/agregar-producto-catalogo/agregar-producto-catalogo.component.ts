@@ -137,6 +137,24 @@ export class AgregarProductoCatalogoComponent {
     }
     if (this.validarExistenciaID()) {
       Swal.fire({
+        title: 'ID Duplicado',
+        text: 'El ID ingresado ya existe. Por favor ingrese un ID diferente.',
+        icon: 'error',
+        confirmButtonColor: '#333333',
+        confirmButtonText: 'Aceptar',
+      });
+      return;
+    } else if (this.validarExistenciaClave()) {
+      Swal.fire({
+        title: 'Clave Duplicada',
+        text: 'La clave ingresada ya existe. Por favor ingrese una clave diferente.',
+        icon: 'error',
+        confirmButtonColor: '#333333',
+        confirmButtonText: 'Aceptar',
+      });
+      return;
+    } else {
+      Swal.fire({
         title: 'Confirmar Registro',
         text: `¿Estás seguro de registrar el nuevo producto ${this.nuevoProducto?.nombre}?`,
         icon: 'question',
@@ -243,6 +261,12 @@ export class AgregarProductoCatalogoComponent {
   validarExistenciaID(): boolean {
     return this.productos.some(
       (producto) => producto.id_producto === this.nuevoProducto.id_producto
+    );
+  }
+
+  validarExistenciaClave(): boolean {
+    return this.productos.some(
+      (producto) => producto.clave === this.nuevoProducto.clave
     );
   }
 

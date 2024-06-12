@@ -26,7 +26,46 @@ import { firstValueFrom } from 'rxjs';
         <label>Apellido Materno:</label>
         <input type="text" [(ngModel)]="nuevoUsuario.apellido_materno" />
         <label>Contraseña:</label>
-        <input type="text" [(ngModel)]="nuevoUsuario.contrasena" />
+        <div class="password-input">
+          <input
+            type="password"
+            [(ngModel)]="nuevoUsuario.contrasena"
+            [ngClass]="{
+              mismatch:
+                nuevoUsuario.contrasena !== nuevoUsuario.confirmarContrasena &&
+                nuevoUsuario.confirmarContrasena !== ''
+            }"
+          />
+          <i
+            class="fa fa-eye"
+            (click)="togglePasswordVisibility('password')"
+          ></i>
+        </div>
+        <label>Confirmar Contraseña:</label>
+        <div class="password-input">
+          <input
+            type="password"
+            [(ngModel)]="nuevoUsuario.confirmarContrasena"
+            [ngClass]="{
+              mismatch:
+                nuevoUsuario.contrasena !== nuevoUsuario.confirmarContrasena &&
+                nuevoUsuario.confirmarContrasena !== ''
+            }"
+          />
+          <i
+            class="fa fa-eye"
+            (click)="togglePasswordVisibility('confirm')"
+          ></i>
+        </div>
+        <div
+          *ngIf="
+            nuevoUsuario.confirmarContrasena !== '' &&
+            nuevoUsuario.contrasena !== nuevoUsuario.confirmarContrasena
+          "
+          class="error-message"
+        >
+          Las contraseñas no coinciden.
+        </div>
         <label>Correo:</label>
         <div
           class="input-container"
@@ -42,7 +81,7 @@ import { firstValueFrom } from 'rxjs';
           </div>
         </div>
         <label>Rol:</label>
-        <select [(ngModel)]="selectedRol">
+        <select [(ngModel)]="selectedRol" (ngModelChange)="onRolChange($event)">
           <option *ngFor="let rol of roles" [value]="rol.id_rol">
             {{ rol.nombre }}
           </option>
@@ -59,7 +98,7 @@ import { firstValueFrom } from 'rxjs';
       </div>
     </div>
   `,
-  styleUrl: './editar-contrasenas.component.css',
+  styleUrls: ['./editar-contrasenas.component.css'],
 })
 export class EditarContrasenasComponent {
   loading: boolean = false;
@@ -73,6 +112,7 @@ export class EditarContrasenasComponent {
   loadingRoles: boolean = true;
   emailTimer: any;
   showEmailError: boolean = false;
+  passwordVisible: boolean = false;
 
   constructor(
     private usuariosService: UsuariosService,
@@ -99,7 +139,7 @@ export class EditarContrasenasComponent {
       };
       this.roles = await firstValueFrom(this.rolesService.getRoles());
       if (this.roles.length > 0) {
-        this.selectedRol = this.roles[0].id_rol;
+        this.selectedRol = this.nuevoUsuario.id_rol || this.roles[0].id_rol;
         this.loadingRoles = false;
       }
     } catch (error) {
@@ -115,6 +155,11 @@ export class EditarContrasenasComponent {
     this.cancelar.emit();
   }
 
+  onRolChange(newRolId: number): void {
+    this.selectedRol = newRolId;
+    this.nuevoUsuario.id_rol = newRolId;
+  }
+
   onEmailInput(): void {
     clearTimeout(this.emailTimer);
     this.emailTimer = setTimeout(() => {
@@ -128,7 +173,7 @@ export class EditarContrasenasComponent {
   }
 
   async editarUsuario() {
-    if (!this.nuevoUsuario.nombre) {
+    if (!this.nuevoUsuario.nombre || !this.nuevoUsuario.id_rol) {
       Swal.fire({
         title: 'Campos Vacíos',
         text: 'Por favor ingrese valores válidos para modificar el usuario.',
@@ -178,5 +223,11 @@ export class EditarContrasenasComponent {
         }
       }
     });
+  }
+
+  togglePasswordVisibility(field: string): void {
+    if (field === 'password') {
+      this.passwordVisible = !this.passwordVisible;
+    }
   }
 }
