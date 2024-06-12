@@ -22,6 +22,12 @@ export class CarritoServiceService {
     this.itemsSubject.next([...items]);
   }
 
+  eliminarItem(index: number) {
+    const items = this.itemsSubject.getValue();
+    items.splice(index, 1);
+    this.itemsSubject.next(items);
+  }
+
   actualizarCantidad(index: number, cantidad: number) {
     const items = this.itemsSubject.getValue();
     const existencia = items[index].existencia;
@@ -31,6 +37,10 @@ export class CarritoServiceService {
     }
   }
 
+  actualizarItems(items: any[]) {
+    this.itemsSubject.next(items);
+  }
+
   eliminarItemPorId(id: number) {
     const items = this.itemsSubject.getValue();
     const index = items.findIndex((item) => item.idArticulo === id);
@@ -38,12 +48,6 @@ export class CarritoServiceService {
       items.splice(index, 1);
       this.itemsSubject.next(items);
     }
-  }
-
-  eliminarItem(index: number) {
-    const items = this.itemsSubject.getValue();
-    items.splice(index, 1);
-    this.itemsSubject.next(items);
   }
 
   vaciarCarrito() {
