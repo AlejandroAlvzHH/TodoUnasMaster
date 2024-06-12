@@ -160,6 +160,7 @@ CREATE TABLE detalle_movimiento (
     FOREIGN KEY (id_movimiento) REFERENCES movimientos(id_movimiento),
     FOREIGN KEY (id_producto) REFERENCES catalogo_general(id_producto)
 );
+
 --Inserts Demo
 INSERT INTO privilegios (nombre) VALUES 
     ('Ver'),
@@ -247,6 +248,7 @@ SELECT dm.id_detalle_mov,
       JOIN movimientos m ON ((dm.id_movimiento = m.id_movimiento)))         
       LEFT JOIN catalogo_general cg ON ((dm.id_producto = cg.id_producto)));
 
+--vista_detalle_movimiento
 CREATE OR REPLACE VIEW vista_detalle_movimiento AS
 SELECT dm.id_detalle_mov,                                                 
      m.id_movimiento,                                                       
@@ -267,14 +269,16 @@ SELECT
     sp.fecha_registro, 
     sp.estado,
     COALESCE(i.cantidad, 0) AS cantidad_existencia,
-    s.url AS url_sucursal
+    s.url AS url_sucursal,
+    COALESCE(sp.status, 0) AS status
 FROM (
     SELECT 
         id_producto, 
         id_sucursal, 
         fecha_registro, 
         estado, 
-        ROW_NUMBER() OVER (PARTITION BY id_producto, id_sucursal ORDER BY fecha_registro DESC) AS rn
+        ROW_NUMBER() OVER (PARTITION BY id_producto, id_sucursal ORDER BY fecha_registro DESC) AS rn,
+        status
     FROM sincronizacion_pendiente
 ) AS sp
 JOIN sucursales s ON sp.id_sucursal = s.id_sucursal  
@@ -371,7 +375,7 @@ WHERE table_schema = 'public';
 SELECT column_name, data_type
 FROM information_schema.columns
 WHERE table_schema = 'public' 
-AND table_name = 'catalogo_general';
+AND table_name = 'sincronizacion_pendiente';
 
 --> MUESTRA TODOS LOS REGISTROS DE UNA TABLA
 SELECT * FROM vista_catalogo_sincronizacion;
@@ -382,7 +386,7 @@ FROM pg_views
 WHERE viewname = 'vista_movimientos';
 
 -->AGREGAR COLUMNA
-ALTER TABLE roles
+ALTER TABLE sincronizacion_pendiente
 ADD COLUMN status INT;
 
 -->COMANDOS NGROK

@@ -35,14 +35,15 @@ import { firstValueFrom } from 'rxjs';
                 nuevoUsuario.contrasena !== nuevoUsuario.confirmarContrasena &&
                 nuevoUsuario.confirmarContrasena !== ''
             }"
+            (input)="onPasswordInput()"
           />
           <i
             class="fa fa-eye"
             (click)="togglePasswordVisibility('password')"
           ></i>
         </div>
-        <label>Confirmar Contraseña:</label>
-        <div class="password-input">
+        <label *ngIf="isPasswordModified()">Confirmar Contraseña:</label>
+        <div class="password-input" *ngIf="isPasswordModified()">
           <input
             type="password"
             [(ngModel)]="nuevoUsuario.confirmarContrasena"
@@ -51,6 +52,7 @@ import { firstValueFrom } from 'rxjs';
                 nuevoUsuario.contrasena !== nuevoUsuario.confirmarContrasena &&
                 nuevoUsuario.confirmarContrasena !== ''
             }"
+            (input)="onConfirmPasswordInput()"
           />
           <i
             class="fa fa-eye"
@@ -59,6 +61,7 @@ import { firstValueFrom } from 'rxjs';
         </div>
         <div
           *ngIf="
+            isPasswordModified() &&
             nuevoUsuario.confirmarContrasena !== '' &&
             nuevoUsuario.contrasena !== nuevoUsuario.confirmarContrasena
           "
@@ -87,7 +90,13 @@ import { firstValueFrom } from 'rxjs';
           </option>
         </select>
         <div class="botonera">
-          <button class="btn" (click)="editarUsuario()">Editar</button>
+          <button
+            class="btn"
+            [disabled]="!canEditUser()"
+            (click)="editarUsuario()"
+          >
+            Editar
+          </button>
           <button class="btn-cerrar" (click)="cerrarModalEditar()">
             Cancelar
           </button>
@@ -112,6 +121,7 @@ export class EditarContrasenasComponent {
   loadingRoles: boolean = true;
   emailTimer: any;
   showEmailError: boolean = false;
+  passwordModified: boolean = false;
   passwordVisible: boolean = false;
 
   constructor(
@@ -143,7 +153,7 @@ export class EditarContrasenasComponent {
         this.loadingRoles = false;
       }
     } catch (error) {
-      console.error('Error fetching user or roles:', error);
+      console.error('Error fetching usuarios o roles:', error);
       this.loadingRoles = false;
     } finally {
       this.loading = false;
@@ -167,17 +177,48 @@ export class EditarContrasenasComponent {
     }, 500);
   }
 
+  onPasswordInput(): void {
+    this.passwordModified = true;
+  }
+
+  onConfirmPasswordInput(): void {
+    this.passwordModified = true;
+  }
+
   isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
 
-  async editarUsuario() {
-    if (!this.nuevoUsuario.nombre || !this.nuevoUsuario.id_rol) {
+  canEditUser(): boolean {
+    return (
+      this.passwordModified ||
+      this.isRoleChanged() ||
+      this.areOtherFieldsModified()
+    );
+  }
+
+  isRoleChanged(): boolean {
+    return this.nuevoUsuario.id_rol !== this.contrasena?.id_rol;
+  }
+  
+  areOtherFieldsModified(): boolean {
+    return (
+      this.nuevoUsuario.nombre !== this.contrasena?.nombre ||
+      this.nuevoUsuario.apellido_paterno !==
+        this.contrasena?.apellido_paterno ||
+      this.nuevoUsuario.apellido_materno !==
+        this.contrasena?.apellido_materno ||
+      this.nuevoUsuario.correo !== this.contrasena?.correo
+    );
+  }
+
+  editarUsuario() {
+    if (!this.canEditUser()) {
       Swal.fire({
-        title: 'Campos Vacíos',
-        text: 'Por favor ingrese valores válidos para modificar el usuario.',
-        icon: 'warning',
+        title: 'Contraseña no coincide',
+        text: 'Las contraseñas no coinciden.',
+        icon: 'error',
         confirmButtonColor: '#333333',
         confirmButtonText: 'Aceptar',
       });
@@ -223,6 +264,10 @@ export class EditarContrasenasComponent {
         }
       }
     });
+  }
+
+  isPasswordModified(): boolean {
+    return this.passwordModified;
   }
 
   togglePasswordVisibility(field: string): void {
