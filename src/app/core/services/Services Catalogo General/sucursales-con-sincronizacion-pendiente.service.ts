@@ -20,4 +20,12 @@ export class SucursalesConSincronizacionPendienteService {
       `${this.url}/${id}`
     );
   }
+
+  getDetalleSincronizacionProductoRecienteStatus1(
+    id: number
+  ): Observable<VistaSincronizacionPendienteReciente[]> {
+    return this.http.get<VistaSincronizacionPendienteReciente[]>(
+      `${this.url}/WithStatus1/${id}`
+    );
+  }
 }

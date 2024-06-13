@@ -102,7 +102,7 @@ export class ModalDetallesSincronizacionComponent {
 
   getDetallesProducto(): void {
     this.sucursalesConSincronizacionPendienteService
-      .getDetalleSincronizacionProductoReciente(this.id_producto!)
+      .getDetalleSincronizacionProductoRecienteStatus1(this.id_producto!)
       .subscribe((detalles) => {
         this.detallesProducto = detalles;
         console.log(this.detallesProducto);
