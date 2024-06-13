@@ -52,34 +52,32 @@ export class LoginComponent {
   async login() {
     this.error = null;
     try {
-      const user = await this.authService.login(this.username, this.password);
+      await this.authService.login(this.username, this.password);
       this.router.navigate(['/']);
     } catch (error: any) {
-      if (error.message === 'Credenciales incorrectas') {
-        Swal.fire({
-          title: 'Credenciales Incorrectas',
-          text: 'Usuario o contraseña incorrectos, por favor intente de nuevo.',
-          icon: 'warning',
-          confirmButtonColor: '#333333',
-          confirmButtonText: 'Aceptar',
-        });
+      console.log(error);
+      if (error.status === 401) {
+        this.error =
+          'Usuario o contraseña incorrectos, por favor intente de nuevo.';
+        this.showErrorAlert('Credenciales Incorrectas', this.error);
       } else if (error.message === 'El usuario está desactivado') {
-        Swal.fire({
-          title: 'Usuario Desactivado',
-          text: 'Su usuario está desactivado, por favor contacte al administrador.',
-          icon: 'error',
-          confirmButtonColor: '#333333',
-          confirmButtonText: 'Aceptar',
-        });
+        this.error =
+          'Su usuario está desactivado, por favor contacte al administrador.';
+        this.showErrorAlert('Usuario Desactivado', this.error);
       } else {
-        Swal.fire({
-          title: 'Error de conexión',
-          text: 'Hubo un problema al conectar con el servidor, por favor intente nuevamente más tarde.',
-          icon: 'error',
-          confirmButtonColor: '#333333',
-          confirmButtonText: 'Aceptar',
-        });
+        this.error =
+          'Hubo un problema al conectar con el servidor, por favor intente nuevamente más tarde.';
+        this.showErrorAlert('Error de conexión', this.error);
       }
     }
+  }
+  showErrorAlert(title: string, message: string) {
+    Swal.fire({
+      title: title,
+      text: message,
+      icon: 'error',
+      confirmButtonColor: '#333333',
+      confirmButtonText: 'Aceptar',
+    });
   }
 }

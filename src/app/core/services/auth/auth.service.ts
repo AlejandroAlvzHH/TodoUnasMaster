@@ -9,6 +9,7 @@ import { environment } from '../../../../environments/environment';
 })
 export class AuthService {
   private baseUrl = environment.baseUrl;
+  private urlAuthenticate = `${this.baseUrl}/api/UsuariosApi/authenticate`;
   private urlUsers = `${this.baseUrl}/api/UsuariosApi`;
   private urlRolesPrivilegios = `${this.baseUrl}/api/VistaRolesPrivilegiosApi`;
   private currentUserSubject: BehaviorSubject<Users | null>;
@@ -34,34 +35,24 @@ export class AuthService {
     return !!this.currentUserValue;
   }
 
-  async login(username: string, password: string): Promise<Users> {
-    return this.http
-      .get<any[]>(`${this.urlUsers}?correo=${username}&contrasena=${password}`)
-      .toPromise()
-      .then(async (users) => {
-        const user = users?.find(
-          (u) => u.correo === username && u.contrasena === password
-        );
-        if (user) {
-          if (user.status === 1) {
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            this.currentUserSubject.next(user);
-            await this.loadUserPrivileges(user.id);
-            return user;
-          } else {
-            throw new Error('El usuario está desactivado');
-          }
-        } else {
-          throw new Error('Credenciales incorrectas');
-        }
-      })
-      .catch((error) => {
-        if (error.status === 0 || error.statusText === 'Unknown Error') {
-          throw new Error('Error de conexión');
-        } else {
-          throw error;
-        }
-      });
+  async login(username: string, password: string): Promise<void> {
+    try {
+      const response = await this.http
+        .post<any>(this.urlAuthenticate, {
+          correo: username,
+          contraseña: password,
+        })
+        .toPromise();
+      const user = response.user;
+      if (user.status !== 1) {
+        throw new Error('El usuario está desactivado');
+      }
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      this.currentUserSubject.next(user);
+      await this.loadUserPrivileges(user.id_usuario);
+    } catch (error: any) {
+      throw error;
+    }
   }
 
   logout() {
