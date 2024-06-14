@@ -36,7 +36,7 @@ export class UsuariosService {
   
   updateStatusUsuario(usuario: Users): Observable<Users> {
     console.log('este es el usuario que recibo',usuario)
-    const updateUrl = `${this.url}/${usuario.id_usuario}`;
+    const updateUrl = `${this.url}/updateWithPassword/${usuario.id_usuario}`;
     console.log(updateUrl)
     return this.http.put<Users>(updateUrl, usuario);
   }
