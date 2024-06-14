@@ -83,8 +83,12 @@ import { firstValueFrom } from 'rxjs';
             Por favor ingrese un correo válido.
           </div>
         </div>
-        <label>Rol:</label>
-        <select [(ngModel)]="selectedRol" (ngModelChange)="onRolChange($event)">
+        <label *ngIf="nuevoUsuario.id_usuario !== 1">Rol:</label>
+        <select
+          *ngIf="nuevoUsuario.id_usuario !== 1"
+          [(ngModel)]="selectedRol"
+          (ngModelChange)="onRolChange($event)"
+        >
           <option *ngFor="let rol of roles" [value]="rol.id_rol">
             {{ rol.nombre }}
           </option>
