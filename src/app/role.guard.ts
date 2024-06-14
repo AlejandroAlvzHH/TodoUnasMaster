@@ -21,7 +21,7 @@ export class RoleGuard implements CanActivate {
     if (this.authService.userPrivileges.length === 0) {
       const currentUser = this.authService.currentUserValue;
       if (currentUser) {
-        await this.authService.loadUserPrivileges(currentUser.id_usuario);
+        await this.authService.loadUserPrivilegesERROR(currentUser.id_rol);
       }
     }
 

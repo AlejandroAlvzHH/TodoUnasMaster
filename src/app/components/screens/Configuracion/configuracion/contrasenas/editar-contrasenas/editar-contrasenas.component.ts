@@ -25,7 +25,7 @@ import { firstValueFrom } from 'rxjs';
         <input type="text" [(ngModel)]="nuevoUsuario.apellido_paterno" />
         <label>Apellido Materno:</label>
         <input type="text" [(ngModel)]="nuevoUsuario.apellido_materno" />
-        <label>Contraseña:</label>
+        <label>Nueva Contraseña:</label>
         <div class="password-input">
           <input
             type="password"
@@ -142,7 +142,6 @@ export class EditarContrasenasComponent {
         nombre: this.contrasena.nombre,
         apellido_paterno: this.contrasena.apellido_paterno,
         apellido_materno: this.contrasena.apellido_materno,
-        contrasena: this.contrasena.contrasena,
         correo: this.contrasena.correo,
         id_rol: this.contrasena.id_rol,
         status: this.contrasena.status,
@@ -201,7 +200,7 @@ export class EditarContrasenasComponent {
   isRoleChanged(): boolean {
     return this.nuevoUsuario.id_rol !== this.contrasena?.id_rol;
   }
-  
+
   areOtherFieldsModified(): boolean {
     return (
       this.nuevoUsuario.nombre !== this.contrasena?.nombre ||
@@ -224,6 +223,13 @@ export class EditarContrasenasComponent {
       });
       return;
     }
+    const usuarioParaActualizar = {
+      ...this.nuevoUsuario,
+    };
+    if (!this.passwordModified) {
+      delete usuarioParaActualizar.contrasena;
+      delete usuarioParaActualizar.confirmarContrasena;
+    }
     Swal.fire({
       title: 'Confirmar Edición',
       text: `¿Estás seguro de registrar el nuevo usuario ${this.nuevoUsuario.nombre}?`,
@@ -238,7 +244,7 @@ export class EditarContrasenasComponent {
         this.loading = true;
         try {
           await firstValueFrom(
-            this.usuariosService.updateStatusUsuario(this.nuevoUsuario)
+            this.usuariosService.updateStatusUsuario(usuarioParaActualizar)
           );
           Swal.fire({
             title: 'Éxito',

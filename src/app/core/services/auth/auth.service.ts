@@ -23,7 +23,7 @@ export class AuthService {
     this.currentUser = this.currentUserSubject.asObservable();
 
     if (this.currentUserValue) {
-      this.loadUserPrivileges(this.currentUserValue.id_usuario);
+      this.loadUserPrivilegesERROR(this.currentUserValue.id_rol);
     }
   }
 
@@ -49,7 +49,7 @@ export class AuthService {
       }
       localStorage.setItem('currentUser', JSON.stringify(user));
       this.currentUserSubject.next(user);
-      await this.loadUserPrivileges(user.id_usuario);
+      await this.loadUserPrivilegesERROR(user.id_rol);
     } catch (error: any) {
       throw error;
     }
@@ -61,10 +61,10 @@ export class AuthService {
     this.userPrivileges = [];
   }
 
-  async loadUserPrivileges(userId: number): Promise<void> {
+  async loadUserPrivilegesERROR(rolID: number): Promise<void> {
     try {
       const response = await this.http
-        .get<any[]>(`${this.urlRolesPrivilegios}/${userId}`)
+        .get<any[]>(`${this.urlRolesPrivilegios}/${rolID}`)
         .toPromise();
       this.userPrivileges = response || [];
     } catch (error) {
