@@ -27,8 +27,8 @@ export const routes: Routes = [
   { path: 'traspasos/:id', component: TraspasosComponent, canActivate: [AuthGuard] },
   { path: 'traspasosclinica/:id', component: TraspasosClinicaComponent, canActivate: [AuthGuard] },
   { path: 'inventariosucursal/:id', component: InventarioSucursalComponent, canActivate: [AuthGuard] },
-  { path: 'contrasenas', component: ContrasenasComponent, canActivate: [AuthGuard, RoleGuard], data: { requiredPrivilege: 'Ver Contrasenas' } },
-  { path: 'roles-usuarios', component: RolesUsuariosComponent, canActivate: [AuthGuard, RoleGuard], data: { requiredPrivilege: 'Ver Roles y Usuarios' } },
+  { path: 'contrasenas', component: ContrasenasComponent, canActivate: [AuthGuard, RoleGuard], data: { requiredPrivilege: 'Ver Usuarios' } },
+  { path: 'roles-usuarios', component: RolesUsuariosComponent, canActivate: [AuthGuard, RoleGuard], data: { requiredPrivilege: 'Ver Roles' } },
   { path: 'catalogo-salidas', component: CatalogoSalidasComponent, canActivate: [AuthGuard, RoleGuard], data: { requiredPrivilege: 'Ver Catalogo de Salidas' } },
   { path: 'catalogo-clinicas', component: CatalogoClinicasComponent, canActivate: [AuthGuard, RoleGuard], data: { requiredPrivilege: 'Ver Catalogo de Clinicas' } },
 ];

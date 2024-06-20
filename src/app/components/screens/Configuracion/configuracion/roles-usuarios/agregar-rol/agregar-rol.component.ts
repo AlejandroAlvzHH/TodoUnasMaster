@@ -32,6 +32,7 @@ export class AgregarRolComponent {
 
   nuevoRol: any = {
     nombre: '',
+    status: 1,
   };
 
   constructor(private rolesService: RolesService) {}

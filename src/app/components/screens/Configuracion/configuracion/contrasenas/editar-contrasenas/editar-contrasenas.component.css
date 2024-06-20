@@ -40,6 +40,7 @@ label {
   font-size: 16px;
   margin-bottom: 5px;
   display: block;
+  text-align: center;
 }
 
 input[type="password"],
@@ -59,6 +60,9 @@ input[type="number"] {
   justify-content: center;
 }
 
+.error-message {
+  text-align: center;
+}
 h1 {
   margin-top: 1%;
   font-family: "Montserrat", sans-serif;
@@ -69,7 +73,3 @@ select {
   font-size: 16px;
   border-radius: 5px;
 }
-
-
-
-

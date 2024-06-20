@@ -51,102 +51,122 @@ import { AjustarPrivilegiosComponent } from './ajustar-privilegios/ajustar-privi
         (cancelar)="cerrarModalEditar()"
       >
       </app-editar-rol>
-      <div class="table-container">
-        <table border="2">
-          <thead>
-            <tr>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('id_rol')"
-                [class.interactive]="columnaOrdenada === 'id_rol'"
-              >
-                ID Rol
-                <i
-                  *ngIf="columnaOrdenada === 'id_rol'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('nombre')"
-                [class.interactive]="columnaOrdenada === 'nombre'"
-              >
-                Nombre
-                <i
-                  *ngIf="columnaOrdenada === 'nombre'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('status')"
-                [class.interactive]="columnaOrdenada === 'status'"
-              >
-                Status
-                <i
-                  *ngIf="columnaOrdenada === 'status'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let index of filteredIndices">
-              <td>{{ filteredRolesList[index].id_rol }}</td>
-              <td>{{ filteredRolesList[index].nombre }}</td>
-              <td>
-                <span *ngIf="filteredRolesList[index].status === 1"
-                  >Activo</span
-                >
-                <span *ngIf="filteredRolesList[index].status === 0"
-                  >Inactivo</span
-                >
-              </td>
-              <td>
-                <button
-                  class="btn"
-                  (click)="abrirModalEditar(filteredRolesList[index])"
-                >
-                  Editar Nombre
-                </button>
-                <button
-                  *ngIf="filteredRolesList[index].id_rol !== 1"
-                  class="btn"
-                  (click)="abrirModalPrivilegios(filteredRolesList[index])"
-                >
-                  Ajustar Privilegios
-                </button>
-                <button
-                  *ngIf="
-                    filteredRolesList[index].status === 1 &&
-                    filteredRolesList[index].id_rol !== 1
-                  "
-                  class="btn"
-                  (click)="deshabilitarRol(filteredRolesList[index])"
-                >
-                  Deshabilitar
-                </button>
-                <button
-                  *ngIf="
-                    filteredRolesList[index].status === 0 &&
-                    filteredRolesList[index].id_rol !== 0
-                  "
-                  class="btn"
-                  (click)="restaurarRol(filteredRolesList[index])"
-                >
-                  Restaurar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="table-container overflow-x-auto">
+        <div class="flex flex-col">
+          <div class="overflow-x-auto">
+            <div class="inline-block min-w-full py-1">
+              <div class="overflow-hidden">
+                <table class="min-w-full text-left text-xs font-light">
+                  <thead class="border-b border-neutral-200 font-medium">
+                    <tr>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('id_rol')"
+                        [class.interactive]="columnaOrdenada === 'id_rol'"
+                      >
+                        ID Rol
+                        <i
+                          *ngIf="columnaOrdenada === 'id_rol'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('nombre')"
+                        [class.interactive]="columnaOrdenada === 'nombre'"
+                      >
+                        Nombre
+                        <i
+                          *ngIf="columnaOrdenada === 'nombre'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('status')"
+                        [class.interactive]="columnaOrdenada === 'status'"
+                      >
+                        Status
+                        <i
+                          *ngIf="columnaOrdenada === 'status'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th scope="col" class="px-2 py-1">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      class="border-b border-neutral-200"
+                      *ngFor="let index of filteredIndices"
+                    >
+                      <td class="whitespace-nowrap px-2 py-1 font-medium">
+                        {{ filteredRolesList[index].id_rol }}
+                      </td>
+                      <td class="whitespace-nowrap px-2 py-1 font-medium">
+                        {{ filteredRolesList[index].nombre }}
+                      </td>
+                      <td class="whitespace-nowrap px-2 py-1 font-medium">
+                        <span *ngIf="filteredRolesList[index].status === 1"
+                          >Activo</span
+                        >
+                        <span *ngIf="filteredRolesList[index].status === 0"
+                          >Inactivo</span
+                        >
+                      </td>
+                      <td class="whitespace-nowrap px-2 py-1 font-medium">
+                        <button
+                          class="btn"
+                          (click)="abrirModalEditar(filteredRolesList[index])"
+                        >
+                          Editar Nombre
+                        </button>
+                        <button
+                          *ngIf="filteredRolesList[index].id_rol !== 1"
+                          class="btn"
+                          (click)="
+                            abrirModalPrivilegios(filteredRolesList[index])
+                          "
+                        >
+                          Ajustar Privilegios
+                        </button>
+                        <button
+                          *ngIf="
+                            filteredRolesList[index].status === 1 &&
+                            filteredRolesList[index].id_rol !== 1
+                          "
+                          class="btn"
+                          (click)="deshabilitarRol(filteredRolesList[index])"
+                        >
+                          Deshabilitar
+                        </button>
+                        <button
+                          *ngIf="
+                            filteredRolesList[index].status === 0 &&
+                            filteredRolesList[index].id_rol !== 0
+                          "
+                          class="btn"
+                          (click)="restaurarRol(filteredRolesList[index])"
+                        >
+                          Restaurar
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>`,
   styleUrl: './roles-usuarios.component.css',

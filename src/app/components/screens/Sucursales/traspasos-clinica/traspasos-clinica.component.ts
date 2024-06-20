@@ -63,7 +63,7 @@ import { CatalogoGeneralService } from '../../../../core/services/Services Catal
         *ngIf="mostrarModal"
         (cerrar)="cerrarModal()"
       ></app-carrito-clinica>
-      <app-tabla-productos [baseUrl]="sucursal?.url"></app-tabla-productos>
+      <app-tabla-productos [baseUrl]="sucursal?.url" [isTraspaso]="isTraspaso"></app-tabla-productos>
     </main>
   `,
   styleUrl: './traspasos-clinica.component.css',
@@ -76,7 +76,8 @@ export class TraspasosClinicaComponent {
   mostrarModal: boolean = false;
   items: any[] = [];
   currentUser?: Users | null;
-
+  isTraspaso: boolean = true;
+  
   carritoClinicaComponent!: CarritoClinicaComponent;
   constructor(
     private sidebarOpeningService: SidebaropeningService,

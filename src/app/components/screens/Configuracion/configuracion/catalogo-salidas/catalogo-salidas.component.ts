@@ -46,95 +46,117 @@ import Swal from 'sweetalert2';
         (cancelar)="cerrarModalEditar()"
       >
       </app-editar-motivo>
-      <div class="table-container">
-        <table border="2">
-          <thead>
-            <tr>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('id_tipo_salida')"
-                [class.interactive]="columnaOrdenada === 'id_tipo_salida'"
-              >
-                ID Tipo Salida
-                <i
-                  *ngIf="columnaOrdenada === 'id_tipo_salida'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('tipo')"
-                [class.interactive]="columnaOrdenada === 'tipo'"
-              >
-                Tipo
-                <i
-                  *ngIf="columnaOrdenada === 'tipo'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('status')"
-                [class.interactive]="columnaOrdenada === 'status'"
-              >
-                Status
-                <i
-                  *ngIf="columnaOrdenada === 'status'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let index of filteredIndices">
-              <td>{{ filteredMotivosList[index].id_tipo_salida }}</td>
-              <td>{{ filteredMotivosList[index].tipo }}</td>
-              <td>
-                <span *ngIf="filteredMotivosList[index].status === 1"
-                  >Activo</span
-                >
-                <span *ngIf="filteredMotivosList[index].status === 0"
-                  >Inactivo</span
-                >
-              </td>
-              <td>
-                <button
-                  class="btn"
-                  (click)="abrirModalEditar(filteredMotivosList[index])"
-                >
-                  Editar
-                </button>
-                <button
-                  *ngIf="
-                    filteredMotivosList[index].status === 1 &&
-                    filteredMotivosList[index].id_tipo_salida !== 1
-                  "
-                  class="btn"
-                  (click)="deshabilitarMotivo(filteredMotivosList[index])"
-                >
-                  Deshabilitar
-                </button>
-                <button
-                  *ngIf="
-                    filteredMotivosList[index].status === 0 &&
-                    filteredMotivosList[index].id_tipo_salida !== 1
-                  "
-                  class="btn"
-                  (click)="restaurarMotivo(filteredMotivosList[index])"
-                >
-                  Restaurar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="table-container overflow-x-auto">
+        <div class="flex flex-col">
+          <div class="overflow-x-auto">
+            <div class="inline-block min-w-full py-1">
+              <div class="overflow-hidden">
+                <table class="min-w-full text-left text-xs font-light">
+                  <thead class="border-b border-neutral-200 font-medium">
+                    <tr>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('id_tipo_salida')"
+                        [class.interactive]="
+                          columnaOrdenada === 'id_tipo_salida'
+                        "
+                      >
+                        ID Tipo Salida
+                        <i
+                          *ngIf="columnaOrdenada === 'id_tipo_salida'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('tipo')"
+                        [class.interactive]="columnaOrdenada === 'tipo'"
+                      >
+                        Tipo
+                        <i
+                          *ngIf="columnaOrdenada === 'tipo'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('status')"
+                        [class.interactive]="columnaOrdenada === 'status'"
+                      >
+                        Status
+                        <i
+                          *ngIf="columnaOrdenada === 'status'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th scope="col" class="px-2 py-1" Acciones></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      class="border-b border-neutral-200"
+                      *ngFor="let index of filteredIndices"
+                    >
+                      <td class="whitespace-nowrap px-2 py-1 font-medium">
+                        {{ filteredMotivosList[index].id_tipo_salida }}
+                      </td>
+                      <td class="whitespace-nowrap px-2 py-1 font-medium">
+                        {{ filteredMotivosList[index].tipo }}
+                      </td>
+                      <td class="whitespace-nowrap px-2 py-1 font-medium">
+                        <span *ngIf="filteredMotivosList[index].status === 1"
+                          >Activo</span
+                        >
+                        <span *ngIf="filteredMotivosList[index].status === 0"
+                          >Inactivo</span
+                        >
+                      </td>
+                      <td class="whitespace-nowrap px-2 py-1 font-medium">
+                        <button
+                          class="btn"
+                          (click)="abrirModalEditar(filteredMotivosList[index])"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          *ngIf="
+                            filteredMotivosList[index].status === 1 &&
+                            filteredMotivosList[index].id_tipo_salida !== 1
+                          "
+                          class="btn"
+                          (click)="
+                            deshabilitarMotivo(filteredMotivosList[index])
+                          "
+                        >
+                          Deshabilitar
+                        </button>
+                        <button
+                          *ngIf="
+                            filteredMotivosList[index].status === 0 &&
+                            filteredMotivosList[index].id_tipo_salida !== 1
+                          "
+                          class="btn"
+                          (click)="restaurarMotivo(filteredMotivosList[index])"
+                        >
+                          Restaurar
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>`,
   styleUrl: './catalogo-salidas.component.css',

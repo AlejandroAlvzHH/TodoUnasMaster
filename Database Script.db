@@ -375,7 +375,7 @@ WHERE table_schema = 'public';
 SELECT column_name, data_type
 FROM information_schema.columns
 WHERE table_schema = 'public' 
-AND table_name = 'usuario';
+AND table_name = 'vista_sincronizacion_pendiente_reciente';
 
 --> MUESTRA TODOS LOS REGISTROS DE UNA TABLA
 SELECT * FROM vista_catalogo_sincronizacion;
@@ -383,7 +383,7 @@ SELECT * FROM vista_catalogo_sincronizacion;
 --> VER EL QUERY DE UNA VIEW
 SELECT definition
 FROM pg_views
-WHERE viewname = 'vista_movimientos';
+WHERE viewname = 'vista_catalogo_sincronizacion';
 
 -->AGREGAR COLUMNA
 ALTER TABLE sincronizacion_pendiente

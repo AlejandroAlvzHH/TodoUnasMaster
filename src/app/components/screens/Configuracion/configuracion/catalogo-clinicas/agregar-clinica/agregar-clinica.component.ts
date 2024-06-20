@@ -33,6 +33,7 @@ export class AgregarClinicaComponent {
   nuevaClinica: any = {
     nombre: '',
     direccion: '',
+    status: 1,
   };
 
   constructor(private clinicasService: ClinicasService) {}

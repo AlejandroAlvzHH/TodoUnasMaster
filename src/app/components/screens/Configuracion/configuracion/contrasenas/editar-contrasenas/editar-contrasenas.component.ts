@@ -83,9 +83,11 @@ import { firstValueFrom } from 'rxjs';
             Por favor ingrese un correo válido.
           </div>
         </div>
-        <label *ngIf="nuevoUsuario.id_usuario !== 1">Rol:</label>
+        <label *ngIf="nuevoUsuario.id_usuario !== 1 && fromSidebar !== 1"
+          >Rol:</label
+        >
         <select
-          *ngIf="nuevoUsuario.id_usuario !== 1"
+          *ngIf="nuevoUsuario.id_usuario !== 1 && fromSidebar !== 1"
           [(ngModel)]="selectedRol"
           (ngModelChange)="onRolChange($event)"
         >
@@ -117,6 +119,7 @@ export class EditarContrasenasComponent {
   loading: boolean = false;
   @Output() cancelar = new EventEmitter<void>();
   @Input() id_usuario: number | null = null;
+  @Input() fromSidebar: number | null = null;
   selectedRol: number | null = null;
   roles: Roles[] = [];
   contrasena: Users | null = null;
@@ -134,6 +137,8 @@ export class EditarContrasenasComponent {
   ) {}
 
   async ngOnInit(): Promise<void> {
+    console.log(this.fromSidebar);
+
     this.loading = true;
     this.loadingRoles = true;
     try {
@@ -195,7 +200,7 @@ export class EditarContrasenasComponent {
 
   canEditUser(): boolean {
     return (
-      this.passwordModified ||
+      (this.passwordModified && this.arePasswordsValid()) ||
       this.isRoleChanged() ||
       this.areOtherFieldsModified()
     );
@@ -208,16 +213,20 @@ export class EditarContrasenasComponent {
   areOtherFieldsModified(): boolean {
     return (
       this.nuevoUsuario.nombre !== this.contrasena?.nombre ||
-      this.nuevoUsuario.apellido_paterno !==
-        this.contrasena?.apellido_paterno ||
-      this.nuevoUsuario.apellido_materno !==
-        this.contrasena?.apellido_materno ||
+      this.nuevoUsuario.apellido_paterno !== this.contrasena?.apellido_paterno ||
+      this.nuevoUsuario.apellido_materno !== this.contrasena?.apellido_materno ||
       this.nuevoUsuario.correo !== this.contrasena?.correo
     );
   }
 
+  arePasswordsValid(): boolean {
+    return (
+      this.nuevoUsuario.contrasena === this.nuevoUsuario.confirmarContrasena
+    );
+  }
+
   editarUsuario() {
-    if (!this.canEditUser()) {
+    if (!this.arePasswordsValid()) {
       Swal.fire({
         title: 'Contraseña no coincide',
         text: 'Las contraseñas no coinciden.',

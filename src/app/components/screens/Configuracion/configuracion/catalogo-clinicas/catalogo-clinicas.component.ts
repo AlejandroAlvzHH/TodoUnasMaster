@@ -32,9 +32,7 @@ import { ClinicasService } from '../../../../../core/services/Services Sucursale
         <h1>CATÁLOGO DE CLÍNICAS</h1>
       </div>
       <div class="botonera">
-        <button class="btn" (click)="abrirModal()">
-          Agregar Motivo de Salida
-        </button>
+        <button class="btn" (click)="abrirModal()">Agregar Clínica</button>
       </div>
       <app-agregar-clinica
         *ngIf="mostrarModal"
@@ -46,89 +44,130 @@ import { ClinicasService } from '../../../../../core/services/Services Sucursale
         (cancelar)="cerrarModalEditar()"
       >
       </app-editar-clinica>
-      <div class="table-container">
-        <table border="2">
-          <thead>
-            <tr>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('id_clinica')"
-                [class.interactive]="columnaOrdenada === 'id_clinica'"
-              >
-                ID Clínica
-                <i
-                  *ngIf="columnaOrdenada === 'id_clinica'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('nombre')"
-                [class.interactive]="columnaOrdenada === 'nombre'"
-              >
-                Nombre
-                <i
-                  *ngIf="columnaOrdenada === 'nombre'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th
-                scope="col"
-                (click)="ordenarPorColumna('status')"
-                [class.interactive]="columnaOrdenada === 'status'"
-              >
-                Status
-                <i
-                  *ngIf="columnaOrdenada === 'nombre'"
-                  class="arrow-icon"
-                  [class.asc]="ordenAscendente"
-                  [class.desc]="!ordenAscendente"
-                ></i>
-              </th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let index of filteredIndices">
-              <td>{{ filteredClinicasList[index].id_clinica }}</td>
-              <td>{{ filteredClinicasList[index].nombre }}</td>
-              <td>
-                <span *ngIf="filteredClinicasList[index].status === 1"
-                  >Activo</span
-                >
-                <span *ngIf="filteredClinicasList[index].status === 0"
-                  >Inactivo</span
-                >
-              </td>
-              <td>
-                <button
-                  class="btn"
-                  (click)="abrirModalEditar(filteredClinicasList[index])"
-                >
-                  Editar
-                </button>
-                <button
-                  *ngIf="filteredClinicasList[index].status === 1"
-                  class="btn"
-                  (click)="deshabilitarClinica(filteredClinicasList[index])"
-                >
-                  Deshabilitar
-                </button>
-                <button
-                  *ngIf="filteredClinicasList[index].status === 0"
-                  class="btn"
-                  (click)="restaurarClinica(filteredClinicasList[index])"
-                >
-                  Restaurar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="table-container overflow-x-auto">
+        <div class="flex flex-col">
+          <div class="overflow-x-auto">
+            <div class="inline-block min-w-full py-1">
+              <div class="overflow-hidden">
+                <table class="min-w-full text-left text-xs font-light">
+                  <thead class="border-b border-neutral-200 font-medium">
+                    <tr>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('id_clinica')"
+                        [class.interactive]="columnaOrdenada === 'id_clinica'"
+                      >
+                        ID Clínica
+                        <i
+                          *ngIf="columnaOrdenada === 'id_clinica'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('nombre')"
+                        [class.interactive]="columnaOrdenada === 'nombre'"
+                      >
+                        Nombre
+                        <i
+                          *ngIf="columnaOrdenada === 'nombre'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('direccion')"
+                        [class.interactive]="columnaOrdenada === 'direccion'"
+                      >
+                        Dirección
+                        <i
+                          *ngIf="columnaOrdenada === 'direccion'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th
+                        scope="col"
+                        class="px-2 py-1"
+                        (click)="ordenarPorColumna('status')"
+                        [class.interactive]="columnaOrdenada === 'status'"
+                      >
+                        Status
+                        <i
+                          *ngIf="columnaOrdenada === 'nombre'"
+                          class="arrow-icon"
+                          [class.asc]="ordenAscendente"
+                          [class.desc]="!ordenAscendente"
+                        ></i>
+                      </th>
+                      <th scope="col" class="px-2 py-1">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      class="border-b border-neutral-200"
+                      *ngFor="let index of filteredIndices"
+                    >
+                      <td class="whitespace-nowrap px-2 py-1 font-medium">
+                        {{ filteredClinicasList[index].id_clinica }}
+                      </td>
+                      <td class="whitespace-nowrap px-2 py-1 font-medium">
+                        {{ filteredClinicasList[index].nombre }}
+                      </td>
+                      <td class="whitespace-nowrap px-2 py-1 font-medium">
+                        {{ filteredClinicasList[index].direccion }}
+                      </td>
+                      <td class="whitespace-nowrap px-2 py-1 font-medium">
+                        <span *ngIf="filteredClinicasList[index].status === 1"
+                          >Activo</span
+                        >
+                        <span *ngIf="filteredClinicasList[index].status === 0"
+                          >Inactivo</span
+                        >
+                      </td>
+                      <td class="whitespace-nowrap px-2 py-1 font-medium">
+                        <button
+                          class="btn"
+                          (click)="
+                            abrirModalEditar(filteredClinicasList[index])
+                          "
+                        >
+                          Editar
+                        </button>
+                        <button
+                          *ngIf="filteredClinicasList[index].status === 1"
+                          class="btn"
+                          (click)="
+                            deshabilitarClinica(filteredClinicasList[index])
+                          "
+                        >
+                          Deshabilitar
+                        </button>
+                        <button
+                          *ngIf="filteredClinicasList[index].status === 0"
+                          class="btn"
+                          (click)="
+                            restaurarClinica(filteredClinicasList[index])
+                          "
+                        >
+                          Restaurar
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>`,
   styleUrl: './catalogo-clinicas.component.css',

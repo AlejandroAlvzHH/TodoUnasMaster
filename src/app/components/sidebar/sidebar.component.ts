@@ -8,18 +8,26 @@ import { Users } from '../../Models/Master/users';
 import { VistaRolesPrivilegios } from '../../Models/Master/vista-roles-privilegios';
 import { VistaRolesPrivilegiosService } from '../../core/services/Services Configuracion/vista-roles-privilegios.service';
 import { RolesService } from '../../core/services/Services Configuracion/roles.service';
+import { UsuariosService } from '../../core/services/Services Configuracion/usuarios.service';
+import { EditarContrasenasComponent } from '../screens/Configuracion/configuracion/contrasenas/editar-contrasenas/editar-contrasenas.component';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, EditarContrasenasComponent],
   template: `
     <aside class="sidebar" [style.left]="getSidebarLeft()">
       <ul *ngIf="isOpen">
-        <h2>TODO UÑAS</h2>
+        <h2>TODO UÑAS MASTER</h2>
         <li><a href="/">Sucursales</a></li>
         <li><a href="/catalogogeneral">Catálogo General</a></li>
         <li><a href="/historicos">Históricos</a></li>
+        <app-editar-contrasenas
+          *ngIf="mostrarModalEditar"
+          [id_usuario]="usuarioSeleccionado"
+          [fromSidebar]="fromSidebar"
+          (cancelar)="cerrarModalEditar()"
+        ></app-editar-contrasenas>
         <li>
           <a href="/configuracion" *ngIf="mostrarBotonAjustes">Ajustes</a>
         </li>
@@ -32,6 +40,9 @@ import { RolesService } from '../../core/services/Services Configuracion/roles.s
             {{ this.currentUser?.apellido_paterno || '' }}
             {{ this.currentUser?.apellido_materno || '' }}
           </h3>
+          <button (click)="abrirModalEditar(this.currentUser!.id_usuario)">
+            Editar mis Datos
+          </button>
         </div>
       </ul>
     </aside>
@@ -41,12 +52,17 @@ import { RolesService } from '../../core/services/Services Configuracion/roles.s
 export class SidebarComponent implements OnInit {
   isOpen = false;
 
+  mostrarModalEditar: boolean = false;
+  usuarioSeleccionado: number | null = null;
+  fromSidebar: number = 1;
+  
   //PARA PRIVILEGIOS
   mostrarBotonAjustes: boolean = false;
   currentUser?: Users | null;
   privilegiosDisponibles?: VistaRolesPrivilegios[] | null;
   rol: string = '';
   constructor(
+    private usuariosService: UsuariosService,
     private SidebaropeningService: SidebaropeningService,
     private authService: AuthService,
     private router: Router,
@@ -107,5 +123,14 @@ export class SidebarComponent implements OnInit {
         this.router.navigate(['/login']);
       }
     });
+  }
+
+  abrirModalEditar(id_usuario: number): void {
+    this.usuarioSeleccionado = id_usuario;
+    this.mostrarModalEditar = true;
+  }
+
+  cerrarModalEditar(): void {
+    this.mostrarModalEditar = false;
   }
 }

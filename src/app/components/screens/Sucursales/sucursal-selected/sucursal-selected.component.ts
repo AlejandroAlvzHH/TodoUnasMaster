@@ -64,12 +64,15 @@ type TipoDeError = HttpErrorResponse;
           <a href="/traspasos/{{ sucursal?.idSucursal }}" class="opcion"
             >Traspaso a Sucursal</a
           >
+          <a href="/traspasosclinica/{{ sucursal?.idSucursal }}" class="opcion"
+            >Traspaso a Clínica</a
+          >
           <button
             class="opcion"
             (click)="eliminarSucursal()"
             *ngIf="mostrarBotonEliminarSucursal"
           >
-            Eliminar Sucursal
+            Deshabilitar Sucursal
           </button>
           <button
             class="opcion"
@@ -78,9 +81,6 @@ type TipoDeError = HttpErrorResponse;
           >
             Modificar Sucursal
           </button>
-          <a href="/traspasosclinica/{{ sucursal?.idSucursal }}" class="opcion"
-            >Traspaso a Clínica</a
-          >
         </div>
       </div>
       <br />
@@ -160,13 +160,13 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
 
   async eliminarSucursal() {
     const result = await Swal.fire({
-      title: 'Confirmar Eliminación',
-      text: `¿Estás seguro de eliminar ${this.sucursal?.nombre}?`,
+      title: 'Confirmar Deshabilitación',
+      text: `¿Estás seguro de deshabilitar ${this.sucursal?.nombre}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#333333',
       cancelButtonColor: '#bcbcbs',
-      confirmButtonText: 'Sí, confirmar eliminación',
+      confirmButtonText: 'Sí, confirmar deshabilitación',
       cancelButtonText: 'Cancelar',
       customClass: {
         confirmButton: 'custom-confirm-button',
@@ -180,7 +180,7 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
           .toPromise();
 
         await Swal.fire({
-          title: 'Sucursal Eliminada',
+          title: 'Sucursal Deshabilitada',
           text: 'Los registros permanecerán en la base de datos.',
           icon: 'success',
           confirmButtonColor: '#333333',
@@ -190,7 +190,7 @@ export class SucursalSelectedComponent implements OnInit, OnDestroy {
         this.mostrarModal = false;
         this.router.navigate(['/']);
       } else {
-        console.error('Error al eliminar la sucursal.');
+        console.error('Error al deshabilitar la sucursal.');
       }
     }
   }

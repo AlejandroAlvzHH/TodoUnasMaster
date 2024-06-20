@@ -18,7 +18,7 @@ import { CarritoComunicationService } from '../../../core/services/Services Sucu
               <table class="min-w-full text-left text-xs font-light">
                 <thead class="border-b border-neutral-200 font-medium">
                   <tr>
-                    <th scope="col" class="px-2 py-1">Id Artículo</th>
+                    <th scope="col" class="px-2 py-1">ID Artículo</th>
                     <th scope="col" class="px-2 py-1">Clave</th>
                     <th scope="col" class="px-2 py-1">Nombre</th>
                     <th scope="col" class="px-2 py-1">Precio</th>
