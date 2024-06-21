@@ -103,159 +103,213 @@ import { HistoricosDetalleComponent } from '../historicos-detalle/historicos-det
           (cancelar)="cerrarModal()"
         ></app-historicos-detalle>
         <div *ngIf="!isDataLoaded" class="spinner"></div>
-        <div class="table-container" *ngIf="isDataLoaded">
-          <table border="2">
-            <thead>
-              <tr>
-                <th
-                  scope="col"
-                  (click)="ordenarPorColumna('id_movimiento')"
-                  [class.interactive]="columnaOrdenada === 'id_movimiento'"
-                >
-                  ID Movimiento
-                  <i
-                    *ngIf="columnaOrdenada === 'id_movimiento'"
-                    class="arrow-icon"
-                    [class.asc]="ordenAscendente"
-                    [class.desc]="!ordenAscendente"
-                  ></i>
-                </th>
-                <th
-                  scope="col"
-                  (click)="ordenarPorColumna('nombre_usuario')"
-                  [class.interactive]="columnaOrdenada === 'nombre_usuario'"
-                >
-                  Usuario
-                  <i
-                    *ngIf="columnaOrdenada === 'nombre_usuario'"
-                    class="arrow-icon"
-                    [class.asc]="ordenAscendente"
-                    [class.desc]="!ordenAscendente"
-                  ></i>
-                </th>
-                <th
-                  scope="col"
-                  (click)="ordenarPorColumna('tipo_movimiento')"
-                  [class.interactive]="columnaOrdenada === 'tipo_movimiento'"
-                >
-                  Tipo
-                  <i
-                    *ngIf="columnaOrdenada === 'tipo_movimiento'"
-                    class="arrow-icon"
-                    [class.asc]="ordenAscendente"
-                    [class.desc]="!ordenAscendente"
-                  ></i>
-                </th>
-                <th
-                  scope="col"
-                  (click)="ordenarPorColumna('sucursal_salida')"
-                  [class.interactive]="columnaOrdenada === 'sucursal_salida'"
-                >
-                  Sucursal de Salida
-                  <i
-                    *ngIf="columnaOrdenada === 'sucursal_salida'"
-                    class="arrow-icon"
-                    [class.asc]="ordenAscendente"
-                    [class.desc]="!ordenAscendente"
-                  ></i>
-                </th>
-                <th
-                  scope="col"
-                  (click)="ordenarPorColumna('sucursal_destino')"
-                  [class.interactive]="columnaOrdenada === 'sucursal_destino'"
-                >
-                  Sucursal Destino
-                  <i
-                    *ngIf="columnaOrdenada === 'sucursal_destino'"
-                    class="arrow-icon"
-                    [class.asc]="ordenAscendente"
-                    [class.desc]="!ordenAscendente"
-                  ></i>
-                </th>
-                <th
-                  scope="col"
-                  (click)="ordenarPorColumna('tipo_salida')"
-                  [class.interactive]="columnaOrdenada === 'tipo_salida'"
-                >
-                  Motivo de Salida
-                  <i
-                    *ngIf="columnaOrdenada === 'tipo_salida'"
-                    class="arrow-icon"
-                    [class.asc]="ordenAscendente"
-                    [class.desc]="!ordenAscendente"
-                  ></i>
-                </th>
-                <th
-                  scope="col"
-                  (click)="ordenarPorColumna('nombre_clinica')"
-                  [class.interactive]="columnaOrdenada === 'nombre_clinica'"
-                >
-                  Clínica
-                  <i
-                    *ngIf="columnaOrdenada === 'nombre_clinica'"
-                    class="arrow-icon"
-                    [class.asc]="ordenAscendente"
-                    [class.desc]="!ordenAscendente"
-                  ></i>
-                </th>
-                <th
-                  scope="col"
-                  (click)="ordenarPorColumna('fecha')"
-                  [class.interactive]="columnaOrdenada === 'fecha'"
-                >
-                  Fecha
-                  <i
-                    *ngIf="columnaOrdenada === 'fecha'"
-                    class="arrow-icon"
-                    [class.asc]="ordenAscendente"
-                    [class.desc]="!ordenAscendente"
-                  ></i>
-                </th>
-                <th
-                  scope="col"
-                  (click)="ordenarPorColumna('precio_total')"
-                  [class.interactive]="columnaOrdenada === 'precio_total'"
-                >
-                  Precio Total
-                  <i
-                    *ngIf="columnaOrdenada === 'precio_total'"
-                    class="arrow-icon"
-                    [class.asc]="ordenAscendente"
-                    [class.desc]="!ordenAscendente"
-                  ></i>
-                </th>
-                <th scope="col">Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              <ng-container *ngFor="let index of paginatedIndices">
-                <tr *ngFor="let index of filteredIndices">
-                  <td>{{ filteredMovementsList[index].id_movimiento }}</td>
-                  <td>{{ filteredMovementsList[index].nombre_usuario }}</td>
-                  <td>{{ filteredMovementsList[index].tipo_movimiento }}</td>
-                  <td>{{ filteredMovementsList[index].sucursal_salida }}</td>
-                  <td>{{ filteredMovementsList[index].sucursal_destino }}</td>
-                  <td>{{ filteredMovementsList[index].tipo_salida }}</td>
-                  <td>{{ filteredMovementsList[index].nombre_clinica }}</td>
-                  <td>
-                    {{ filteredMovementsList[index].fecha | date : 'short' }}
-                  </td>
-                  <td>
-                    {{ filteredMovementsList[index].precio_total }}
-                  </td>
-                  <td>
-                    <button
-                      class="btn"
-                      (click)="abrirModal(filteredMovementsList[index])"
-                    >
-                      Ver Detalle
-                    </button>
-                  </td>
-                </tr>
-              </ng-container>
-            </tbody>
-          </table>
+        <div class="table-container overflow-x-auto" *ngIf="isDataLoaded">
+          <div class="flex flex-col">
+            <div class="overflow-x-auto">
+              <div class="inline-block min-w-full py-1">
+                <div class="overflow-hidden">
+                  <table class="min-w-full text-left text-xs font-light">
+                    <thead class="border-b border-neutral-200 font-medium">
+                      <tr>
+                        <th
+                          scope="col"
+                          class="px-2 py-1"
+                          (click)="ordenarPorColumna('id_movimiento')"
+                          [class.interactive]="
+                            columnaOrdenada === 'id_movimiento'
+                          "
+                        >
+                          ID Movimiento
+                          <i
+                            *ngIf="columnaOrdenada === 'id_movimiento'"
+                            class="arrow-icon"
+                            [class.asc]="ordenAscendente"
+                            [class.desc]="!ordenAscendente"
+                          ></i>
+                        </th>
+                        <th
+                          scope="col"
+                          class="px-2 py-1"
+                          (click)="ordenarPorColumna('nombre_usuario')"
+                          [class.interactive]="
+                            columnaOrdenada === 'nombre_usuario'
+                          "
+                        >
+                          Usuario
+                          <i
+                            *ngIf="columnaOrdenada === 'nombre_usuario'"
+                            class="arrow-icon"
+                            [class.asc]="ordenAscendente"
+                            [class.desc]="!ordenAscendente"
+                          ></i>
+                        </th>
+                        <th
+                          scope="col"
+                          class="px-2 py-1"
+                          (click)="ordenarPorColumna('tipo_movimiento')"
+                          [class.interactive]="
+                            columnaOrdenada === 'tipo_movimiento'
+                          "
+                        >
+                          Tipo
+                          <i
+                            *ngIf="columnaOrdenada === 'tipo_movimiento'"
+                            class="arrow-icon"
+                            [class.asc]="ordenAscendente"
+                            [class.desc]="!ordenAscendente"
+                          ></i>
+                        </th>
+                        <th
+                          scope="col"
+                          class="px-2 py-1"
+                          (click)="ordenarPorColumna('sucursal_salida')"
+                          [class.interactive]="
+                            columnaOrdenada === 'sucursal_salida'
+                          "
+                        >
+                          Sucursal de Salida
+                          <i
+                            *ngIf="columnaOrdenada === 'sucursal_salida'"
+                            class="arrow-icon"
+                            [class.asc]="ordenAscendente"
+                            [class.desc]="!ordenAscendente"
+                          ></i>
+                        </th>
+                        <th
+                          scope="col"
+                          class="px-2 py-1"
+                          (click)="ordenarPorColumna('sucursal_destino')"
+                          [class.interactive]="
+                            columnaOrdenada === 'sucursal_destino'
+                          "
+                        >
+                          Sucursal Destino
+                          <i
+                            *ngIf="columnaOrdenada === 'sucursal_destino'"
+                            class="arrow-icon"
+                            [class.asc]="ordenAscendente"
+                            [class.desc]="!ordenAscendente"
+                          ></i>
+                        </th>
+                        <th
+                          scope="col"
+                          class="px-2 py-1"
+                          (click)="ordenarPorColumna('tipo_salida')"
+                          [class.interactive]="
+                            columnaOrdenada === 'tipo_salida'
+                          "
+                        >
+                          Motivo de Salida
+                          <i
+                            *ngIf="columnaOrdenada === 'tipo_salida'"
+                            class="arrow-icon"
+                            [class.asc]="ordenAscendente"
+                            [class.desc]="!ordenAscendente"
+                          ></i>
+                        </th>
+                        <th
+                          scope="col"
+                          class="px-2 py-1"
+                          (click)="ordenarPorColumna('nombre_clinica')"
+                          [class.interactive]="
+                            columnaOrdenada === 'nombre_clinica'
+                          "
+                        >
+                          Clínica
+                          <i
+                            *ngIf="columnaOrdenada === 'nombre_clinica'"
+                            class="arrow-icon"
+                            [class.asc]="ordenAscendente"
+                            [class.desc]="!ordenAscendente"
+                          ></i>
+                        </th>
+                        <th
+                          scope="col"
+                          class="px-2 py-1"
+                          (click)="ordenarPorColumna('fecha')"
+                          [class.interactive]="columnaOrdenada === 'fecha'"
+                        >
+                          Fecha
+                          <i
+                            *ngIf="columnaOrdenada === 'fecha'"
+                            class="arrow-icon"
+                            [class.asc]="ordenAscendente"
+                            [class.desc]="!ordenAscendente"
+                          ></i>
+                        </th>
+                        <th
+                          scope="col"
+                          class="px-2 py-1"
+                          (click)="ordenarPorColumna('precio_total')"
+                          [class.interactive]="
+                            columnaOrdenada === 'precio_total'
+                          "
+                        >
+                          Precio Total
+                          <i
+                            *ngIf="columnaOrdenada === 'precio_total'"
+                            class="arrow-icon"
+                            [class.asc]="ordenAscendente"
+                            [class.desc]="!ordenAscendente"
+                          ></i>
+                        </th>
+                        <th scope="col" class="px-2 py-1">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngFor="let index of paginatedIndices">
+                        <tr
+                          class="border-b border-neutral-200"
+                          *ngFor="let index of filteredIndices"
+                        >
+                          <td class="whitespace-nowrap px-2 py-1 font-medium">
+                            {{ filteredMovementsList[index].id_movimiento }}
+                          </td>
+                          <td class="whitespace-nowrap px-2 py-1 font-medium">
+                            {{ filteredMovementsList[index].nombre_usuario }}
+                          </td>
+                          <td class="whitespace-nowrap px-2 py-1 font-medium">
+                            {{ filteredMovementsList[index].tipo_movimiento }}
+                          </td>
+                          <td class="whitespace-nowrap px-2 py-1 font-medium">
+                            {{ filteredMovementsList[index].sucursal_salida }}
+                          </td>
+                          <td class="whitespace-nowrap px-2 py-1 font-medium">
+                            {{ filteredMovementsList[index].sucursal_destino }}
+                          </td>
+                          <td class="whitespace-nowrap px-2 py-1 font-medium">
+                            {{ filteredMovementsList[index].tipo_salida }}
+                          </td>
+                          <td class="whitespace-nowrap px-2 py-1 font-medium">
+                            {{ filteredMovementsList[index].nombre_clinica }}
+                          </td>
+                          <td class="whitespace-nowrap px-2 py-1 font-medium">
+                            {{
+                              filteredMovementsList[index].fecha
+                                | date : 'short'
+                            }}
+                          </td>
+                          <td class="whitespace-nowrap px-2 py-1 font-medium">
+                            {{ filteredMovementsList[index].precio_total }}
+                          </td>
+                          <td class="whitespace-nowrap px-2 py-1 font-medium">
+                            <button
+                              class="btn"
+                              (click)="abrirModal(filteredMovementsList[index])"
+                            >
+                              Ver Detalle
+                            </button>
+                          </td>
+                        </tr>
+                      </ng-container>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
         <div class="pagination-controls mt-4">
           <button (click)="previousPage()" [disabled]="currentPage === 1">
             Anterior
