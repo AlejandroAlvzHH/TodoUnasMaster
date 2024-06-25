@@ -1,0 +1,216 @@
+ privilegios
+ catalogo_general
+ catalogo_general_hist
+ inventario
+ sucursales_hist
+ sucursales
+ detalle_movimiento
+ movimientos
+ catalogo_salidas
+ clinicas
+ roles
+ roles_privilegios
+ sincronizacion_pendiente
+ usuario
+
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_schema = 'public' 
+AND table_name = 'usuario';
+
+'privilegios'
+  column_name  |     data_type
+---------------+-------------------
+ id_privilegio | integer
+ nombre        | character varying
+
+'catalogo_general'
+     column_name     |          data_type
+---------------------+-----------------------------
+ id_producto         | integer
+ nombre              | character varying
+ descripcion         | text
+ cantidad_total      | integer
+ precio              | numeric
+ usuario_creador     | integer
+ fecha_creado        | timestamp without time zone
+ usuario_modificador | integer
+ fecha_modificado    | timestamp without time zone
+ usuario_eliminador  | integer
+ fecha_eliminado     | timestamp without time zone
+ clave               | character varying
+
+'catalogo_general_hist';
+     column_name     |     data_type
+---------------------+-------------------
+ id_historico        | integer
+ id_producto         | integer
+ nombre              | character varying
+ descripcion         | text
+ cantidad_total      | integer
+ precio              | numeric
+ usuario_involucrado | integer
+ tipo_accion         | character varying
+ fecha               | date
+
+'inventario';
+ column_name | data_type
+-------------+-----------
+ id_sucursal | integer
+ id_producto | integer
+ cantidad    | integer
+
+'sucursales_hist';
+     column_name     |     data_type
+---------------------+-------------------
+ id_historico        | integer
+ id_sucursal         | integer
+ nombre              | character varying
+ estado              | character varying
+ fecha_actualizacion | date
+ direccion           | character varying
+ url                 | character varying
+ usuario_involucrado | integer
+ tipo_accion         | character varying
+ fecha               | date
+ url_imagen          | character varying
+ status              | integer
+
+'sucursales';
+     column_name     |          data_type
+---------------------+-----------------------------
+ id_sucursal         | integer
+ nombre              | character varying
+ estado              | character varying
+ fecha_actualizacion | timestamp without time zone
+ direccion           | character varying
+ url                 | character varying
+ usuario_creador     | integer
+ fecha_creado        | timestamp with time zone
+ usuario_modificador | integer
+ fecha_modificado    | timestamp with time zone
+ usuario_eliminador  | integer
+ fecha_eliminado     | timestamp with time zone
+ url_imagen          | character varying
+ status              | integer
+
+'detalle_movimiento';
+  column_name   | data_type
+----------------+-----------
+ id_detalle_mov | integer
+ id_movimiento  | integer
+ id_producto    | integer
+ cantidad       | integer
+ precio         | numeric
+
+ todo_unas_master-# AND table_name = 'movimientos';
+   column_name    |          data_type
+------------------+-----------------------------
+ id_movimiento    | integer
+ id_usuario       | integer
+ tipo_movimiento  | character varying
+ sucursal_salida  | integer
+ sucursal_destino | integer
+ id_tipo_salida   | integer
+ id_clinica       | integer
+ fecha            | timestamp without time zone
+ precio_total     | numeric
+
+'catalogo_salidas';
+  column_name   |     data_type
+----------------+-------------------
+ id_tipo_salida | integer
+ tipo           | character varying
+ status         | integer
+
+'clinicas';
+ column_name |     data_type
+-------------+-------------------
+ id_clinica  | integer
+ nombre      | character varying
+ direccion   | character varying
+ status      | integer
+
+'roles';
+ column_name |     data_type
+-------------+-------------------
+ id_rol      | integer
+ nombre      | character varying
+ status      | integer
+
+'roles_privilegios';
+     column_name      | data_type
+----------------------+-----------
+ id_roles_privilegios | integer
+ id_rol               | integer
+ id_privilegio        | integer
+
+'sincronizacion_pendiente';
+  column_name   |          data_type
+----------------+-----------------------------
+ id_sync        | integer
+ id_producto    | integer
+ id_sucursal    | integer
+ fecha_registro | timestamp without time zone
+ estado         | character varying
+ mensaje_error  | text
+ status         | integer
+
+'usuario';
+   column_name    |     data_type
+------------------+-------------------
+ id_usuario       | integer
+ nombre           | character varying
+ apellido_paterno | character varying
+ apellido_materno | character varying
+ contrasena       | character varying
+ correo           | character varying
+ id_rol           | integer
+ status           | integer
+
+--> MUESTRA TODAS LAS TABLAS DEL SISTEMA
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+AND table_type = 'BASE TABLE';
+
+-->MUESTRA TODAS LAS VISTAS
+SELECT table_name
+FROM information_schema.views
+WHERE table_schema = 'public'; 
+
+--> MUESTRA COLUMNAS DE UNA TABLA ESPECÍFICA
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_schema = 'public' 
+AND table_name = 'vista_sincronizacion_pendiente_reciente';
+
+--> MUESTRA TODOS LOS REGISTROS DE UNA TABLA
+SELECT * FROM vista_catalogo_sincronizacion;
+
+--> VER EL QUERY DE UNA VIEW
+SELECT definition
+FROM pg_views
+WHERE viewname = 'vista_movimientos';
+
+-->AGREGAR COLUMNA
+ALTER TABLE sincronizacion_pendiente
+ADD COLUMN status INT;
+
+-->COMANDOS NGROK
+ngrok http 10395 --host-header="localhost:10395"
+ngrok http 10394 --host-header="localhost:10394"
+
+--> MODIFICAR UNA COLUMNA
+ALTER TABLE sincronizacion_pendiente
+ALTER COLUMN estado TYPE VARCHAR(200);
+
+--> CAMBIAR FECHAS A +ZONA HORARIA
+ALTER TABLE catalogo_general
+   ALTER COLUMN fecha_creado SET DATA TYPE TIMESTAMP,
+   ALTER COLUMN fecha_modificado SET DATA TYPE TIMESTAMP,
+   ALTER COLUMN fecha_eliminado SET DATA TYPE TIMESTAMP;
+
+--> PARA CAMBIAR NOMBRE DE COLUMNA
+ALTER TABLE usuario
+RENAME COLUMN contraseña TO contrasena;
